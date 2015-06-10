@@ -22,3 +22,5 @@ Deployment/**
 DocDeployment/**
 
 **/*.userprefs
+/sdk/obj
+/sdk/bin

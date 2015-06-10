@@ -1,1 +1,0 @@
-C:\dev\DotNet\syncmanager\sdk\obj\net35\Debug\AWSSDK.SyncManager.Net35.csprojResolveAssemblyReference.cache
