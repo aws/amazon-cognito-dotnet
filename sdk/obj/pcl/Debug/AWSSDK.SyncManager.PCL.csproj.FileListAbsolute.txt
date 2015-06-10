@@ -1,0 +1,1 @@
+C:\dev\DotNet\syncmanager\sdk\obj\pcl\Debug\AWSSDK.SyncManager.PCL.csprojResolveAssemblyReference.cache
