@@ -20,6 +20,7 @@ using System.Data.SQLite;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
@@ -48,7 +49,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         private static void SetupDatabase()
         {
-            SQLiteConnection.CreateFile(DB_FILE_NAME);
+
+            //check if database already exists
+            if (!File.Exists(DB_FILE_NAME))
+                SQLiteConnection.CreateFile(DB_FILE_NAME);
+
             connection = new SQLiteConnection("Data Source=test.db;Version=3;");
             connection.Open();
             string createDatasetTable = "CREATE TABLE IF NOT EXISTS " + TABLE_DATASETS + "("

@@ -31,8 +31,6 @@ namespace Amazon.CognitoSync.SyncManager
         private Logger _logger;
         private bool _disposed;
 
-        protected static readonly string DATABASE_NAME = "aws_cognito_cache.db";
-
         protected ILocalStorage Local
         {
             get;
@@ -65,12 +63,11 @@ namespace Amazon.CognitoSync.SyncManager
                 throw new ArgumentNullException("cognitoCredentials.IdentityPoolId");
             }
             this.cognitoCredentials = cognitoCredentials;
-#if AWSSDK_UNITY
-            Local = new SQLiteLocalStorage(System.IO.Path.Combine(UnityEngine.Application.persistentDataPath, DATABASE_NAME));
-#else
+
             Local = new SQLiteLocalStorage();
-#endif
+
             remote = new CognitoSyncStorage(cognitoCredentials, config);
+
             cognitoCredentials.IdentityChangedEvent += this.IdentityChanged;
 
             _logger = Logger.GetLogger(this.GetType());
