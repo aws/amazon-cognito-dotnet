@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2298569A-5753-4DFB-A72F-51A4D8319AD9}</ProjectGuid>
+    <ProjectGuid>{19E5479F-D67B-45E1-9244-91E96F65515F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AWSSDK_DotNet35.UnitTests</RootNamespace>
@@ -53,7 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sdk\AWSSDK.SyncManager.Net35.csproj">
+    <ProjectReference Include="..\..\sdk\AWSSDK.SyncManager.Net35.csproj">
       <Project>{e0c5cdaf-6d20-4832-8d24-2a7a50711f0d}</Project>
       <Name>AWSSDK.SyncManager.Net35</Name>
     </ProjectReference>

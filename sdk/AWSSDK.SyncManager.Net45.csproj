@@ -52,17 +52,21 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\net45\AWSSDK.CognitoIdentity.dll</HintPath>
+    <Reference Include="AWSSDK.CognitoIdentity, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.0.0.2-preview\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.CognitoSync">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\net45\AWSSDK.CognitoSync.dll</HintPath>
+    <Reference Include="AWSSDK.CognitoSync, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.CognitoSync.3.0.0.2-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\net45\AWSSDK.Core.dll</HintPath>
+    <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.Core.3.0.0.2-preview\lib\net45\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\net45\AWSSDK.SecurityToken.dll</HintPath>
+    <Reference Include="AWSSDK.SecurityToken, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.SecurityToken.3.0.0.2-preview\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
@@ -74,6 +78,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.97.0\lib\net45\System.Data.SQLite.dll</HintPath>

@@ -22,6 +22,7 @@ using System.IO;
 
 using Amazon.Runtime;
 using Amazon.CognitoIdentity;
+using Amazon.CognitoSync;
 using Amazon.CognitoSync.Model;
 using Amazon.Util.Internal;
 using Amazon.CognitoSync.SyncManager;

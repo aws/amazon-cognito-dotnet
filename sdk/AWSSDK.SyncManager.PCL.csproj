@@ -80,18 +80,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\pcl\AWSSDK.CognitoIdentity.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.CognitoSync">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\pcl\AWSSDK.CognitoSync.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\pcl\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\..\xamarin\AWSDotNetPublic\sdk\src\Services\CognitoSync\bin\Debug\pcl\AWSSDK.SecurityToken.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLitePCL.3.8.7.2\lib\portable-net45+sl50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\SQLitePCL.dll</HintPath>
       <Private>True</Private>
