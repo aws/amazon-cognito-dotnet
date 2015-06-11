@@ -26,24 +26,55 @@ using Amazon.Util.Internal;
 
 namespace Amazon.CognitoSync.SyncManager
 {
+    /// <summary>
+    /// The Cognito Sync Manager for Dot Net allows your application to store data 
+    /// in the cloud for your users and synchronize across other devices. The library 
+    /// uses the sqlite for local storage API and defaults to inmemory where sqlite 
+    /// is not available to create a local cache for the data, similar to our SDK. 
+    /// This allows your application to access stored data even when there is no connectivity.
+    /// <code>
+    /// CognitoAWSCredentials credentials = new CognitoAWSCredentials(&quot;identityPoolId&quot;,&quot;RegionEndpoint&quot;)
+    /// //using default region from your app.config or awsconfig.xml
+    /// CognitoSyncManager cognitoSyncManager = new CognitoSyncManager(credentials);
+    /// // creating a dataset
+    /// Dataset playerInfo = cognitoSyncManager.OpenOrCreateDataset(&quot;playerInfo&quot;);
+    /// // add some values into your dataset
+    /// playerInfo.Put(&quot;high_score&quot;, &quot;90&quot;);
+    /// playerInfo.Put(&quot;name&quot;, &quot;John&quot;);
+    /// // push changes to remote if needed
+    /// playerInfo.synchronize();
+    /// </code>
+    /// </summary>
     public partial class CognitoSyncManager : IDisposable
     {
         private Logger _logger;
         private bool _disposed;
 
-        protected ILocalStorage Local
-        {
-            get;
-            set;
-        }
+        private readonly ILocalStorage Local;
 
-        protected readonly CognitoSyncStorage remote;
-        protected readonly CognitoAWSCredentials cognitoCredentials;
+        private readonly CognitoSyncStorage Remote;
+
+        private readonly CognitoAWSCredentials CognitoCredentials;
 
         #region Constructor
 
+        /// <summary>
+        /// Creates an instance of CognitoSyncManager using Cognito Credentials, the region is picked up from the config if it 
+        /// <code>
+        /// CognitoSyncManager cognitoSyncManager = new CognitoSyncManager(credentials)
+        /// </code>
+        /// </summary>
+        /// <param name="cognitoCredentials"><see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/></param>
         public CognitoSyncManager(CognitoAWSCredentials cognitoCredentials) : this(cognitoCredentials, new AmazonCognitoSyncConfig()) { }
 
+        /// <summary>
+        /// Creates an instance of CognitoSyncManager using cognito credentials and a specific region
+        /// <code>
+        /// CognitoSyncManager cognitoSyncManager = new CognitoSyncManager(credentials, RegionEndpoint.USEAST1)
+        /// </code>
+        /// </summary>
+        /// <param name="cognitoCredentials"><see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/></param>
+        /// <param name="endpoint"><see cref="Amazon.RegionEndpoint"/></param>
         public CognitoSyncManager(CognitoAWSCredentials cognitoCredentials, RegionEndpoint endpoint)
             : this(cognitoCredentials, new AmazonCognitoSyncConfig
             {
@@ -51,6 +82,14 @@ namespace Amazon.CognitoSync.SyncManager
             })
         { }
 
+        /// <summary>
+        /// Creates an instance of CognitoSyncManager using cognito credentials and a configuration object
+        /// <code>
+        /// CognitoSyncManager cognitoSyncManager = new CognitoSyncManager(credentials,new AmazonCognitoSyncConfig { RegionEndpoint =  RegionEndpoint.USEAST1})
+        /// </code>
+        /// </summary>
+        /// <param name="cognitoCredentials"><see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/></param>
+        /// <param name="config"><see cref="Amazon.CognitoSync.AmazonCognitoSyncConfig"/></param>
         public CognitoSyncManager(CognitoAWSCredentials cognitoCredentials, AmazonCognitoSyncConfig config)
         {
             if (cognitoCredentials == null)
@@ -62,11 +101,11 @@ namespace Amazon.CognitoSync.SyncManager
             {
                 throw new ArgumentNullException("cognitoCredentials.IdentityPoolId");
             }
-            this.cognitoCredentials = cognitoCredentials;
+            this.CognitoCredentials = cognitoCredentials;
 
             Local = new SQLiteLocalStorage();
 
-            remote = new CognitoSyncStorage(cognitoCredentials, config);
+            Remote = new CognitoSyncStorage(cognitoCredentials, config);
 
             cognitoCredentials.IdentityChangedEvent += this.IdentityChanged;
 
@@ -77,12 +116,18 @@ namespace Amazon.CognitoSync.SyncManager
 
         #region Dispose Methods
 
+        /// <summary>
+        /// Releases the resources consumed by this object
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases the resources consumed by this object if disposing is true. 
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
@@ -90,7 +135,7 @@ namespace Amazon.CognitoSync.SyncManager
 
             if (disposing)
             {
-                cognitoCredentials.IdentityChangedEvent -= this.IdentityChanged;
+                CognitoCredentials.IdentityChangedEvent -= this.IdentityChanged;
                 _disposed = true;
             }
         }
@@ -103,8 +148,11 @@ namespace Amazon.CognitoSync.SyncManager
         /// Opens or creates a dataset. If the dataset doesn't exist, an empty one
         /// with the given name will be created. Otherwise, the dataset is loaded from
         /// local storage. If a dataset is marked as deleted but hasn't been deleted
-        /// on remote via <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadataAsync"/>, it will throw
-        /// <see cref="System.InvalidOperationException"/>.
+        /// on remote via <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadata"/>, 
+        /// it will throw <see cref="System.InvalidOperationException"/>.
+        /// <code>
+        /// Dataset dataset = cognitoSyncManager.OpenOrCreateDataset("myDatasetName");
+        /// </code>
         /// </summary>
         /// <returns>Dataset loaded from local storage</returns>
         /// <param name="datasetName">DatasetName dataset name, must be [a-zA-Z0=9_.:-]+</param>
@@ -112,12 +160,12 @@ namespace Amazon.CognitoSync.SyncManager
         {
             DatasetUtils.ValidateDatasetName(datasetName);
             Local.CreateDataset(GetIdentityId(), datasetName);
-            return new Dataset(datasetName, cognitoCredentials, Local, remote);
+            return new Dataset(datasetName, CognitoCredentials, Local, Remote);
         }
 
         /// <summary>
         /// Retrieves a list of datasets from local storage. It may not reflects
-        /// latest dataset on the remote storage until <see cref="CognitoSyncManager#RefreshDatasetMetadataAsync"/> is
+        /// latest dataset on the remote storage until <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadata"/> is
         /// called.
         /// </summary>
         /// <returns>List of datasets</returns>
@@ -140,7 +188,15 @@ namespace Amazon.CognitoSync.SyncManager
         #endregion
 
         #region Protected Methods
-
+        /// <summary>
+        /// This is triggered when an Identity Change event occurs. 
+        /// The dataset are then remapped to the new identity id.
+        /// This may happend for example when a user is working with 
+        /// unauthenticated id and later decides to authenticate 
+        /// himself with a public login provider
+        /// </summary>
+        /// <param name="sender">The object which triggered this methos</param>
+        /// <param name="e">Event Arguments</param>
         protected void IdentityChanged(object sender, EventArgs e)
         {
             var identityChangedEvent = e as Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityChangedArgs;
@@ -150,9 +206,14 @@ namespace Amazon.CognitoSync.SyncManager
             if (oldIdentity != newIdentity) Local.ChangeIdentityId(oldIdentity, newIdentity);
         }
 
+        /// <summary>
+        /// Returns the IdentityId, if the application is not online then an 
+        /// Unknown Identity Will be returned
+        /// </summary>
+        /// <returns>Identity ID</returns>
         protected string GetIdentityId()
         {
-            return DatasetUtils.GetIdentityId(cognitoCredentials);
+            return DatasetUtils.GetIdentityId(CognitoCredentials);
         }
         #endregion
 
@@ -160,7 +221,7 @@ namespace Amazon.CognitoSync.SyncManager
 
         internal List<DatasetMetadata> RefreshDatasetMetadataHelper()
         {
-            List<DatasetMetadata> response = remote.GetDatasetMetadata();
+            List<DatasetMetadata> response = Remote.GetDatasetMetadata();
             Local.UpdateDatasetMetadata(GetIdentityId(), response);
             return response;
         }

@@ -31,6 +31,10 @@ using Amazon.Util;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
+    /// <summary>
+    /// An implementation for <see cref="Amazon.CognitoSync.SyncManager.ILocalStorage"/> 
+    /// using <see href="http://sqlite.org">SQLite</see>
+    /// </summary>
     public partial class SQLiteLocalStorage : ILocalStorage, IDisposable
     {
         internal Logger _logger;
@@ -40,6 +44,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         internal const string DB_FILE_NAME = "aws_cognito_sync.db";
 
         #region constructor
+        /// <summary>
+        /// Creates a new instance of SQLiteLocalStorage
+        /// </summary>
         public SQLiteLocalStorage()
         {
             _logger = Logger.GetLogger(this.GetType());
@@ -52,16 +59,16 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region dispose methods
-
+        /// <summary>
+        /// Releases the resources consumed by this object
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-
         #endregion
-
 
         #region table datastructure
 
@@ -229,7 +236,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region helper class
-        public class Statement
+        internal class Statement
         {
             public string Query { get; set; }
             public object[] Parameters { get; set; }
@@ -239,7 +246,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region helper methods
 
-        public static byte[] ToUtf8(string sText)
+        internal static byte[] ToUtf8(string sText)
         {
             byte[] byteArray;
             int nLen = Encoding.UTF8.GetByteCount(sText) + 1;
@@ -253,6 +260,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region public api's
 
+        /// <summary>
+        /// Create a dataset 
+        /// </summary>
+        /// <param name="identityId">Identity Id</param>
+        /// <param name="datasetName">Dataset name.</param>
         public void CreateDataset(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -276,6 +288,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Retrieves the string value of a key in dataset. The value can be null
+        /// when the record doesn't exist or is marked as deleted.
+        /// </summary>
+        /// <returns>string value of the record, or null if not present or deleted.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="key">record key.</param>
         public string GetValue(string identityId, string datasetName, string key)
         {
             lock (sqlite_lock)
@@ -293,6 +313,17 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+
+        /// <summary>
+        /// Puts the value of a key in dataset. If a new value is assigned to the
+        /// key, the record is marked as dirty. If the value is null, then the record
+        /// is marked as deleted. The changed record will be synced with remote
+        /// storage.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="key">record key.</param>
+        /// <param name="value">string value. If null, the record is marked as deleted.</param>
         public void PutValue(string identityId, string datasetName, string key, string value)
         {
             lock (sqlite_lock)
@@ -310,6 +341,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Retrieves a key-value map from dataset, excluding marked as deleted
+        /// values.
+        /// </summary>
+        /// <returns>a key-value map of all but deleted values.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public Dictionary<string, string> GetValueMap(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -329,6 +367,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+
+        /// <summary>
+        /// Puts a key-value map into a dataset. This is optimized for batch
+        /// operation. It's the preferred way to put a list of records into dataset.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="values">a key-value map.</param>
         public void PutAllValues(string identityId, string datasetName, IDictionary<string, string> values)
         {
             lock (sqlite_lock)
@@ -341,6 +387,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Gets a list of dataset's metadata information.
+        /// </summary>
+        /// <returns>a list of dataset metadata</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <exception cref="DataStorageException"></exception>
         public List<DatasetMetadata> GetDatasetMetadata(string identityId)
         {
             lock (sqlite_lock)
@@ -355,6 +407,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Retrieves the metadata of a dataset.
+        /// </summary>
+        /// <returns>The dataset metadata.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <exception cref="DataStorageException"></exception>
         public DatasetMetadata GetDatasetMetadata(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -363,6 +422,15 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+
+        /// <summary>
+        /// Gets a raw record from local store. If the dataset/key combo doesn't
+        /// // exist, null will be returned.
+        /// </summary>
+        /// <returns>a Record object if found, null otherwise.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="key">Key for the record.</param>
         public Record GetRecord(string identityId, string datasetName, string key)
         {
             lock (sqlite_lock)
@@ -379,6 +447,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Gets a list of all records.
+        /// </summary>
+        /// <returns>A list of records which have been updated since lastSyncCount.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public List<Record> GetRecords(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -395,6 +469,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Puts a list of raw records into dataset.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="records">A list of Records.</param>
         public void PutRecords(string identityId, string datasetName, List<Record> records)
         {
             foreach (Record record in records)
@@ -403,54 +483,25 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Deletes a dataset. It clears all records in this dataset and marked it as
+        /// deleted for future sync.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <exception cref="DatasetNotFoundException"></exception>
         public void DeleteDataset(string identityId, string datasetName)
         {
             DeleteDataset(identityId, datasetName, null);
         }
 
-        private void DeleteDataset(string identityId, string datasetName, List<Statement> additionalStatements)
-        {
-            lock (sqlite_lock)
-            {
-                string deleteRecordsQuery =
-                RecordColumns.BuildDelete(
-                    RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    RecordColumns.DATASET_NAME + " = @whereDatasetName"
-                );
-
-                Statement s1 = new Statement
-                {
-                    Query = deleteRecordsQuery,
-                    Parameters = new string[] { identityId, datasetName }
-                };
-
-                string deleteDatasetQuery =
-                DatasetColumns.BuildUpdate(
-                    new string[] {
-                        DatasetColumns.LAST_MODIFIED_TIMESTAMP,
-                        DatasetColumns.LAST_SYNC_COUNT
-                        },
-                    DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
-                );
-
-                Statement s2 = new Statement
-                {
-                    Query = deleteDatasetQuery,
-                    Parameters = new object[] { DateTime.Now, -1, identityId, datasetName }
-                };
-
-                List<Statement> statementsToExecute = new List<Statement>() { s1, s2 };
-
-                if (additionalStatements != null)
-                {
-                    statementsToExecute.AddRange(additionalStatements);
-                }
-
-                ExecuteMultipleHelper(statementsToExecute);
-            }
-        }
-
+        /// <summary>
+        /// This is different from <see cref="DeleteDataset(String,String)"/>. Not only does it
+        /// clears all records in the dataset, it also remove it from metadata table.
+        /// It won't be visible in <see cref="GetDatasetMetadata(String,String)"/>.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public void PurgeDataset(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -470,6 +521,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Retrieves the last sync count. This sync count is a counter that
+        /// represents when the last sync happened. The counter should be updated on
+        /// a successful sync.
+        /// </summary>
+        /// <returns>The last sync count.</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public long GetLastSyncCount(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -483,6 +542,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of locally modified records since last successful sync
+        /// operation.
+        /// </summary>
+        /// <returns>a list of locally modified records</returns>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public List<Record> GetModifiedRecords(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -497,6 +563,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Updates the last sync count after successful sync with the remote data
+        /// store.
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="lastSyncCount">Last sync count.</param>
         public void UpdateLastSyncCount(string identityId, string datasetName, long lastSyncCount)
         {
             lock (sqlite_lock)
@@ -513,6 +586,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Wipes all locally cached data including dataset metadata and records. All
+        /// opened dataset handler should not perform further operations to avoid
+        /// inconsistent state.
+        /// </summary>
         public void WipeData()
         {
             lock (sqlite_lock)
@@ -524,27 +602,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        HashSet<string> GetCommonDatasetNames(string oldIdentityId, string newIdentityId)
-        {
-            HashSet<string> newNameSet = new HashSet<string>();
-            HashSet<string> oldNameSet = new HashSet<string>();
-            if (oldIdentityId != null && newIdentityId != null)
-            {
-                List<DatasetMetadata> newDatasets = GetDatasetMetadata(newIdentityId);
-                List<DatasetMetadata> oldDatasets = GetDatasetMetadata(oldIdentityId);
-                foreach (DatasetMetadata oldMetaData in oldDatasets)
-                {
-                    oldNameSet.Add(oldMetaData.DatasetName);
-                }
-                foreach (DatasetMetadata newMetaData in newDatasets)
-                {
-                    newNameSet.Add(newMetaData.DatasetName);
-                }
-                oldNameSet.IntersectWith(newNameSet);
-            }
-            return oldNameSet;
-        }
+        
 
+        /// <summary>
+        /// Reparents all datasets from old identity id to a new one.
+        /// </summary>
+        /// <param name="oldIdentityId">Old identity identifier.</param>
+        /// <param name="newIdentityId">New identity identifier.</param>
         public void ChangeIdentityId(string oldIdentityId, string newIdentityId)
         {
             _logger.DebugFormat("Reparenting datasets from {0} to {1}", oldIdentityId, newIdentityId);
@@ -719,6 +783,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         }
 
+        /// <summary>
+        /// Updates local dataset metadata
+        /// </summary>
+        /// <param name="identityId">Identity identifier.</param>
+        /// <param name="datasetMetadata">Dataset metadata.</param>
         public void UpdateDatasetMetadata(string identityId, List<DatasetMetadata> datasetMetadata)
         {
             lock (sqlite_lock)
@@ -733,6 +802,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Updates the last modified timestamp
+        /// </summary>
+        /// <param name="identityId">Identity Identifier.</param>
+        /// <param name="datasetName">Dataset name.</param>
         public void UpdateLastModifiedTimestamp(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -750,6 +824,49 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region private methods
+
+        private void DeleteDataset(string identityId, string datasetName, List<Statement> additionalStatements)
+        {
+            lock (sqlite_lock)
+            {
+                string deleteRecordsQuery =
+                RecordColumns.BuildDelete(
+                    RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
+                    RecordColumns.DATASET_NAME + " = @whereDatasetName"
+                );
+
+                Statement s1 = new Statement
+                {
+                    Query = deleteRecordsQuery,
+                    Parameters = new string[] { identityId, datasetName }
+                };
+
+                string deleteDatasetQuery =
+                DatasetColumns.BuildUpdate(
+                    new string[] {
+                        DatasetColumns.LAST_MODIFIED_TIMESTAMP,
+                        DatasetColumns.LAST_SYNC_COUNT
+                        },
+                    DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
+                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                );
+
+                Statement s2 = new Statement
+                {
+                    Query = deleteDatasetQuery,
+                    Parameters = new object[] { DateTime.Now, -1, identityId, datasetName }
+                };
+
+                List<Statement> statementsToExecute = new List<Statement>() { s1, s2 };
+
+                if (additionalStatements != null)
+                {
+                    statementsToExecute.AddRange(additionalStatements);
+                }
+
+                ExecuteMultipleHelper(statementsToExecute);
+            }
+        }
 
         private bool UpdateDatasetMetadataInternal(string identityId, DatasetMetadata metadata)
         {
@@ -833,6 +950,27 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     return true;
                 }
             }
+        }
+
+        private HashSet<string> GetCommonDatasetNames(string oldIdentityId, string newIdentityId)
+        {
+            HashSet<string> newNameSet = new HashSet<string>();
+            HashSet<string> oldNameSet = new HashSet<string>();
+            if (oldIdentityId != null && newIdentityId != null)
+            {
+                List<DatasetMetadata> newDatasets = GetDatasetMetadata(newIdentityId);
+                List<DatasetMetadata> oldDatasets = GetDatasetMetadata(oldIdentityId);
+                foreach (DatasetMetadata oldMetaData in oldDatasets)
+                {
+                    oldNameSet.Add(oldMetaData.DatasetName);
+                }
+                foreach (DatasetMetadata newMetaData in newDatasets)
+                {
+                    newNameSet.Add(newMetaData.DatasetName);
+                }
+                oldNameSet.IntersectWith(newNameSet);
+            }
+            return oldNameSet;
         }
         #endregion
     }

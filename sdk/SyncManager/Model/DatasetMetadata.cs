@@ -18,14 +18,17 @@
 using System;
 namespace Amazon.CognitoSync.SyncManager
 {
+    /// <summary>
+    /// Metadata information representing a dataset
+    /// </summary>
     public sealed class DatasetMetadata
     {
-        private readonly string _datasetName;
-        private readonly DateTime? _creationDate;
-        private readonly DateTime? _lastModifiedDate;
-        private readonly string _lastModifiedBy;
-        private readonly long _storageSizeBytes;
-        private readonly long _recordCount;
+        private string _datasetName;
+        private DateTime? _creationDate;
+        private DateTime? _lastModifiedDate;
+        private string _lastModifiedBy;
+        private long _storageSizeBytes;
+        private long _recordCount;
 
         /// <summary>
         /// Non empty String name of the dataset
@@ -81,6 +84,15 @@ namespace Amazon.CognitoSync.SyncManager
             get { return this._recordCount; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetName"></param>
+        /// <param name="creationDate"></param>
+        /// <param name="lastModifiedDate"></param>
+        /// <param name="lastModifiedBy"></param>
+        /// <param name="storageSizeBytes"></param>
+        /// <param name="recordCount"></param>
         public DatasetMetadata(string datasetName, DateTime? creationDate, DateTime? lastModifiedDate, string lastModifiedBy, long storageSizeBytes, long recordCount)
         {
             this._datasetName = datasetName;
@@ -91,6 +103,10 @@ namespace Amazon.CognitoSync.SyncManager
             this._recordCount = recordCount;
         }
 
+        /// <summary>
+        /// A string representation of DatasetMetadata
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format(

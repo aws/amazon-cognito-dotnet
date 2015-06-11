@@ -24,6 +24,9 @@ using System.Text;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
+    /// <summary>
+    /// A Utility class for all the dataset operations
+    /// </summary>
     public class DatasetUtils
     {
         /// <summary>
@@ -87,8 +90,8 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// provider. If the identity id is null, UNKNOWN_IDENTITY_ID will be
         /// returned.
         /// </summary>
+        /// <param name="credentials">The Cognito Credentials.</param>
         /// <returns>The identity identifier.</returns>
-        /// <param name="provider">Provider.</param>
         public static string GetIdentityId(CognitoAWSCredentials credentials)
         {
             return string.IsNullOrEmpty(credentials.GetCachedIdentityId())

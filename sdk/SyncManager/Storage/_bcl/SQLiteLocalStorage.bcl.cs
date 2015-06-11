@@ -32,7 +32,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         private static SQLiteConnection connection;
 
         #region dispose methods
-
+        /// <summary>
+        /// Releases the resources consumed by this object if disposing is true. 
+        /// </summary>
         public virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -45,7 +47,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region helper methods
-
 
         private static void SetupDatabase()
         {

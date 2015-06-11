@@ -26,21 +26,23 @@ namespace Amazon.CognitoSync.SyncManager
     /// </summary>
     public class SyncManagerException : AmazonServiceException
     {
-        public SyncManagerException()
-            : base()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new SyncManagerException with the specified message and an existing exception object
+        /// </summary>
         public SyncManagerException(string detailMessage, Exception ex)
             : base(detailMessage, ex)
         {
         }
-
+        /// <summary>
+        /// Constructs a new SyncManagerException with the specified message
+        /// </summary>
         public SyncManagerException(string detailMessage)
             : base(detailMessage)
         {
         }
-
+        /// <summary>
+        /// Constructs a new SyncManagerException with an existing exception object
+        /// </summary>
         public SyncManagerException(Exception ex)
             : base(ex.Message, ex)
         {

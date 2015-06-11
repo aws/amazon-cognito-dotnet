@@ -36,8 +36,9 @@ namespace Amazon.CognitoSync.SyncManager
         /// storage and stored in local storage. Their record data isn't pulled down
         /// until you sync each dataset.
         /// </summary>
-        /// <param name="callback">Callback once the refresh is complete</param>
-        /// <param name="options">Options for asynchronous execution</param>
+        /// <param name="cancellationToken">
+        ///     A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException">Thrown when fail to fresh dataset metadata</exception>
         public Task<List<DatasetMetadata>> RefreshDatasetMetadataAsync(CancellationToken cancellationToken = default(CancellationToken))
         {

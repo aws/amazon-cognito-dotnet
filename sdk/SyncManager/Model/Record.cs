@@ -101,6 +101,16 @@ namespace Amazon.CognitoSync.SyncManager
             get { return this._modified; }
         }
 
+        /// <summary>
+        /// Creates an instance of the Record.
+        /// </summary>
+        /// <param name="key">The key representing the record</param>
+        /// <param name="value">The value for the record</param>
+        /// <param name="syncCount">THe number of times this record has been synchronized</param>
+        /// <param name="lastModifiedDate">The last time the record was modified in UTC</param>
+        /// <param name="lastModifiedBy"></param>
+        /// <param name="deviceLastModifiedDate"></param>
+        /// <param name="modified">Flag indicating the record was modified</param>
         public Record(string key, string value, long syncCount, DateTime? lastModifiedDate, string lastModifiedBy, DateTime? deviceLastModifiedDate, bool modified)
         {
             if (string.IsNullOrEmpty(key))
@@ -129,6 +139,10 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// A string representation of the record
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format(

@@ -28,16 +28,25 @@ namespace Amazon.CognitoSync.SyncManager
         private readonly Record _remoteRecord;
         private readonly Record _localRecord;
 
+        /// <summary>
+        /// The record Key
+        /// </summary>
         public string Key
         {
             get { return this._key; }
         }
 
+        /// <summary>
+        /// Return the record which is present on the server
+        /// </summary>
         public Record RemoteRecord
         {
             get { return this._remoteRecord; }
         }
 
+        /// <summary>
+        /// Return the record which is present locally on the device
+        /// </summary>
         public Record LocalRecord
         {
             get { return this._localRecord; }

@@ -21,6 +21,9 @@ using System.Collections.Generic;
 
 namespace Amazon.CognitoSync.SyncManager
 {
+    /// <summary>
+    /// A local storage like a sqlite database on which we can invoke actions like creating a dataset, or record
+    /// </summary>
     public interface ILocalStorage
     {
         /// <summary>
@@ -89,7 +92,7 @@ namespace Amazon.CognitoSync.SyncManager
         List<Record> GetRecords(string identityId, string datasetName);
 
         /// <summary>
-        /// GRetrieves a list of locally modified records since last successful sync
+        /// Retrieves a list of locally modified records since last successful sync
         /// operation.
         /// </summary>
         /// <returns>a list of locally modified records</returns>
@@ -115,7 +118,7 @@ namespace Amazon.CognitoSync.SyncManager
 
         /// <summary>
         /// Deletes a dataset. It clears all records in this dataset and marked it as
-        /// deleted for future sync. It's still visible in {@link #getDatasets()}
+        /// deleted for future sync.
         /// </summary>
         /// <param name="identityId">Identity identifier.</param>
         /// <param name="datasetName">Dataset name.</param>
@@ -123,9 +126,9 @@ namespace Amazon.CognitoSync.SyncManager
         void DeleteDataset(string identityId, string datasetName);
 
         /// <summary>
-        /// This is different from <see cref="Amazon.CognitoSync.SyncManager.DeleteDataset(String)"/>. Not only does it
+        /// This is different from <see cref="DeleteDataset(String,String)"/>. Not only does it
         /// clears all records in the dataset, it also remove it from metadata table.
-        /// It won't be visible in <see cref="Amazon.CognitoSync.SyncManager.GetDatasets()"/>.
+        /// It won't be visible in <see cref="GetDatasetMetadata(String,String)"/>.
         /// </summary>
         /// <param name="identityId">Identity identifier.</param>
         /// <param name="datasetName">Dataset name.</param>

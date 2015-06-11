@@ -20,6 +20,9 @@ using Amazon.Runtime;
 
 namespace Amazon.CognitoSync.SyncManager
 {
+    /// <summary>
+    /// A remote storage like a cognito sync service on which we can invoke actions like creating a dataset, or record
+    /// </summary>
     public interface IRemoteDataStorage
     {
 
@@ -28,10 +31,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// <summary>
         /// Gets a list of <see cref="DatasetMetadata"/>
         /// </summary>
-        /// <param name="callback">An Action delegate that is invoked when the operation completes</param>
-        /// <param name="options">A user-defined state object that is passed to the callback procedure. 
-        /// 	Retrieve this object from within the callback
-        /// 	procedure using the AsyncState property.</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         List<DatasetMetadata> GetDatasetMetadata();
 
@@ -44,11 +43,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// Retrieves the metadata of a dataset.
         /// </summary>
         /// <param name="datasetName">Dataset name.</param>
-        /// <param name="callback">An Action delegate that is invoked when 
-        /// 	the operation completes with AmazonServiceResult result</param>
-        /// <param name="options">A user-defined state object that is passed to the callback procedure. 
-        /// 	Retrieve this object from within the callback
-        /// 	procedure using the AsyncState property.</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         DatasetMetadata GetDatasetMetadata(string datasetName);
         #endregion
@@ -64,11 +58,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         /// <returns>A list of records which have been updated since lastSyncCount.</returns>
         /// <param name="datasetName">Dataset name.</param>
-        /// <param name="callback">An AsyncCallback delegate that is invoked when 
-        /// 	the operation completes with AmazonServiceResult result</param>
-        /// <param name="options">A user-defined state object that is passed to the callback procedure. 
-        /// 	Retrieve this object from within the callback
-        /// 	procedure using the AsyncState property.</param>
         /// <param name="lastSyncCount">Last sync count.</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         DatasetUpdates ListUpdates(string datasetName, long lastSyncCount);
@@ -87,11 +76,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="datasetName">Dataset name.</param>
         /// <param name="records">Records.</param>
         /// <param name="syncSessionToken">Sync session token.</param>
-        /// <param name="callback">An AsyncCallback delegate that is invoked when 
-        /// 	the operation completes with AmazonServiceResult result</param>
-        /// <param name="options">A user-defined state object that is passed to the callback procedure. 
-        /// 	Retrieve this object from within the callback
-        /// 	procedure using the AsyncState property.</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataConflictException"></exception>
         List<Record> PutRecords(string datasetName, List<Record> records, string syncSessionToken);
@@ -104,11 +88,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// Deletes a dataset.
         /// </summary>
         /// <param name="datasetName">Dataset name.</param>
-        /// <param name="callback">An AsyncCallback delegate that is invoked when 
-        /// 	the operation completes with AmazonServiceResult result</param>
-        /// <param name="options">A user-defined state object that is passed to the callback procedure. 
-        /// 	Retrieve this object from within the callback
-        /// 	procedure using the AsyncState property.</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         void DeleteDataset(string datasetName);
 

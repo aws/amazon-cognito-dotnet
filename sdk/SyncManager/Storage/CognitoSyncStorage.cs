@@ -29,6 +29,9 @@ using Amazon.CognitoSync.SyncManager;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
+    /// <summary>
+    /// An <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/> implementation using Cognito Sync service on which we can invoke actions like creating a dataset, or record
+    /// </summary>
     public class CognitoSyncStorage : IRemoteDataStorage
     {
         private readonly string identityPoolId;
@@ -36,6 +39,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         private readonly CognitoAWSCredentials cognitoCredentials;
 
         #region Constructor
+
+        /// <summary>
+        /// Creates an insance of IRemoteStorage Interface. 
+        /// </summary>
+        /// <param name="cognitoCredentials"><see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/></param>
+        /// <param name="config"><see cref="Amazon.CognitoSync.AmazonCognitoSyncConfig"/></param>
         public CognitoSyncStorage(CognitoAWSCredentials cognitoCredentials, AmazonCognitoSyncConfig config)
         {
             if (cognitoCredentials == null)
@@ -54,9 +63,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// <summary>
         /// Gets a list of <see cref="DatasetMetadata"/>
         /// </summary>
-        /// <param name="callback">An AsyncCallback delegate that is invoked when the operation completes</param>
-        /// <param name="state">A user-defined state object that is passed to the callback procedure. </param>
-        /// <exception cref="DataStorageException"></exception>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         public List<DatasetMetadata> GetDatasetMetadata()
         {
             return PopulateGetDatasetMetadata(null, new List<DatasetMetadata>());
@@ -86,6 +93,16 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region ListUpdates
+        /// <summary>
+        /// Gets a list of records which have been updated since lastSyncCount
+        /// (inclusive). If the value of a record equals null, then the record is
+        /// deleted. If you pass 0 as lastSyncCount, the full list of records will be
+        /// returned.
+        /// </summary>
+        /// <returns>A list of records which have been updated since lastSyncCount.</returns>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="lastSyncCount">Last sync count.</param>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         public DatasetUpdates ListUpdates(string datasetName, long lastSyncCount)
         {
             return PopulateListUpdates(datasetName, lastSyncCount, new List<Record>(), null);
@@ -130,7 +147,18 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region PutRecords
-
+        /// <summary>
+        /// Post updates to remote storage. Each record has a sync count. If the sync
+        /// count doesn't match what's on the remote storage, i.e. the record is
+        /// modified by a different device, this operation throws ConflictException.
+        /// Otherwise it returns a list of records that are updated successfully.
+        /// </summary>
+        /// <returns>The records.</returns>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="records">Records.</param>
+        /// <param name="syncSessionToken">Sync session token.</param>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DataConflictException"></exception>
         public List<Record> PutRecords(string datasetName, List<Record> records, string syncSessionToken)
         {
             UpdateRecordsRequest request = new UpdateRecordsRequest();
@@ -167,7 +195,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region DeleteDataset
 
-
+        /// <summary>
+        /// Deletes a dataset.
+        /// </summary>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         public void DeleteDataset(string datasetName)
         {
             DeleteDatasetRequest request = new DeleteDatasetRequest();
@@ -188,7 +220,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region GetDatasetMetadata
-
+        /// <summary>
+        /// Retrieves the metadata of a dataset.
+        /// </summary>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
         public DatasetMetadata GetDatasetMetadata(string datasetName)
         {
             DescribeDatasetRequest request = new DescribeDatasetRequest();

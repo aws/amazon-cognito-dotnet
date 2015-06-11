@@ -25,21 +25,23 @@ namespace Amazon.CognitoSync.SyncManager
     /// </summary>
     public class DatasetNotFoundException : DataStorageException
     {
-        public DatasetNotFoundException()
-            : base()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new DatasetNotFoundException with the specified message and an existing exception object
+        /// </summary>
         public DatasetNotFoundException(string detailMessage, Exception ex)
             : base(detailMessage, ex)
         {
         }
-
+        /// <summary>
+        /// Constructs a new DatasetNotFoundException with the specified message
+        /// </summary>
         public DatasetNotFoundException(string detailMessage)
             : base(detailMessage)
         {
         }
-
+        /// <summary>
+        /// Constructs a new DatasetNotFoundException with  an existing exception object
+        /// </summary>
         public DatasetNotFoundException(Exception ex)
             : base(ex.Message, ex)
         {

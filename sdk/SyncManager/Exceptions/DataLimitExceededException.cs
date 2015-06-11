@@ -26,21 +26,25 @@ namespace Amazon.CognitoSync.SyncManager
     /// </summary>
     public class DataLimitExceededException : DataStorageException
     {
-        public DataLimitExceededException()
-            : base()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new DataLimitExceedException with the specified message and an existing exception object
+        /// </summary>
         public DataLimitExceededException(string detailMessage, Exception ex)
             : base(detailMessage, ex)
         {
         }
 
+        /// <summary>
+        /// Constructs a new DataLimitExceedException with the specified message
+        /// </summary>
         public DataLimitExceededException(string detailMessage)
             : base(detailMessage)
         {
         }
 
+        /// <summary>
+        /// Constructs a new DataLimitExceedException using an existing exception object
+        /// </summary>
         public DataLimitExceededException(Exception ex)
             : base(ex.Message, ex)
         {

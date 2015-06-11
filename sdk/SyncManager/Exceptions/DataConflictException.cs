@@ -24,21 +24,23 @@ namespace Amazon.CognitoSync.SyncManager
     /// </summary>
     public class DataConflictException : DataStorageException
     {
-        public DataConflictException()
-            : base()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new DataConflictException with the specified message and an existing exception object
+        /// </summary>
         public DataConflictException(string detailMessage, Exception ex)
             : base(detailMessage, ex)
         {
         }
-
+        /// <summary>
+        /// Constructs a new DataConflictException with the specified message 
+        /// </summary>
         public DataConflictException(string detailMessage)
             : base(detailMessage)
         {
         }
-
+        /// <summary>
+        /// Constructs a new DataConflictException with an existing exception object
+        /// </summary>
         public DataConflictException(Exception ex)
             : base(ex.Message, ex)
         {

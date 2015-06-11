@@ -35,6 +35,9 @@ namespace Amazon.CognitoSync.SyncManager
         }
 
         #region Dispose Methods
+        /// <summary>
+        /// Releases the resources consumed by this object if disposing is true. 
+        /// </summary>
         public virtual void Dispose(bool disposing)
         {
             if (_disposed)

@@ -33,8 +33,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// storage and stored in local storage. Their record data isn't pulled down
         /// until you sync each dataset.
         /// </summary>
-        /// <param name="callback">Callback once the refresh is complete</param>
-        /// <param name="options">Options for asynchronous execution</param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException">Thrown when fail to fresh dataset metadata</exception>
         public List<DatasetMetadata> RefreshDatasetMetadata()
         {

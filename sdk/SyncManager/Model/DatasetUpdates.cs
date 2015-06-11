@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Amazon.CognitoSync.SyncManager
 {
-
+    /// <summary>
+    /// A model class which stores a list of updated dataset. 
+    /// </summary>
     public class DatasetUpdates
     {
         private string _datasetName;
@@ -14,6 +16,9 @@ namespace Amazon.CognitoSync.SyncManager
         private bool _deleted;
         private List<string> _mergedDatasetNameList;
 
+        /// <summary>
+        /// THe name representing the dataset.
+        /// </summary>
         public string DatasetName
         {
             get
@@ -22,6 +27,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// A flag which indicates if the dataset is deleted or not.
+        /// </summary>
         public bool Deleted
         {
             get
@@ -30,6 +38,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// A flag indicating if the dataset exists.
+        /// </summary>
         public bool Exists
         {
             get
@@ -38,6 +49,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// A list of dataset names which are merged.
+        /// </summary>
         public List<string> MergedDatasetNameList
         {
             get
@@ -46,7 +60,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
-
+        /// <summary>
+        /// A list of records.
+        /// </summary>
         public List<Record> Records
         {
             get
@@ -55,6 +71,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// The count of number of times the dataset is synchronized.
+        /// </summary>
         public long SyncCount
         {
             get
@@ -63,6 +82,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string SyncSessionToken
         {
             get
@@ -71,6 +93,16 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetName"></param>
+        /// <param name="records"></param>
+        /// <param name="syncCount"></param>
+        /// <param name="syncSessionToken"></param>
+        /// <param name="exists"></param>
+        /// <param name="deleted"></param>
+        /// <param name="mergedDatasetNameList"></param>
         public DatasetUpdates(string datasetName, List<Record> records, long syncCount, string syncSessionToken,
                                   bool exists, bool deleted, List<string> mergedDatasetNameList)
         {

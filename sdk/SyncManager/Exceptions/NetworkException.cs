@@ -25,21 +25,23 @@ namespace Amazon.CognitoSync.SyncManager
     /// </summary>
     public class NetworkException : SyncManagerException
     {
-        public NetworkException()
-            : base()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new NetworkException with the specified message and an existing exception object
+        /// </summary>
         public NetworkException(string detailMessage, Exception ex)
             : base(detailMessage, ex)
         {
         }
-
+        /// <summary>
+        /// Constructs a new NetworkException with the specified message
+        /// </summary>
         public NetworkException(string detailMessage)
             : base(detailMessage)
         {
         }
-
+        /// <summary>
+        /// Constructs a new NetworkException with an existing exception object
+        /// </summary>
         public NetworkException(Exception ex)
             : base(ex.Message, ex)
         {
