@@ -740,8 +740,10 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         public DatasetMergedDelegate OnDatasetMerged;
 
-
-        internal void ClearAllDelegates()
+        /// <summary>
+        /// Clears all the delegates
+        /// </summary>
+        public void ClearAllDelegates()
         {
             if (OnSyncSuccess != null)
                 foreach (Delegate d in OnSyncSuccess.GetInvocationList())

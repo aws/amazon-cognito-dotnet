@@ -6,7 +6,7 @@
     <ProjectGuid>{2298569A-5753-4DFB-A72F-51A4D8319AD9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AWSSDK_DotNet35.UnitTests</RootNamespace>
+    <RootNamespace>AWSSDK_DotNet.IntegrationTests</RootNamespace>
     <AssemblyName>AWSSDK.UnitTests.Net35</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,6 +46,10 @@
     </Reference>
     <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AWSSDK.Core.3.0.0.2-preview\lib\net35\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.IdentityManagement, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AWSSDK.IdentityManagement.3.0.0.2-preview\lib\net35\AWSSDK.IdentityManagement.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SecurityToken, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">

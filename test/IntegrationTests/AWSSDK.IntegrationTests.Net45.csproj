@@ -6,7 +6,7 @@
     <ProjectGuid>{212FE907-7411-4661-B2D4-6522893DEF5E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AWSSDK_DotNet45.UnitTests</RootNamespace>
+    <RootNamespace>AWSSDK_DotNet.IntegrationTests</RootNamespace>
     <AssemblyName>AWSSDK.UnitTest.Net45</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
