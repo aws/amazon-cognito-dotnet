@@ -52,6 +52,12 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sdk\AWSSDK.SyncManager.Net35.csproj">
+      <Project>{e0c5cdaf-6d20-4832-8d24-2a7a50711f0d}</Project>
+      <Name>AWSSDK.SyncManager.Net35</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
