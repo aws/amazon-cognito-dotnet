@@ -29,7 +29,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         //datetime is converted to ticks and stored as string
 
-        private static SQLiteConnection connection;
+        private SQLiteConnection connection;
 
         #region dispose methods
         /// <summary>
@@ -48,14 +48,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region helper methods
 
-        private static void SetupDatabase()
+        private void SetupDatabase()
         {
 
             //check if database already exists
             if (!File.Exists(DB_FILE_NAME))
                 SQLiteConnection.CreateFile(DB_FILE_NAME);
 
-            connection = new SQLiteConnection("Data Source=test.db;Version=3;");
+            connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_NAME));
             connection.Open();
             string createDatasetTable = "CREATE TABLE IF NOT EXISTS " + TABLE_DATASETS + "("
                         + DatasetColumns.IDENTITY_ID + " TEXT NOT NULL,"
@@ -95,6 +95,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             {
                 command.ExecuteNonQuery();
             }
+
+            string createKvStore = "CREATE TABLE IF NOT EXISTS kvstore (key TEXT NOT NULL, value TEXT NOT NULL, UNIQUE (KEY))";
+
+            using (var command = new SQLiteCommand(createKvStore, connection))
+            {
+                command.ExecuteNonQuery();
+            }
         }
 
         internal void CreateDatasetHelper(string query, params object[] parameters)
@@ -110,8 +117,8 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         internal DatasetMetadata GetMetadataHelper(string identityId, string datasetName)
         {
             string query = DatasetColumns.BuildQuery(
-                    DatasetColumns.IDENTITY_ID + " = ? AND " +
-                        DatasetColumns.DATASET_NAME + " = ?"
+                    DatasetColumns.IDENTITY_ID + " = @identityId AND " +
+                        DatasetColumns.DATASET_NAME + " = @datasetName "
                     );
 
             DatasetMetadata metadata = null;
@@ -159,7 +166,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 BindData(command, parameters);
                 using (var reader = command.ExecuteReader())
                 {
-                    if (reader.HasRows && reader.Read())
+                    if (reader.Read())
                     {
                         record = SqliteStmtToRecord(reader);
                     }
@@ -227,20 +234,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             using (var transaction = connection.BeginTransaction())
             {
-
                 foreach (var stmt in statements)
                 {
-                    string query = stmt.Query.TrimEnd();
-                    //transaction statements should end with a semi-colon, so if there is no semi-colon then append it in the end
-                    if (!query.EndsWith(";"))
-                    {
-                        query += ";";
-                    }
                     using (var command = connection.CreateCommand())
                     {
-                        command.CommandText = query;
-                        BindData(command, stmt.Parameters);
+                        command.CommandText = stmt.Query;
                         command.Transaction = transaction;
+                        BindData(command, stmt.Parameters);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -268,22 +268,26 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        internal void UpdateAndClearRecord(string identityId, string datasetName, Record record)
+        internal void UpdateOrInsertRecord(string identityId, string datasetName, Record record)
         {
             lock (sqlite_lock)
             {
-                string updateAndClearQuery = RecordColumns.BuildQuery(
+                string checkRecordExistsQuery = "SELECT COUNT(*) FROM " + SQLiteLocalStorage.TABLE_RECORDS + " WHERE " +
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                     RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
-                    RecordColumns.KEY + " = @whereKey "
-                );
+                    RecordColumns.KEY + " = @whereKey ";
+
                 bool recordsFound = false;
 
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = updateAndClearQuery;
+                    command.CommandText = checkRecordExistsQuery;
                     BindData(command, identityId, datasetName, record.Key);
-                    command.ExecuteNonQuery();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                            recordsFound = reader.GetInt32(0) > 0;
+                    }
                 }
 
                 if (recordsFound)
@@ -293,7 +297,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         new string[] {
                             RecordColumns.VALUE,
                             RecordColumns.SYNC_COUNT,
-                            RecordColumns.MODIFIED
+                            RecordColumns.MODIFIED,
+                            RecordColumns.LAST_MODIFIED_TIMESTAMP,
+                            RecordColumns.LAST_MODIFIED_BY,
+                            RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP
                         },
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                         RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
@@ -303,7 +310,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = updateRecordQuery;
-                        BindData(command, record.Value, record.SyncCount, record.IsModified ? 1 : 0, identityId, datasetName, record.Key);
+                        BindData(command, record.Value, record.SyncCount, record.IsModified ? 1 : 0, record.LastModifiedDate, record.LastModifiedBy, record.DeviceLastModifiedDate, identityId, datasetName, record.Key);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -329,7 +336,15 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             int count = 0;
             foreach (Match match in Regex.Matches(query, "(\\@\\w+) "))
             {
-                command.Parameters.Add(new SQLiteParameter(match.Groups[1].Value, parameters[count]));
+                var date = parameters[count] as DateTime?;
+                if (date.HasValue)
+                {
+                    command.Parameters.Add(new SQLiteParameter(match.Groups[1].Value, date.Value.Ticks));
+                }
+                else
+                {
+                    command.Parameters.Add(new SQLiteParameter(match.Groups[1].Value, parameters[count]));
+                }
                 count++;
             }
         }
@@ -355,6 +370,49 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                                nvc[RecordColumns.LAST_MODIFIED_BY], new DateTime(long.Parse(nvc[RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP])),
                                int.Parse(nvc[RecordColumns.MODIFIED]) == 1);
         }
+        #endregion
+
+
+        #region BCL Specific implementation for identityId caching
+
+        public void CacheIdentity(string key, string identity)
+        {
+            string query = "INSERT INTO kvstore(key,value) values ( @key , @value )";
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = query;
+                BindData(command, key, identity);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public string GetIdentity(string key)
+        {
+            string query = "SELECT value FROM kvstore WHERE key = @key ";
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = query;
+                BindData(command,  key);
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                        return reader.GetString(0);
+                }
+            }
+            return null;
+        }
+
+        public void DeleteCachedIdentity(string key)
+        {
+            string query = "delete from kvstore where key = @key ";
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = query;
+                BindData(command,  key);
+                command.ExecuteNonQuery();
+            }
+        }
+
         #endregion
 
     }

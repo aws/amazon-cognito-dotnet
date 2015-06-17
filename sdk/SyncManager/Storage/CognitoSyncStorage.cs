@@ -30,7 +30,8 @@ using Amazon.CognitoSync.SyncManager;
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
     /// <summary>
-    /// An <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/> implementation using Cognito Sync service on which we can invoke actions like creating a dataset, or record
+    /// An <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/> implementation 
+    /// using Cognito Sync service on which we can invoke actions like creating a dataset, or record
     /// </summary>
     public class CognitoSyncStorage : IRemoteDataStorage
     {

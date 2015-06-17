@@ -3187,6 +3187,22 @@
             <param name="awsSessionToken">AWS Session Token</param>
             <param name="clientConfig">The AmazonCognitoSyncClient Configuration Object</param>
         </member>
+        <member name="M:Amazon.CognitoSync.AmazonCognitoSyncClient.CreateSigner">
+            <summary>
+            Creates the signer for the service.
+            </summary>
+        </member>
+        <member name="M:Amazon.CognitoSync.AmazonCognitoSyncClient.CustomizeRuntimePipeline(Amazon.Runtime.Internal.RuntimePipeline)">
+            <summary>
+            Customizes the runtime pipeline.
+            </summary>
+            <param name="pipeline">Runtime pipeline for the current client.</param>
+        </member>
+        <member name="M:Amazon.CognitoSync.AmazonCognitoSyncClient.Dispose(System.Boolean)">
+            <summary>
+            Disposes the service client.
+            </summary>
+        </member>
         <member name="M:Amazon.CognitoSync.AmazonCognitoSyncClient.BulkPublishAsync(Amazon.CognitoSync.Model.BulkPublishRequest,System.Threading.CancellationToken)">
             <summary>
             Initiates the asynchronous execution of the BulkPublish operation.

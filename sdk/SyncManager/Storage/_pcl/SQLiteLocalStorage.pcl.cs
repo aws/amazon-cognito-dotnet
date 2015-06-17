@@ -240,19 +240,21 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             lock (sqlite_lock)
             {
-                string updateAndClearQuery = RecordColumns.BuildQuery(
+                string checkRecordExistsQuery = "SELECT count(*) FROM " + SQLiteLocalStorage.TABLE_RECORDS +
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                     RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
-                    RecordColumns.KEY + " = @whereKey "
-                );
+                    RecordColumns.KEY + " = @whereKey ";
+
                 bool recordsFound = false;
 
-                using (var sqliteStatement = connection.Prepare(updateAndClearQuery))
+                using (var sqliteStatement = connection.Prepare(checkRecordExistsQuery))
                 {
                     BindData(sqliteStatement, identityId, datasetName, record.Key);
                     var result = sqliteStatement.Step();
                     if (result != SQLiteResult.OK)
                         throw new Exception(result.ToString());
+
+                    recordsFound = sqliteStatement.GetInteger(0) > 0;
                 }
 
                 if (recordsFound)
@@ -269,7 +271,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         RecordColumns.KEY + " = @whereKey "
                     );
 
-                    using (var sqliteStatement = connection.Prepare(updateAndClearQuery))
+                    using (var sqliteStatement = connection.Prepare(updateRecordQuery))
                     {
                         BindData(sqliteStatement, record.Value, record.SyncCount, record.IsModified ? 1 : 0, identityId, datasetName, record.Key);
                         var result = sqliteStatement.Step();
@@ -280,7 +282,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 else
                 {
                     string insertRecord = RecordColumns.BuildInsert();
-                    using (var sqliteStatement = connection.Prepare(updateAndClearQuery))
+                    using (var sqliteStatement = connection.Prepare(insertRecord))
                     {
                         BindData(sqliteStatement, identityId, datasetName, record.Key, record.Value, record.SyncCount, record.LastModifiedDate, record.LastModifiedBy, record.DeviceLastModifiedDate, record.IsModified ? 1 : 0);
                         var result = sqliteStatement.Step();

@@ -102,12 +102,12 @@ namespace Amazon.CognitoSync.SyncManager
         /// Instance of <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/>
         /// </summary>
         protected readonly IRemoteDataStorage Remote;
-        
+
         /// <summary>
         /// Instance of <see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/>
         /// </summary>
         protected readonly CognitoAWSCredentials CognitoCredentials;
-        
+
         private Boolean waitingForConnectivity = false;
         private bool _disposed;
         private Logger _logger;
@@ -121,7 +121,8 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="cognitoCredentials">The Cognito Credentials associated with the dataset</param>
         /// <param name="local">local storage, can be InMemoryStorage or SQLiteStorage or Some Custom Storage Class which implements <see cref="Amazon.CognitoSync.SyncManager.ILocalStorage"/></param>
         /// <param name="remote">remote storage</param>
-        public Dataset(string datasetName, CognitoAWSCredentials cognitoCredentials, ILocalStorage local, IRemoteDataStorage remote):this()
+        public Dataset(string datasetName, CognitoAWSCredentials cognitoCredentials, ILocalStorage local, IRemoteDataStorage remote)
+            : this()
         {
             this.DatasetName = datasetName;
             this.CognitoCredentials = cognitoCredentials;
@@ -343,6 +344,11 @@ namespace Amazon.CognitoSync.SyncManager
 
                 waitingForConnectivity = false;
 
+                //make a call to fetch the identity id before the synchronization starts
+                CognitoCredentials.GetIdentityId();
+
+                // there could be potential merges that could have happened due to reparenting from the previous step,
+                // check and call onDatasetMerged
                 bool resume = true;
                 List<string> mergedDatasets = GetLocalMergedDatasets();
                 if (mergedDatasets.Count > 0)
@@ -402,13 +408,15 @@ namespace Amazon.CognitoSync.SyncManager
             // if dataset is deleted locally, push it to remote
             if (lastSyncCount == -1)
             {
-                try{
+                try
+                {
                     Remote.DeleteDataset(DatasetName);
                 }
-                catch(DatasetNotFoundException)
+                catch (DatasetNotFoundException)
                 {
                     //Ignore the exception here, since the dataset was local only
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     _logger.InfoFormat("{0} , dataset : {1}", e.Message, this.DatasetName);
                     EndSynchronizeAndCleanup();
@@ -424,208 +432,206 @@ namespace Amazon.CognitoSync.SyncManager
 
             // get latest modified records from remote
             _logger.InfoFormat("get latest modified records since {0} for dataset {1}", lastSyncCount, this.DatasetName);
-
+            DatasetUpdates datasetUpdates = null;
             try
             {
-                DatasetUpdates datasetUpdates = Remote.ListUpdates(DatasetName, lastSyncCount);
-                if(datasetUpdates == null)
-                {
-                    //TODO: should we fire a sync failure event here? If yes, then what is the exception to throw?
-                    EndSynchronizeAndCleanup();
-                    return;
-                }
-                if (datasetUpdates.MergedDatasetNameList.Count != 0 && this.OnDatasetMerged != null)
-                {
-                    bool resume = this.OnDatasetMerged(this, datasetUpdates.MergedDatasetNameList);
-                    if (resume)
-                    {
-                        if (retry == 0)
-                        {
-                            EndSynchronizeAndCleanup();
-                            FireSyncFailureEvent(new SyncManagerException("Out of retries"));
-                        }
-                        else
-                        {
-                            this.RunSyncOperation(--retry);
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        _logger.InfoFormat("OnSyncFailure: Manual Cancel");
-                        EndSynchronizeAndCleanup();
-                        FireSyncFailureEvent(new SyncManagerException("Manual cancel"));
-                        return;
-                    }
-                }
-
-                // if the dataset doesn't exist or is deleted, trigger onDelete
-                if (lastSyncCount != 0 && !datasetUpdates.Exists
-                    || datasetUpdates.Deleted && this.OnDatasetDeleted != null)
-                {
-                    bool resume = this.OnDatasetDeleted(this);
-                    if (resume)
-                    {
-                        // remove both records and metadata
-                        Local.DeleteDataset(GetIdentityId(), DatasetName);
-                        Local.PurgeDataset(GetIdentityId(), DatasetName);
-                        _logger.InfoFormat("OnSyncSuccess");
-                        EndSynchronizeAndCleanup();
-                        FireSyncSuccessEvent(new List<Record>());
-                        return;
-                    }
-                    else
-                    {
-                        _logger.InfoFormat("OnSyncFailure");
-                        EndSynchronizeAndCleanup();
-                        FireSyncFailureEvent(new SyncManagerException("Manual cancel"));
-                        return;
-                    }
-                }
-                lastSyncCount = datasetUpdates.SyncCount;
-
-                List<Record> remoteRecords = datasetUpdates.Records;
-                if (remoteRecords.Count != 0)
-                {
-                    // if conflict, prompt developer/user with callback
-                    List<SyncConflict> conflicts = new List<SyncConflict>();
-                    List<Record> conflictRecords = new List<Record>();
-                    foreach (Record remoteRecord in remoteRecords)
-                    {
-                        Record localRecord = Local.GetRecord(GetIdentityId(),
-                                                              DatasetName,
-                                                              remoteRecord.Key);
-                        // only when local is changed and its value is different
-                        if (localRecord != null && localRecord.IsModified
-                            && !StringUtils.Equals(localRecord.Value, remoteRecord.Value))
-                        {
-                            conflicts.Add(new SyncConflict(remoteRecord, localRecord));
-                            conflictRecords.Add(remoteRecord);
-                        }
-                    }
-                    // retaining only non-conflict records
-                    remoteRecords.RemoveAll(t => conflictRecords.Contains(t));
-
-                    if (conflicts.Count > 0)
-                    {
-                        _logger.InfoFormat("{0} records in conflict!", conflicts.Count);
-                        bool syncConflictResult = false;
-                        if (this.OnSyncConflict == null)
-                        {
-                            // delegate is not implemented so the conflict resolution is applied
-                            syncConflictResult = this.ResolveConflictsWithDefaultPolicy(conflicts);
-                        }
-                        else
-                        {
-                            syncConflictResult = this.OnSyncConflict(this, conflicts);
-                        }
-                        if (!syncConflictResult)
-                        {
-                            _logger.InfoFormat("User cancelled conflict resolution");
-                            EndSynchronizeAndCleanup();
-                            FireSyncFailureEvent(new OperationCanceledException("User cancelled conflict resolution"));
-                            return;
-                        }
-                    }
-
-                    // save to local
-                    if (remoteRecords.Count > 0)
-                    {
-                        _logger.InfoFormat("save {0} records to local", remoteRecords.Count);
-                        Local.PutRecords(GetIdentityId(), DatasetName, remoteRecords);
-                    }
-
-
-                    // new last sync count
-                    _logger.InfoFormat("updated sync count {0}", datasetUpdates.SyncCount);
-                    Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
-                                              datasetUpdates.SyncCount);
-                }
-
-                // push changes to remote
-                List<Record> localChanges = this.GetModifiedRecords();
-                long maxPatchSyncCount = 0;
-                foreach (Record r in localChanges)
-                {
-                    //track the max sync count
-                    if (r.SyncCount > maxPatchSyncCount)
-                    {
-                        maxPatchSyncCount = r.SyncCount;
-                    }
-                }
-                if (localChanges.Count != 0)
-                {
-                    _logger.InfoFormat("push {0} records to remote", localChanges.Count);
-
-                    try
-                    {
-                        List<Record> result = Remote.PutRecords(DatasetName, localChanges, datasetUpdates.SyncSessionToken);
-                        
-                        // update local meta data
-                        Local.PutRecords(GetIdentityId(), DatasetName, result);
-
-                        // verify the server sync count is increased exactly by one, aka no
-                        // other updates were made during this update.
-                        long newSyncCount = 0;
-                        foreach (Record record in result)
-                        {
-                            newSyncCount = newSyncCount < record.SyncCount
-                                ? record.SyncCount
-                                    : newSyncCount;
-                        }
-                        if (newSyncCount == lastSyncCount + 1)
-                        {
-                            _logger.InfoFormat("updated sync count {0}", newSyncCount);
-                            Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
-                                                      newSyncCount);
-                        }
-
-                        _logger.InfoFormat("OnSyncSuccess");
-                        EndSynchronizeAndCleanup();
-                        FireSyncSuccessEvent(remoteRecords);
-                        return;
-
-                    }
-                    catch (DataConflictException e)
-                    {
-                        _logger.InfoFormat("Conflicts detected when pushing changes to remote: {0}", e.Message);
-                        if (retry == 0)
-                        {
-                            EndSynchronizeAndCleanup();
-                            FireSyncFailureEvent(e);
-                        }
-                        else
-                        {
-                            //it's possible there is a local dirty record with a stale sync count this will fix it
-                            if (lastSyncCount > maxPatchSyncCount)
-                            {
-                                Local.UpdateLastSyncCount(GetIdentityId(), DatasetName, maxPatchSyncCount);
-                            }
-                            this.RunSyncOperation(--retry);
-                        }
-                        return;
-                    }catch(Exception e)
-                    {
-                        _logger.InfoFormat("OnSyncFailure {0}", e.Message);
-                        EndSynchronizeAndCleanup();
-                        FireSyncFailureEvent(e);
-                        return;
-                    }
-                }
-                else
-                {
-                    _logger.InfoFormat("OnSyncSuccess");
-                    EndSynchronizeAndCleanup();
-                    FireSyncSuccessEvent(remoteRecords);
-                    return;
-                }
+                datasetUpdates = Remote.ListUpdates(DatasetName, lastSyncCount);
             }
             catch (Exception listUpdatesException)
             {
                 _logger.Error(listUpdatesException, string.Empty);
                 EndSynchronizeAndCleanup();
                 FireSyncFailureEvent(listUpdatesException);
+                return;
             }
+
+            if (datasetUpdates != null && datasetUpdates.MergedDatasetNameList.Count != 0 && this.OnDatasetMerged != null)
+            {
+                bool resume = this.OnDatasetMerged(this, datasetUpdates.MergedDatasetNameList);
+                if (resume)
+                {
+                    if (retry == 0)
+                    {
+                        EndSynchronizeAndCleanup();
+                        FireSyncFailureEvent(new SyncManagerException("Out of retries"));
+                    }
+                    else
+                    {
+                        this.RunSyncOperation(--retry);
+                    }
+                    return;
+                }
+                else
+                {
+                    _logger.InfoFormat("OnSyncFailure: Manual Cancel");
+                    EndSynchronizeAndCleanup();
+                    FireSyncFailureEvent(new SyncManagerException("Manual cancel"));
+                    return;
+                }
+            }
+
+            // if the dataset doesn't exist or is deleted, trigger onDelete
+            if (lastSyncCount != 0 && !datasetUpdates.Exists
+                || datasetUpdates.Deleted && this.OnDatasetDeleted != null)
+            {
+                bool resume = this.OnDatasetDeleted(this);
+                if (resume)
+                {
+                    // remove both records and metadata
+                    Local.DeleteDataset(GetIdentityId(), DatasetName);
+                    Local.PurgeDataset(GetIdentityId(), DatasetName);
+                    _logger.InfoFormat("OnSyncSuccess");
+                    EndSynchronizeAndCleanup();
+                    FireSyncSuccessEvent(new List<Record>());
+                    return;
+                }
+                else
+                {
+                    _logger.InfoFormat("OnSyncFailure");
+                    EndSynchronizeAndCleanup();
+                    FireSyncFailureEvent(new SyncManagerException("Manual cancel"));
+                    return;
+                }
+            }
+            lastSyncCount = datasetUpdates.SyncCount;
+
+            List<Record> remoteRecords = datasetUpdates.Records;
+            if (remoteRecords.Count != 0)
+            {
+                // if conflict, prompt developer/user with callback
+                List<SyncConflict> conflicts = new List<SyncConflict>();
+                List<Record> conflictRecords = new List<Record>();
+                foreach (Record remoteRecord in remoteRecords)
+                {
+                    Record localRecord = Local.GetRecord(GetIdentityId(),
+                                                          DatasetName,
+                                                          remoteRecord.Key);
+                    // only when local is changed and its value is different
+                    if (localRecord != null && localRecord.IsModified
+                        && !StringUtils.Equals(localRecord.Value, remoteRecord.Value))
+                    {
+                        conflicts.Add(new SyncConflict(remoteRecord, localRecord));
+                        conflictRecords.Add(remoteRecord);
+                    }
+                }
+                // retaining only non-conflict records
+                remoteRecords.RemoveAll(t => conflictRecords.Contains(t));
+
+                if (conflicts.Count > 0)
+                {
+                    _logger.InfoFormat("{0} records in conflict!", conflicts.Count);
+                    bool syncConflictResult = false;
+                    if (this.OnSyncConflict == null)
+                    {
+                        // delegate is not implemented so the conflict resolution is applied
+                        syncConflictResult = this.ResolveConflictsWithDefaultPolicy(conflicts);
+                    }
+                    else
+                    {
+                        syncConflictResult = this.OnSyncConflict(this, conflicts);
+                    }
+                    if (!syncConflictResult)
+                    {
+                        _logger.InfoFormat("User cancelled conflict resolution");
+                        EndSynchronizeAndCleanup();
+                        FireSyncFailureEvent(new OperationCanceledException("User cancelled conflict resolution"));
+                        return;
+                    }
+                }
+
+                // save to local
+                if (remoteRecords.Count > 0)
+                {
+                    _logger.InfoFormat("save {0} records to local", remoteRecords.Count);
+                    Local.PutRecords(GetIdentityId(), DatasetName, remoteRecords);
+                }
+
+
+                // new last sync count
+                _logger.InfoFormat("updated sync count {0}", datasetUpdates.SyncCount);
+                Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
+                                          datasetUpdates.SyncCount);
+            }
+
+            // push changes to remote
+            List<Record> localChanges = this.GetModifiedRecords();
+            long maxPatchSyncCount = 0;
+            foreach (Record r in localChanges)
+            {
+                //track the max sync count
+                if (r.SyncCount > maxPatchSyncCount)
+                {
+                    maxPatchSyncCount = r.SyncCount;
+                }
+            }
+            if (localChanges.Count != 0)
+            {
+                _logger.InfoFormat("push {0} records to remote", localChanges.Count);
+
+                try
+                {
+                    List<Record> result = Remote.PutRecords(DatasetName, localChanges, datasetUpdates.SyncSessionToken);
+
+                    // update local meta data
+                    Local.ConditionallyPutRecords(GetIdentityId(), DatasetName, result, localChanges);
+
+                    // verify the server sync count is increased exactly by one, aka no
+                    // other updates were made during this update.
+                    long newSyncCount = 0;
+                    foreach (Record record in result)
+                    {
+                        newSyncCount = newSyncCount < record.SyncCount
+                            ? record.SyncCount
+                                : newSyncCount;
+                    }
+                    if (newSyncCount == lastSyncCount + 1)
+                    {
+                        _logger.InfoFormat("updated sync count {0}", newSyncCount);
+                        Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
+                                                  newSyncCount);
+                    }
+
+                    _logger.InfoFormat("OnSyncSuccess");
+                    EndSynchronizeAndCleanup();
+                    FireSyncSuccessEvent(remoteRecords);
+                    return;
+
+                }
+                catch (DataConflictException e)
+                {
+                    _logger.InfoFormat("Conflicts detected when pushing changes to remote: {0}", e.Message);
+                    if (retry == 0)
+                    {
+                        EndSynchronizeAndCleanup();
+                        FireSyncFailureEvent(e);
+                    }
+                    else
+                    {
+                        //it's possible there is a local dirty record with a stale sync count this will fix it
+                        if (lastSyncCount > maxPatchSyncCount)
+                        {
+                            Local.UpdateLastSyncCount(GetIdentityId(), DatasetName, maxPatchSyncCount);
+                        }
+                        this.RunSyncOperation(--retry);
+                    }
+                    return;
+                }
+                catch (Exception e)
+                {
+                    _logger.InfoFormat("OnSyncFailure {0}", e.Message);
+                    EndSynchronizeAndCleanup();
+                    FireSyncFailureEvent(e);
+                    return;
+                }
+            }
+            else
+            {
+                _logger.InfoFormat("OnSyncSuccess");
+                EndSynchronizeAndCleanup();
+                FireSyncSuccessEvent(remoteRecords);
+                return;
+            }
+
         }
 
 

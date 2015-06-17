@@ -50,12 +50,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         public SQLiteLocalStorage()
         {
             _logger = Logger.GetLogger(this.GetType());
-        }
-
-        static SQLiteLocalStorage()
-        {
             SetupDatabase();
         }
+
         #endregion
 
         #region dispose methods
@@ -114,11 +111,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             public static string BuildInsert(string[] fieldList)
             {
                 string insert = "INSERT INTO " + SQLiteLocalStorage.TABLE_DATASETS + " (" + string.Join(",", fieldList) + ") " +
-                    " VALUES (";
+                    " VALUES ( ";
 
                 for (int i = 0; i < fieldList.Length; i++)
                 {
-                    insert += "@" + fieldList[i] + (i < fieldList.Length - 1 ? "," : "");
+                    insert += "@" + fieldList[i] + (i < fieldList.Length - 1 ? " , " : " ");
                 }
 
                 insert += " )";
@@ -132,7 +129,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
                 for (int i = 0; i < fieldList.Length; i++)
                 {
-                    update += fieldList[i] + " = @" + fieldList[i] + (i < fieldList.Length - 1 ? "," : "");
+                    update += fieldList[i] + " = @" + fieldList[i] + (i < fieldList.Length - 1 ? " , " : " ");
                 }
 
                 if (conditions != null && conditions.Trim().Length > 0)
@@ -190,12 +187,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
             public static string BuildInsert(string[] fieldList)
             {
-                string insert = "INSERT INTO " + SQLiteLocalStorage.TABLE_RECORDS + " (" + string.Join(",", fieldList) + ") " +
-                    " VALUES (";
+                string insert = "INSERT INTO " + SQLiteLocalStorage.TABLE_RECORDS + " (" + string.Join(" ,", fieldList) + " ) " +
+                    " VALUES ( ";
 
                 for (int i = 0; i < fieldList.Length; i++)
                 {
-                    insert += "@" + fieldList[i] + (i < fieldList.Length - 1 ? "," : "");
+                    insert += "@" + fieldList[i] + (i < fieldList.Length - 1 ? " , " : " ");
                 }
 
                 insert += " )";
@@ -209,7 +206,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
                 for (int i = 0; i < fieldList.Length; i++)
                 {
-                    update += fieldList[i] + " = @" + fieldList[i] + (i < fieldList.Length - 1 ? "," : "");
+                    update += fieldList[i] + " = @" + fieldList[i] + (i < fieldList.Length - 1 ? " , " : " ");
                 }
 
                 if (conditions != null && conditions.Trim().Length > 0)
@@ -400,7 +397,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 List<DatasetMetadata> datasets = new List<DatasetMetadata>();
 
                 string query = DatasetColumns.BuildQuery(
-                DatasetColumns.IDENTITY_ID + " = @whereIdentityId"
+                DatasetColumns.IDENTITY_ID + " = @whereIdentityId "
                 );
 
                 return GetDatasetMetadataHelper(query, identityId);
@@ -440,7 +437,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 string query = RecordColumns.BuildQuery(
                     RecordColumns.IDENTITY_ID + " = @identityId AND " +
                     RecordColumns.DATASET_NAME + " = @datasetName AND " +
-                    RecordColumns.KEY + " = @key"
+                    RecordColumns.KEY + " = @key "
                 );
                 record = GetRecordHelper(query, identityId, datasetName, key);
                 return record;
@@ -462,7 +459,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 string query =
                 RecordColumns.BuildQuery(
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    RecordColumns.DATASET_NAME + " = @whereDatasetName"
+                    RecordColumns.DATASET_NAME + " = @whereDatasetName "
                 );
 
                 return GetRecordsHelper(query, identityId, datasetName);
@@ -479,13 +476,51 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             foreach (Record record in records)
             {
-                UpdateAndClearRecord(identityId, datasetName, record);
+                UpdateOrInsertRecord(identityId, datasetName, record);
             }
         }
 
+        public void ConditionallyPutRecords(String identityId, String datasetName, List<Record> records,
+
+                List<Record> localRecords)
+        {
+            /*
+             * Grab an instance of the record from the local store with the remote change's 
+             * key and the snapshot version.
+             * 1) If both are null the remote change is new and we should save. 
+             * 2) If both exist but the values and sync counts have changed, 
+             *    it has changed locally and we shouldn't overwrite with the remote changes, 
+             *    which will still exist in remote. 
+             * 3) If both exist and the values have not changed, we should save the remote change.	
+             * 4) If the current check exists but it wasn't in the snapshot, we should save.	
+             */
+
+            Dictionary<string, Record> localRecordMap = new Dictionary<string, Record>();
+
+            foreach (Record record in localRecords)
+            {
+                localRecordMap[record.Key] = record;
+            }
+
+            foreach (Record record in records)
+            {
+                Record databaseRecord = this.GetRecord(identityId, datasetName, record.Key);
+                Record oldDatabaseRecord = localRecordMap[record.Key];
+                if (databaseRecord != null && oldDatabaseRecord != null
+                        && (!StringUtils.Equals(databaseRecord.Value, oldDatabaseRecord.Value)
+                        || databaseRecord.SyncCount != oldDatabaseRecord.SyncCount
+                        || !StringUtils.Equals(databaseRecord.LastModifiedBy, oldDatabaseRecord.LastModifiedBy)))
+                {
+                    continue;
+                }
+                UpdateOrInsertRecord(identityId, datasetName, record);
+            }
+        }
+
+
         /// <summary>
-        /// Deletes a dataset. It clears all records in this dataset and marked it as
-        /// deleted for future sync.
+        /// Deletes a dataset. All the records associated with dataset are cleared and 
+        /// dataset is marked as deleted for future sync.
         /// </summary>
         /// <param name="identityId">Identity identifier.</param>
         /// <param name="datasetName">Dataset name.</param>
@@ -508,7 +543,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             {
                 string query = DatasetColumns.BuildDelete(
                     DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                    DatasetColumns.DATASET_NAME + " = @whereDatasetName "
                 );
 
                 Statement s1 = new Statement
@@ -535,7 +570,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             {
                 string query = DatasetColumns.BuildQuery(
                     DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                    DatasetColumns.DATASET_NAME + " = @whereDatasetName "
                 );
 
                 return GetLastSyncCountHelper(query, identityId, datasetName);
@@ -557,7 +592,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     RecordColumns.BuildQuery(
                         RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                         RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
-                        RecordColumns.MODIFIED + " = @whereModified"
+                        RecordColumns.MODIFIED + " = @whereModified "
                 );
                 return GetModifiedRecordsHelper(query, identityId, datasetName, 1); ;
             }
@@ -580,7 +615,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         DatasetColumns.LAST_SYNC_TIMESTAMP
                     },
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    RecordColumns.DATASET_NAME + " = @whereDatasetName"
+                    RecordColumns.DATASET_NAME + " = @whereDatasetName "
                 );
                 UpdateLastSyncCountHelper(query, lastSyncCount, DateTime.Now, identityId, datasetName);
             }
@@ -602,7 +637,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        
+
 
         /// <summary>
         /// Reparents all datasets from old identity id to a new one.
@@ -612,9 +647,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         public void ChangeIdentityId(string oldIdentityId, string newIdentityId)
         {
             _logger.DebugFormat("Reparenting datasets from {0} to {1}", oldIdentityId, newIdentityId);
-
-            GetCommonDatasetNames(oldIdentityId, newIdentityId);
-
             lock (sqlite_lock)
             {
 
@@ -630,12 +662,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     // append UNKNOWN to the name of all non unique datasets
                     foreach (String oldDatasetName in commonDatasetNames)
                     {
-
-
                         string updateDatasetQuery = "UPDATE " + TABLE_DATASETS
                               + " SET " + DatasetColumns.DATASET_NAME + " = @" + DatasetColumns.DATASET_NAME
                               + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID
-                              + " AND " + DatasetColumns.DATASET_NAME + " = @" + DatasetColumns.DATASET_NAME;
+                              + " AND " + DatasetColumns.DATASET_NAME + " = @old" + DatasetColumns.DATASET_NAME + " ";
 
                         string timestamp = AWSSDKUtils.ConvertToUnixEpochMilliSeconds(DateTime.UtcNow).ToString();
 
@@ -650,7 +680,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         string updateRecordsQuery = "UPDATE " + TABLE_RECORDS
                             + " SET " + RecordColumns.DATASET_NAME + " = @" + RecordColumns.DATASET_NAME
                             + " WHERE " + RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID
-                            + " AND " + RecordColumns.DATASET_NAME + " = @" + RecordColumns.DATASET_NAME;
+                            + " AND " + RecordColumns.DATASET_NAME + " = @old" + RecordColumns.DATASET_NAME + " ";
 
                         Statement updateRecordsStatement = new Statement()
                         {
@@ -663,7 +693,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
                     string updateIdentityDatasetQuery = DatasetColumns.BuildUpdate(
                             new string[] { DatasetColumns.IDENTITY_ID },
-                            DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID
+                            DatasetColumns.IDENTITY_ID + " = @oldIdentityId "
                         );
 
                     Statement UpdateIdentityDatasetStatement = new Statement()
@@ -676,7 +706,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
                     string updateRecordsIdentityQuery = RecordColumns.BuildUpdate(
                             new string[] { RecordColumns.IDENTITY_ID },
-                            RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID
+                            RecordColumns.IDENTITY_ID + " = @oldIdentityId "
                         );
 
                     Statement UpdateIdentityRecordsStatement = new Statement()
@@ -707,7 +737,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         + DatasetColumns.STORAGE_SIZE_BYTES + ","
                         + DatasetColumns.RECORD_COUNT
                         + " FROM " + TABLE_DATASETS
-                        + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID;
+                        + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID + " ";
 
                     statements.Add(new Statement
                     {
@@ -736,7 +766,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         + RecordColumns.LAST_MODIFIED_BY + ","
                         + RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP
                         + " FROM " + TABLE_RECORDS
-                        + " WHERE " + RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID;
+                        + " WHERE " + RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID + " ";
 
                     statements.Add(new Statement
                     {
@@ -753,7 +783,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         + DatasetColumns.IDENTITY_ID + " = '" + newIdentityId + "', "
                         + DatasetColumns.DATASET_NAME + " = "
                         + DatasetColumns.DATASET_NAME + " || '." + oldIdentityId + "'"
-                        + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID;
+                        + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID + " ";
 
                     statements.Add(new Statement
                     {
@@ -767,7 +797,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         + RecordColumns.IDENTITY_ID + " = '" + newIdentityId + "', "
                         + RecordColumns.DATASET_NAME + " = "
                         + RecordColumns.DATASET_NAME + " || '." + oldIdentityId + "'"
-                        + " WHERE " + RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID;
+                        + " WHERE " + RecordColumns.IDENTITY_ID + " = @" + RecordColumns.IDENTITY_ID + " ";
 
                     statements.Add(new Statement
                     {
@@ -815,7 +845,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     DatasetColumns.BuildUpdate(
                     new string[] { DatasetColumns.LAST_MODIFIED_TIMESTAMP },
                     DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                    DatasetColumns.DATASET_NAME + " = @whereDatasetName "
                 );
                 UpdateLastModifiedTimestampHelper(query, DateTime.Now, identityId, datasetName);
             }
@@ -832,7 +862,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 string deleteRecordsQuery =
                 RecordColumns.BuildDelete(
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    RecordColumns.DATASET_NAME + " = @whereDatasetName"
+                    RecordColumns.DATASET_NAME + " = @whereDatasetName "
                 );
 
                 Statement s1 = new Statement
@@ -848,7 +878,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         DatasetColumns.LAST_SYNC_COUNT
                         },
                     DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                    DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                    DatasetColumns.DATASET_NAME + " = @whereDatasetName "
                 );
 
                 Statement s2 = new Statement
@@ -896,7 +926,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                                 DatasetColumns.STORAGE_SIZE_BYTES
                             },
                         DatasetColumns.IDENTITY_ID + " = @whereIdentityId AND " +
-                        DatasetColumns.DATASET_NAME + " = @whereDatasetName"
+                        DatasetColumns.DATASET_NAME + " = @whereDatasetName "
                     );
                     ExecuteMultipleHelper(new List<Statement>(){
                             new Statement{

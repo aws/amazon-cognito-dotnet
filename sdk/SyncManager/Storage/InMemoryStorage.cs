@@ -25,7 +25,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
     /// This implementation does not persist the information to disk. If you want to use 
     /// persistant storage option, then use <see cref="Amazon.CognitoSync.SyncManager.Internal.SQLiteLocalStorage"/>
     /// </summary>
-    public class InMemoryStorage : ILocalStorage
+    public partial class InMemoryStorage : ILocalStorage
     {
         private static object _lock = new object();
         private ILogger _logger;
@@ -397,6 +397,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         storedRecord.Value = record.Value;
                         storedRecord.IsModified = record.IsModified;
                         storedRecord.SyncCount = record.SyncCount;
+                        storedRecord.LastModifiedTimestamp = record.LastModifiedDate;
+                        storedRecord.LastModifiedBy = record.LastModifiedBy;
+                        storedRecord.DeviceLastModifiedTimestamp = record.DeviceLastModifiedDate;
                     }
                     else
                     {
@@ -416,6 +419,19 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 }
                 UpdateLastModifiedTimestamp(identityId, datasetName);
             }
+        }
+
+        /// <summary>
+        /// Puts a list of raw records into that dataset if 
+        /// the local version hasn't changed (to be used in 
+        /// synchronizations). 
+        /// </summary> 
+        /// <param name="identityId">Identity id.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// <param name="localRecords">A list of records to check for changes.</param>
+        public void ConditionallyPutRecords(string identityId, string datasetName, List<Record> records, List<Record> localRecords)
+        {
+            PutRecords(identityId, datasetName, records);
         }
 
         /// <summary>

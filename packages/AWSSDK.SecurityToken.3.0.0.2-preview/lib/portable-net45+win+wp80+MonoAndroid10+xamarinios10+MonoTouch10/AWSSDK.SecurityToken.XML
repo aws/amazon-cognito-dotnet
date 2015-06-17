@@ -2206,6 +2206,16 @@
             <param name="awsSessionToken">AWS Session Token</param>
             <param name="clientConfig">The AmazonSecurityTokenServiceClient Configuration Object</param>
         </member>
+        <member name="M:Amazon.SecurityToken.AmazonSecurityTokenServiceClient.CreateSigner">
+            <summary>
+            Creates the signer for the service.
+            </summary>
+        </member>
+        <member name="M:Amazon.SecurityToken.AmazonSecurityTokenServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Disposes the service client.
+            </summary>
+        </member>
         <member name="M:Amazon.SecurityToken.AmazonSecurityTokenServiceClient.AssumeRoleAsync(Amazon.SecurityToken.Model.AssumeRoleRequest,System.Threading.CancellationToken)">
             <summary>
             Initiates the asynchronous execution of the AssumeRole operation.

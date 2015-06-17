@@ -15716,6 +15716,16 @@
             <param name="awsSessionToken">AWS Session Token</param>
             <param name="clientConfig">The AmazonIdentityManagementServiceClient Configuration Object</param>
         </member>
+        <member name="M:Amazon.IdentityManagement.AmazonIdentityManagementServiceClient.CreateSigner">
+            <summary>
+            Creates the signer for the service.
+            </summary>
+        </member>
+        <member name="M:Amazon.IdentityManagement.AmazonIdentityManagementServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Disposes the service client.
+            </summary>
+        </member>
         <member name="M:Amazon.IdentityManagement.AmazonIdentityManagementServiceClient.AddClientIDToOpenIDConnectProviderAsync(Amazon.IdentityManagement.Model.AddClientIDToOpenIDConnectProviderRequest,System.Threading.CancellationToken)">
             <summary>
             Initiates the asynchronous execution of the AddClientIDToOpenIDConnectProvider operation.

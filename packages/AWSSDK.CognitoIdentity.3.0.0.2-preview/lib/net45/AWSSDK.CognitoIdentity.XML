@@ -16,6 +16,11 @@
             Depending on configured Logins, credentials may be authenticated or unauthenticated.
             </summary>
         </member>
+        <member name="F:Amazon.CognitoIdentity.CognitoAWSCredentials._identityState">
+            <summary>
+            Identity State which is returned by refresh identity.
+            </summary>
+        </member>
         <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.Clear">
             <summary>
             Clears current credentials state. This will reset the IdentityId.
@@ -41,9 +46,12 @@
             new value, attach a listener to IdentityChangedEvent
             </summary>
         </member>
-        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.GetIdentityIdWithCaching">
-            Checks to see if there is a cached identity id first and falls back to getting a fresh identity id by calling
-            GetIdentityId()
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.RefreshIdentity">
+            <summary>
+            Provides a way to override fetching the identity in case of developer authenticated identities.
+            The default behaviour will be using Cognito to retrieve the identity id.
+            </summary>
+            <returns>returns a <see cref="T:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState"/></returns>
         </member>
         <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.GetIdentityIdAsync">
             <summary>
@@ -52,14 +60,14 @@
             new value, attach a listener to IdentityChangedEvent
             </summary>
         </member>
-        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.GetIdentityIdWithCachingAsync">
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.RefreshIdentityAsync">
             <summary>
-            Checks to see if there is a cached identity id first and falls back to getting a fresh identity id by calling
-            GetIdentityIdAsync()
+            Provides a way to override fetching the identity in case of developer authenticated identities.
+            The default behaviour will be using Cognito to retrieve the identity id.
             </summary>
-            <returns></returns>
+            <returns>returns a <see cref="T:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState"/></returns>
         </member>
-        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.ShouldRetry(Amazon.CognitoIdentity.AmazonCognitoIdentityException,Amazon.CognitoIdentity.CognitoAWSCredentials.GetIdentityIdStatus)">
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.ShouldRetry(Amazon.CognitoIdentity.AmazonCognitoIdentityException)">
             <summary>
             Checks the exception from a call that used an identity id and determines if the 
             failure was caused by a cached identity id. If it was determined then the cache
@@ -155,6 +163,22 @@
             </para>
             </summary>
         </member>
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.CacheCredentials(Amazon.Runtime.RefreshingAWSCredentials.CredentialsRefreshState)">
+            <summary>
+            Caches the credentials to player pref's
+            </summary>
+        </member>
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.GetCachedCredentials">
+            <summary>
+            Gets the cached credentials state
+            </summary>
+        </member>
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.IsIdentityCachingEnabled">
+            <summary>
+            Flag indicating if the caching is enabled for cognito identity or not
+            </summary>
+            <returns>true if cognito identity caching is enabled, else false</returns>
+        </member>
         <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.AccountId">
             <summary>
             The AWS accountId for the account with Amazon Cognito
@@ -187,6 +211,12 @@
             The list of current providers that are used for authenticated credentials.
             </summary>
         </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.LoginsCount">
+            <summary>
+            Returns count of Login Providers.
+            </summary>
+            <returns>The count of the login provider.</returns>
+        </member>
         <member name="E:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityChangedEvent">
             <summary>
             Event for identity change notifications.
@@ -208,9 +238,50 @@
             Gets the NewIdentityId property.
             </summary>
         </member>
-        <member name="T:Amazon.CognitoIdentity.CognitoAWSCredentials.GetIdentityIdStatus">
+        <member name="T:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState">
             <summary>
-            Simple class for returning back and identity id and whether the id returned was from a cache.
+            Information about the state of the identity
+            </summary>
+        </member>
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.#ctor(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates an instance of the Identity State using identity id , token, provider, fromCache flag
+            </summary>
+            <param name="identityId"></param>
+            <param name="provider"></param>
+            <param name="token"></param>
+            <param name="fromCache"></param>
+        </member>
+        <member name="M:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.#ctor(System.String,System.Boolean)">
+            <summary>
+            Creates an instance using the identity id and from cache flag
+            </summary>
+            <param name="identityId"></param>
+            <param name="fromCache"></param>
+        </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.IdentityId">
+            <summary>
+            Gets the Identity Id
+            </summary>
+        </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.LoginProvider">
+            <summary>
+            Gets the Login Provider
+            </summary>
+        </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.LoginToken">
+            <summary>
+            Gets the Login Token
+            </summary>
+        </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.FromCache">
+            <summary>
+            Indicates if the identity Id is from cache
+            </summary>
+        </member>
+        <member name="P:Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityState.LoginSpecified">
+            <summary>
+            returns true is the Login provider and login token values are present
             </summary>
         </member>
         <member name="T:Amazon.CognitoIdentity.Model.Credentials">
