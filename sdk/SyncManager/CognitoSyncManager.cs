@@ -230,7 +230,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException">Thrown when fail to fresh dataset metadata</exception>
         public async Task<List<DatasetMetadata>> RefreshDatasetMetadataAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            List<DatasetMetadata> response = await Remote.GetDatasetMetadata(cancellationToken);
+            List<DatasetMetadata> response = await Remote.GetDatasetMetadataAsync(cancellationToken);
             Local.UpdateDatasetMetadata(GetIdentityId(), response);
             return response;
         }

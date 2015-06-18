@@ -69,7 +69,7 @@ namespace Amazon.CognitoSync.SyncManager
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
-                await SynchronizeHelper(cancellationToken);
+                await SynchronizeHelperAsync(cancellationToken);
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Amazon.CognitoSync.SyncManager
                 return;
             }
 
-            await SynchronizeHelper(cancellationToken);
+            await SynchronizeHelperAsync(cancellationToken);
         }
     }
 

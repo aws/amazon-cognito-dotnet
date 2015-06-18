@@ -69,7 +69,7 @@ namespace Amazon.CognitoSync.SyncManager
                 return;
             }
 
-            await SynchronizeHelper(cancellationToken);
+            await SynchronizeHelperAsync(cancellationToken);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Amazon.CognitoSync.SyncManager
             NetworkReachability reachability = new NetworkReachability();
             if (reachability.NetworkStatus != NetworkStatus.NotReachable)
             {
-                await SynchronizeHelper(cancellationToken);
+                await SynchronizeHelperAsync(cancellationToken);
             }
             else
             {

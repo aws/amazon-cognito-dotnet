@@ -70,7 +70,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        public async Task<List<DatasetMetadata>> GetDatasetMetadata(CancellationToken cancellationToken)
+        public async Task<List<DatasetMetadata>> GetDatasetMetadataAsync(CancellationToken cancellationToken)
         {
             return await PopulateGetDatasetMetadata(null, new List<DatasetMetadata>(), cancellationToken);
         }
@@ -82,7 +82,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             request.MaxResults = 64;
             request.NextToken = nextToken;
 
-            ListDatasetsResponse response = await client.ListDatasetsAsync(request, cancellationToken).ConfigureAwait(false);
+            ListDatasetsResponse response = await client.ListDatasetsAsync(request, cancellationToken);
 
             foreach (Amazon.CognitoSync.Model.Dataset dataset in response.Datasets)
             {
@@ -113,12 +113,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        public async Task<DatasetUpdates> ListUpdates(string datasetName, long lastSyncCount, CancellationToken cancellationToken)
+        public async Task<DatasetUpdates> ListUpdatesAsync(string datasetName, long lastSyncCount, CancellationToken cancellationToken)
         {
-            return await PopulateListUpdates(datasetName, lastSyncCount, new List<Record>(), null, cancellationToken);
+            return await PopulateListUpdatesAsync(datasetName, lastSyncCount, new List<Record>(), null, cancellationToken);
         }
 
-        private async Task<DatasetUpdates> PopulateListUpdates(string datasetName, long lastSyncCount, List<Record> records, string nextToken, CancellationToken cancellationToken)
+        private async Task<DatasetUpdates> PopulateListUpdatesAsync(string datasetName, long lastSyncCount, List<Record> records, string nextToken, CancellationToken cancellationToken)
         {
             ListRecordsRequest request = new ListRecordsRequest();
             request.IdentityPoolId = identityPoolId;
@@ -129,7 +129,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             request.MaxResults = 1024;
             request.NextToken = nextToken;
 
-            ListRecordsResponse listRecordsResponse = await client.ListRecordsAsync(request, cancellationToken).ConfigureAwait(false);
+            ListRecordsResponse listRecordsResponse = await client.ListRecordsAsync(request, cancellationToken);
             foreach (Amazon.CognitoSync.Model.Record remoteRecord in listRecordsResponse.Records)
             {
                 records.Add(this.ModelToRecord(remoteRecord));
@@ -138,7 +138,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             nextToken = listRecordsResponse.NextToken;
 
             if (nextToken != null)
-                await PopulateListUpdates(datasetName, lastSyncCount, records, nextToken, cancellationToken);
+                await PopulateListUpdatesAsync(datasetName, lastSyncCount, records, nextToken, cancellationToken);
 
 
             DatasetUpdates updates = new DatasetUpdates(
@@ -172,7 +172,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataConflictException"></exception>
-        public async Task<List<Record>> PutRecords(string datasetName, List<Record> records, string syncSessionToken, CancellationToken cancellationToken)
+        public async Task<List<Record>> PutRecordsAsync(string datasetName, List<Record> records, string syncSessionToken, CancellationToken cancellationToken)
         {
             UpdateRecordsRequest request = new UpdateRecordsRequest();
             request.DatasetName = datasetName;
@@ -192,7 +192,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             try
             {
 
-                UpdateRecordsResponse updateRecordsResponse = await client.UpdateRecordsAsync(request, cancellationToken).ConfigureAwait(false);
+                UpdateRecordsResponse updateRecordsResponse = await client.UpdateRecordsAsync(request, cancellationToken);
                 foreach (Amazon.CognitoSync.Model.Record remoteRecord in updateRecordsResponse.Records)
                 {
                     updatedRecords.Add(ModelToRecord(remoteRecord));
@@ -217,7 +217,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
-        public async Task DeleteDataset(string datasetName, CancellationToken cancellationToken)
+        public async Task DeleteDatasetAsync(string datasetName, CancellationToken cancellationToken)
         {
             DeleteDatasetRequest request = new DeleteDatasetRequest();
             request.IdentityPoolId = identityPoolId;
@@ -226,7 +226,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
             try
             {
-                await client.DeleteDatasetAsync(request, cancellationToken).ConfigureAwait(false);
+                await client.DeleteDatasetAsync(request, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -245,7 +245,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        public async Task<DatasetMetadata> GetDatasetMetadata(string datasetName, CancellationToken cancellationToken)
+        public async Task<DatasetMetadata> GetDatasetMetadataAsync(string datasetName, CancellationToken cancellationToken)
         {
             DescribeDatasetRequest request = new DescribeDatasetRequest();
             request.IdentityPoolId = identityPoolId;
@@ -254,7 +254,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
             try
             {
-                DescribeDatasetResponse describeDatasetResponse = await client.DescribeDatasetAsync(request, cancellationToken).ConfigureAwait(false);
+                DescribeDatasetResponse describeDatasetResponse = await client.DescribeDatasetAsync(request, cancellationToken);
                 return ModelToDatasetMetadata(describeDatasetResponse.Dataset);
             }
             catch (Exception ex)

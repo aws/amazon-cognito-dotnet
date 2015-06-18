@@ -37,7 +37,7 @@ namespace Amazon.CognitoSync.SyncManager
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        Task<List<DatasetMetadata>> GetDatasetMetadata(CancellationToken cancellationToken);
+        Task<List<DatasetMetadata>> GetDatasetMetadataAsync(CancellationToken cancellationToken);
 
         #endregion
 
@@ -53,7 +53,7 @@ namespace Amazon.CognitoSync.SyncManager
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        Task<DatasetMetadata> GetDatasetMetadata(string datasetName, CancellationToken cancellationToken);
+        Task<DatasetMetadata> GetDatasetMetadataAsync(string datasetName, CancellationToken cancellationToken);
         #endregion
 
 
@@ -72,7 +72,7 @@ namespace Amazon.CognitoSync.SyncManager
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        Task<DatasetUpdates> ListUpdates(string datasetName, long lastSyncCount, CancellationToken cancellationToken);
+        Task<DatasetUpdates> ListUpdatesAsync(string datasetName, long lastSyncCount, CancellationToken cancellationToken);
         #endregion
 
 
@@ -93,7 +93,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataConflictException"></exception>
-        Task<List<Record>> PutRecords(string datasetName, List<Record> records, string syncSessionToken, CancellationToken cancellationToken);
+        Task<List<Record>> PutRecordsAsync(string datasetName, List<Record> records, string syncSessionToken, CancellationToken cancellationToken);
         #endregion
 
 
@@ -107,7 +107,7 @@ namespace Amazon.CognitoSync.SyncManager
         ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
-        Task DeleteDataset(string datasetName, CancellationToken cancellationToken);
+        Task DeleteDatasetAsync(string datasetName, CancellationToken cancellationToken);
 
         #endregion
 
