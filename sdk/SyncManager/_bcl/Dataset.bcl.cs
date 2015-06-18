@@ -18,60 +18,58 @@ using Amazon.CognitoIdentity;
 using Amazon.CognitoSync.SyncManager.Internal;
 using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Util;
-using Amazon.Util.Storage.Internal;
-
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Threading;
+using System.Threading.Tasks;
 
-using UnityEngine;
 
 namespace Amazon.CognitoSync.SyncManager
 {
 
     public partial class Dataset : IDisposable
     {
-        
-        /// <summary>
-        /// Synchronize <see cref="Dataset"/> between local storage and remote storage.
-        /// </summary>
-        public virtual void Synchronize()
-        {
-            if (NetworkInfo.GetReachability() == NetworkReachability.NotReachable)
-            {
-                FireSyncFailureEvent(new NetworkException("Network connectivity unavailable."));
-                return;
-            }
 
-            // if the thread is in background thread, then start synchronizing, 
-            // else queue the synchronization in a threadpool thread
-            if (!UnityInitializer.IsMainThread())
+        internal Dataset()
+        {
+            NetworkChange.NetworkAvailabilityChanged += HandleNetworkChange;
+        }
+
+        #region Dispose Methods
+        /// <summary>
+        /// Releases the resources consumed by this object if disposing is true. 
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
             {
-                SynchronizeInternalAsync();
-            }
-            else
-            {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(delegate
-                {
-                    SynchronizeInternalAsync();
-                }));
+                ClearAllDelegates();
+                NetworkChange.NetworkAvailabilityChanged -= HandleNetworkChange;
+                _disposed = true;
             }
         }
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Attempt to synchronize <see cref="Dataset"/> when connectivity is available. If
         /// the connectivity is available right away, it behaves the same as
-        /// <see cref="Dataset.Synchronize()"/>. Otherwise it listens to connectivity
+        /// <see cref="Dataset.SynchronizeAsync"/>. Otherwise it listens to connectivity
         /// changes, and will do a sync once the connectivity is back. Note that if
         /// this method is called multiple times, only the last synchronize request
         /// is kept. If either the dataset or the callback is garbage collected
         /// , this method will not perform a sync and the callback won't fire.
         /// </summary>
-        public virtual void SynchronizeOnConnectivity()
+        public async virtual void SynchronizeOnConnectivity(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (NetworkInfo.GetReachability() != NetworkReachability.NotReachable)
+            if (NetworkInterface.GetIsNetworkAvailable())
             {
-                Synchronize();
+                await SynchronizeHelper(cancellationToken);
             }
             else
             {
@@ -79,20 +77,38 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
-        private void HandleConnectivityRefresh(object sender, UnityMainThreadDispatcher.NetworkStatusRefreshed result)
+        #endregion
+
+        #region Private Methods
+
+        private async void HandleNetworkChange(object sender, NetworkAvailabilityEventArgs e)
         {
             if (!waitingForConnectivity)
             {
                 return;
             }
 
-            if (result.NetworkReachability != NetworkReachability.NotReachable)
+            if (e.IsAvailable)
             {
-                Synchronize();
+                await SynchronizeAsync();
             }
         }
 
         #endregion
+
+        /// <summary>
+        /// Synchronize <see cref="Dataset"/> between local storage and remote storage.
+        /// </summary>
+        public async virtual Task SynchronizeAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                FireSyncFailureEvent(new NetworkException("Network connectivity unavailable."));
+                return;
+            }
+
+            await SynchronizeHelper(cancellationToken);
+        }
     }
 
 }

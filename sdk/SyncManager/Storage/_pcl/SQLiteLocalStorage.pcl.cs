@@ -19,6 +19,7 @@ using Amazon.Runtime.Internal.Util;
 using SQLitePCL;
 using SQLitePCL.Extensions;
 using System;
+
 using System.Collections.Generic;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
@@ -31,8 +32,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         private static SQLiteConnection connection;
 
         #region dispose methods
-
-        public virtual void Dispose(bool disposing)
+        /// <summary>
+        /// Implements the Dispose pattern
+        /// </summary>
+        /// <param name="disposing">Whether this object is being disposed via a call to Dispose
+        /// or garbage collected.</param>
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -47,9 +52,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         private static void SetupDatabase()
         {
+            
             string dbPath = "";
 
-            connection = new SQLiteConnection(DB_FILE_NAME);
+            connection = new SQLiteConnection(dbPath);
 
             string createDatasetTable = "CREATE TABLE IF NOT EXISTS " + TABLE_DATASETS + "("
                         + DatasetColumns.IDENTITY_ID + " TEXT NOT NULL,"
@@ -195,11 +201,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         internal void ExecuteMultipleHelper(List<Statement> statements)
         {
             connection.Prepare("BEGIN;").Step();
-            foreach(var stmt in statements)
+            foreach (var stmt in statements)
             {
                 string query = stmt.Query.TrimEnd();
                 //transaction statements should end with a semi-colon, so if there is no semi-colon then append it in the end
-                if(!query.EndsWith(";"))
+                if (!query.EndsWith(";"))
                 {
                     query += ";";
                 }
@@ -236,7 +242,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        internal void UpdateAndClearRecord(string identityId, string datasetName, Record record)
+        internal void UpdateOrInsertRecord(string identityId, string datasetName, Record record)
         {
             lock (sqlite_lock)
             {
@@ -246,7 +252,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     RecordColumns.KEY + " = @whereKey ";
 
                 bool recordsFound = false;
-
                 using (var sqliteStatement = connection.Prepare(checkRecordExistsQuery))
                 {
                     BindData(sqliteStatement, identityId, datasetName, record.Key);
@@ -264,7 +269,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         new string[] {
                             RecordColumns.VALUE,
                             RecordColumns.SYNC_COUNT,
-                            RecordColumns.MODIFIED
+                            RecordColumns.MODIFIED,
+                            RecordColumns.LAST_MODIFIED_TIMESTAMP,
+                            RecordColumns.LAST_MODIFIED_BY,
+                            RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP
                         },
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                         RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
@@ -273,7 +281,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
                     using (var sqliteStatement = connection.Prepare(updateRecordQuery))
                     {
-                        BindData(sqliteStatement, record.Value, record.SyncCount, record.IsModified ? 1 : 0, identityId, datasetName, record.Key);
+                        BindData(sqliteStatement, record.Value, record.SyncCount, record.IsModified ? 1 : 0, record.LastModifiedDate, record.LastModifiedBy, record.DeviceLastModifiedDate, identityId, datasetName, record.Key);
                         var result = sqliteStatement.Step();
                         if (result != SQLiteResult.OK)
                             throw new Exception(result.ToString());

@@ -16,20 +16,21 @@
 //
 using Amazon.CognitoIdentity;
 using Amazon.CognitoSync.SyncManager.Internal;
-using Amazon.Common;
 using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Util;
+using Amazon.Util.Internal.PlatformServices;
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Amazon.CognitoSync.SyncManager
 {
 
     public partial class Dataset : IDisposable
     {
-        NetworkReachability reachability;
+        INetworkReachability reachability;
 
         internal Dataset()
         {
@@ -37,6 +38,9 @@ namespace Amazon.CognitoSync.SyncManager
         }
 
         #region Dispose Methods
+        /// <summary>
+        /// Releases the resources consumed by this object if disposing is true. 
+        /// </summary>
         public virtual void Dispose(bool disposing)
         {
             if (_disposed)
@@ -56,7 +60,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <summary>
         /// Synchronize <see cref="Dataset"/> between local storage and remote storage.
         /// </summary>
-        public virtual void SynchronizeAsync()
+        public async virtual Task SynchronizeAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
 
             if (reachability.NetworkStatus == NetworkStatus.NotReachable)
@@ -65,24 +69,24 @@ namespace Amazon.CognitoSync.SyncManager
                 return;
             }
 
-            SynchronizeHelper();
+            await SynchronizeHelper(cancellationToken);
         }
 
         /// <summary>
         /// Attempt to synchronize <see cref="Dataset"/> when connectivity is available. If
         /// the connectivity is available right away, it behaves the same as
-        /// <see cref="Dataset.Synchronize()"/>. Otherwise it listens to connectivity
+        /// <see cref="Dataset.SynchronizeAsync"/>. Otherwise it listens to connectivity
         /// changes, and will do a sync once the connectivity is back. Note that if
         /// this method is called multiple times, only the last synchronize request
         /// is kept. If either the dataset or the callback is garbage collected
         /// , this method will not perform a sync and the callback won't fire.
         /// </summary>
-        public virtual void SynchronizeOnConnectivity()
+        public async virtual Task SynchronizeOnConnectivity(CancellationToken cancellationToken = default(CancellationToken))
         {
             NetworkReachability reachability = new NetworkReachability();
             if (reachability.NetworkStatus != NetworkStatus.NotReachable)
             {
-                SynchronizeHelper();
+                await SynchronizeHelper(cancellationToken);
             }
             else
             {
@@ -94,7 +98,7 @@ namespace Amazon.CognitoSync.SyncManager
 
         #region Private Methods
 
-        private void HandleNetworkChange(object sender, NetworkStatus status)
+        private void HandleNetworkChange(object sender, NetworkStatusEventArgs e)
         {
 
             if (!waitingForConnectivity)
@@ -102,9 +106,9 @@ namespace Amazon.CognitoSync.SyncManager
                 return;
             }
 
-            if (status != NetworkStatus.NotReachable)
+            if (e.Status != NetworkStatus.NotReachable)
             {
-                SynchronizeHelper();
+                SynchronizeAsync().ConfigureAwait(false);
             }
         }
 

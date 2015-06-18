@@ -13,6 +13,7 @@ using Amazon.Runtime;
 using System.IO;
 using System.Data.SQLite;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AWSSDK_DotNet.IntegrationTests.Tests
 {
@@ -49,6 +50,11 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         string poolName = null;
 
         internal const string DB_FILE_NAME = "aws_cognito_sync.db";
+
+        protected static void RunAsSync(Func<Task> asyncFunc)
+        {
+            Task.Run(asyncFunc).Wait();
+        }
 
         [TestCleanup]
         public void Cleanup()
@@ -149,7 +155,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                             Assert.AreEqual(erasedValue, restoredValues);
                         };
 
-                        d.Synchronize();
+                        RunAsSync(async () => await d.SynchronizeAsync());
                     };
                     d.OnSyncFailure += delegate(object sender, SyncFailureEvent e)
                     {
@@ -172,7 +178,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         Assert.Fail();
                         return false;
                     };
-                    d.Synchronize();
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
         }
@@ -240,18 +246,18 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                                                 {
                                                     Dataset mergedDataset = sm3.OpenOrCreateDataset(mergeds);
                                                     mergedDataset.Delete();
-                                                    mergedDataset.Synchronize();
+                                                    RunAsSync(async () => await mergedDataset.SynchronizeAsync());
                                                 });
                                                 return true;
                                             };
-                                            d3.Synchronize();
+                                            RunAsSync(async () => await d3.SynchronizeAsync());
                                         }
                                     }
                                 };
                                 d2.OnSyncFailure += (object sender, SyncFailureEvent e) =>
                                 {
                                     Console.WriteLine(e.Exception.Message);
-                                    Console.WriteLine(e.Exception.StackTrace); 
+                                    Console.WriteLine(e.Exception.StackTrace);
                                     Assert.Fail();
                                 };
                                 d2.OnSyncConflict += (Dataset dataset, List<SyncConflict> conflicts) =>
@@ -269,7 +275,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                                     Assert.Fail();
                                     return false;
                                 };
-                                d2.Synchronize();
+                                RunAsSync(async () => await d2.SynchronizeAsync());
                             }
                         }
                     };
@@ -294,7 +300,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         Assert.Fail();
                         return false;
                     };
-                    d.Synchronize();
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
         }
@@ -347,7 +353,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         Assert.IsTrue(finalDate > initialDate);
                         Assert.IsTrue(initialDate == synchronizedDate);
                     };
-                    d.Synchronize();
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
         }
@@ -390,10 +396,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                             {
                                 Assert.IsTrue(conflictTriggered, "Expecting OnSyncConflict instead of OnSyncFailure");
                             };
-                            d2.Synchronize();
+                            RunAsSync(async () => await d2.SynchronizeAsync());
                         }
                     };
-                    d.Synchronize();
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
         }
@@ -459,10 +465,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                             {
                                 Assert.Fail("Expecting SyncConflict instead of SyncFailure");
                             };
-                            d2.Synchronize();
+                            RunAsSync(async () => await d2.SynchronizeAsync());
                         }
                     };
-                    d.Synchronize();
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
         }

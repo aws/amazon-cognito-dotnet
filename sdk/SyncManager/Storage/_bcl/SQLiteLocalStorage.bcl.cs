@@ -374,7 +374,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
 
         #region BCL Specific implementation for identityId caching
-
+        /// <summary>
+        /// cache the identity
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="identity"></param>
         public void CacheIdentity(string key, string identity)
         {
             string query = "INSERT INTO kvstore(key,value) values ( @key , @value )";
@@ -386,6 +390,11 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        /// <summary>
+        /// Get the cached identity id
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public string GetIdentity(string key)
         {
             string query = "SELECT value FROM kvstore WHERE key = @key ";
@@ -402,6 +411,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return null;
         }
 
+        /// <summary>
+        /// Delete the cached identity id
+        /// </summary>
+        /// <param name="key"></param>
         public void DeleteCachedIdentity(string key)
         {
             string query = "delete from kvstore where key = @key ";

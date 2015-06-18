@@ -23,6 +23,8 @@ using Amazon.CognitoSync.SyncManager.Internal;
 using Amazon.CognitoIdentity;
 using Amazon.Runtime.Internal.Util;
 using Amazon.Util.Internal;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Amazon.CognitoSync.SyncManager
 {
@@ -148,7 +150,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// Opens or creates a dataset. If the dataset doesn't exist, an empty one
         /// with the given name will be created. Otherwise, the dataset is loaded from
         /// local storage. If a dataset is marked as deleted but hasn't been deleted
-        /// on remote via <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadata"/>, 
+        /// on remote via <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadataAsync"/>, 
         /// it will throw <see cref="System.InvalidOperationException"/>.
         /// <code>
         /// Dataset dataset = cognitoSyncManager.OpenOrCreateDataset("myDatasetName");
@@ -163,9 +165,10 @@ namespace Amazon.CognitoSync.SyncManager
             return new Dataset(datasetName, CognitoCredentials, Local, Remote);
         }
 
+
         /// <summary>
         /// Retrieves a list of datasets from local storage. It may not reflects
-        /// latest dataset on the remote storage until <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadata"/> is
+        /// latest dataset on the remote storage until <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadataAsync"/> is
         /// called.
         /// </summary>
         /// <returns>List of datasets</returns>
@@ -215,17 +218,24 @@ namespace Amazon.CognitoSync.SyncManager
         {
             return DatasetUtils.GetIdentityId(CognitoCredentials);
         }
-        #endregion
 
-        #region Helper Methods
-
-        internal List<DatasetMetadata> RefreshDatasetMetadataHelper()
+        /// <summary>
+        /// Refreshes dataset metadata. Dataset metadata is pulled from remote
+        /// storage and stored in local storage. Their record data isn't pulled down
+        /// until you sync each dataset.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///     A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException">Thrown when fail to fresh dataset metadata</exception>
+        public async Task<List<DatasetMetadata>> RefreshDatasetMetadataAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            List<DatasetMetadata> response = Remote.GetDatasetMetadata();
+            List<DatasetMetadata> response = await Remote.GetDatasetMetadata(cancellationToken);
             Local.UpdateDatasetMetadata(GetIdentityId(), response);
             return response;
         }
 
         #endregion
+
     }
 }

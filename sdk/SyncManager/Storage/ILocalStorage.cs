@@ -115,6 +115,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary> 
         /// <param name="identityId">Identity id.</param>
         /// <param name="datasetName">Dataset name.</param>
+        /// <param name="records">A list of remote records to compare with</param>
         /// <param name="localRecords">A list of records to check for changes.</param>
         void ConditionallyPutRecords(String identityId, String datasetName,List<Record> records, List<Record> localRecords);
 

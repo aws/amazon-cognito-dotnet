@@ -17,6 +17,8 @@
 
 using System.Collections.Generic;
 using Amazon.Runtime;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Amazon.CognitoSync.SyncManager
 {
@@ -31,8 +33,11 @@ namespace Amazon.CognitoSync.SyncManager
         /// <summary>
         /// Gets a list of <see cref="DatasetMetadata"/>
         /// </summary>
+        /// <param name="cancellationToken">
+        ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        List<DatasetMetadata> GetDatasetMetadata();
+        Task<List<DatasetMetadata>> GetDatasetMetadata(CancellationToken cancellationToken);
 
         #endregion
 
@@ -43,8 +48,12 @@ namespace Amazon.CognitoSync.SyncManager
         /// Retrieves the metadata of a dataset.
         /// </summary>
         /// <param name="datasetName">Dataset name.</param>
+        /// 
+        /// <param name="cancellationToken">
+        ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        DatasetMetadata GetDatasetMetadata(string datasetName);
+        Task<DatasetMetadata> GetDatasetMetadata(string datasetName, CancellationToken cancellationToken);
         #endregion
 
 
@@ -59,8 +68,11 @@ namespace Amazon.CognitoSync.SyncManager
         /// <returns>A list of records which have been updated since lastSyncCount.</returns>
         /// <param name="datasetName">Dataset name.</param>
         /// <param name="lastSyncCount">Last sync count.</param>
+        /// <param name="cancellationToken">
+        ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataStorageException"></exception>
-        DatasetUpdates ListUpdates(string datasetName, long lastSyncCount);
+        Task<DatasetUpdates> ListUpdates(string datasetName, long lastSyncCount, CancellationToken cancellationToken);
         #endregion
 
 
@@ -76,9 +88,12 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="datasetName">Dataset name.</param>
         /// <param name="records">Records.</param>
         /// <param name="syncSessionToken">Sync session token.</param>
+        /// <param name="cancellationToken">
+        ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DataConflictException"></exception>
-        List<Record> PutRecords(string datasetName, List<Record> records, string syncSessionToken);
+        Task<List<Record>> PutRecords(string datasetName, List<Record> records, string syncSessionToken, CancellationToken cancellationToken);
         #endregion
 
 
@@ -88,8 +103,11 @@ namespace Amazon.CognitoSync.SyncManager
         /// Deletes a dataset.
         /// </summary>
         /// <param name="datasetName">Dataset name.</param>
+        /// <param name="cancellationToken">
+        ///  A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
         /// <exception cref="Amazon.CognitoSync.SyncManager.DatasetNotFoundException"></exception>
-        void DeleteDataset(string datasetName);
+        Task DeleteDataset(string datasetName, CancellationToken cancellationToken);
 
         #endregion
 

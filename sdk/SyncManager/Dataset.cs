@@ -22,6 +22,7 @@ using Amazon.Runtime.Internal.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace Amazon.CognitoSync.SyncManager
@@ -323,11 +324,10 @@ namespace Amazon.CognitoSync.SyncManager
             if (queuedSync)
             {
                 queuedSync = false;
-                SynchronizeHelper();
             }
         }
 
-        internal void SynchronizeHelper()
+        internal async Task SynchronizeHelper(CancellationToken cancellationToken)
         {
             try
             {
@@ -345,7 +345,7 @@ namespace Amazon.CognitoSync.SyncManager
                 waitingForConnectivity = false;
 
                 //make a call to fetch the identity id before the synchronization starts
-                CognitoCredentials.GetIdentityId();
+                await CognitoCredentials.GetIdentityIdAsync().ConfigureAwait(false);
 
                 // there could be potential merges that could have happened due to reparenting from the previous step,
                 // check and call onDatasetMerged
@@ -367,7 +367,7 @@ namespace Amazon.CognitoSync.SyncManager
                     return;
                 }
 
-                RunSyncOperation(MAX_RETRY);
+                RunSyncOperation(MAX_RETRY,cancellationToken);
             }
             catch (Exception e)
             {
@@ -400,7 +400,7 @@ namespace Amazon.CognitoSync.SyncManager
             return Local.GetModifiedRecords(GetIdentityId(), DatasetName);
         }
 
-        private void RunSyncOperation(int retry)
+        private async void RunSyncOperation(int retry, CancellationToken cancellationToken)
         {
 
             long lastSyncCount = Local.GetLastSyncCount(GetIdentityId(), DatasetName);
@@ -410,7 +410,7 @@ namespace Amazon.CognitoSync.SyncManager
             {
                 try
                 {
-                    Remote.DeleteDataset(DatasetName);
+                    await Remote.DeleteDataset(DatasetName, cancellationToken);
                 }
                 catch (DatasetNotFoundException)
                 {
@@ -435,7 +435,7 @@ namespace Amazon.CognitoSync.SyncManager
             DatasetUpdates datasetUpdates = null;
             try
             {
-                datasetUpdates = Remote.ListUpdates(DatasetName, lastSyncCount);
+                datasetUpdates = await Remote.ListUpdates(DatasetName, lastSyncCount,cancellationToken);
             }
             catch (Exception listUpdatesException)
             {
@@ -457,7 +457,7 @@ namespace Amazon.CognitoSync.SyncManager
                     }
                     else
                     {
-                        this.RunSyncOperation(--retry);
+                        this.RunSyncOperation(--retry,cancellationToken);
                     }
                     return;
                 }
@@ -570,7 +570,7 @@ namespace Amazon.CognitoSync.SyncManager
 
                 try
                 {
-                    List<Record> result = Remote.PutRecords(DatasetName, localChanges, datasetUpdates.SyncSessionToken);
+                    List<Record> result = await Remote.PutRecords(DatasetName, localChanges, datasetUpdates.SyncSessionToken,cancellationToken);
 
                     // update local meta data
                     Local.ConditionallyPutRecords(GetIdentityId(), DatasetName, result, localChanges);
@@ -612,7 +612,7 @@ namespace Amazon.CognitoSync.SyncManager
                         {
                             Local.UpdateLastSyncCount(GetIdentityId(), DatasetName, maxPatchSyncCount);
                         }
-                        this.RunSyncOperation(--retry);
+                        this.RunSyncOperation(--retry,cancellationToken);
                     }
                     return;
                 }

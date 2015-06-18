@@ -480,9 +480,16 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        public void ConditionallyPutRecords(String identityId, String datasetName, List<Record> records,
-
-                List<Record> localRecords)
+        /// <summary>
+        /// Puts a list of raw records into that dataset if 
+        /// the local version hasn't changed (to be used in 
+        /// synchronizations). 
+        /// </summary> 
+        /// <param name="identityId">Identity id.</param>
+        /// <param name="datasetName">Dataset name.</param>
+        /// /// <param name="records">A list of remote records to compare with</param>
+        /// <param name="localRecords">A list of records to check for changes.</param>
+        public void ConditionallyPutRecords(String identityId, String datasetName, List<Record> records, List<Record> localRecords)
         {
             /*
              * Grab an instance of the record from the local store with the remote change's 

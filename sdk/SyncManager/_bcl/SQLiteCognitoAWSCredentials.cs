@@ -57,6 +57,10 @@ namespace Amazon.CognitoSync.SyncManager
 
         private static readonly String IDENTITY_ID_CACHE_KEY = "CognitoIdentity:IdentityId";
 
+        /// <summary>
+        /// Caches the identity id retrieved from Cognito. 
+        /// </summary>
+        /// <param name="identityId">The Cognito identity id to cache</param>
         public override void CacheIdentityId(string identityId)
         {
             base.CacheIdentityId(identityId);
@@ -66,6 +70,9 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// Clears the currently identity id from the cache.
+        /// </summary>
         public override void ClearIdentityCache()
         {
             base.ClearIdentityCache();
@@ -75,6 +82,10 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
+        /// <summary>
+        /// Gets the previously cached the identity id retrieved from Cognito. 
+        /// </summary>
+        /// <returns>The previously cached identity id</returns>
         public override string GetCachedIdentityId()
         {
             string identityId = null;
