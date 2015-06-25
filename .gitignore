@@ -15,13 +15,11 @@
 **/NuGet.exe
 **/buildlogs/
 
-sdk/packages/**
-sdk/test/PCLTests/AndroidTests/packages/**
-
-Deployment/**
-DocDeployment/**
-
 **/*.userprefs
-/sdk/obj
-/sdk/bin
+/sdk/src/obj
+/sdk/src/bin
 /packages
+/sdk/packages
+/sdk/test/CrossPlatformTests/AndroidApp/Assets/credentials.json
+/sdk/test/CrossPlatformTests/CommonTests/Resources/settings.json
+/sdk/.nuget
