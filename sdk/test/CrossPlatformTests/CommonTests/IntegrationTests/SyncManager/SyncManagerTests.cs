@@ -35,8 +35,8 @@ namespace CommonTests.IntegrationTests.SyncManager
         }
 
         // Facebook information required to run Facebook tests
-        public const string FacebookAppId = "809434219126221";
-        public const string FacebookAppSecret = "76cd5a3ad8681a5418a438c48fdecd7b";
+        public const string FacebookAppId = "";
+        public const string FacebookAppSecret = "";
         private const string FacebookProvider = "graph.facebook.com";
         static FacebookUtilities.FacebookCreateUserResponse facebookUser = null;
 
