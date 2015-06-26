@@ -112,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\AWSSDK.Core.3.0.0.3-preview\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\..\..\packages\AWSSDK.Core.3.0.0.4-preview\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SQLitePCL, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">

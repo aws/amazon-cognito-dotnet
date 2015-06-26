@@ -28,8 +28,8 @@
 	<Target Name="full-build" DependsOnTargets="init;test-sdk;copy-assemblies;save-build"/>
 	
 	<Target Name="restore-nuget">
-		<Message Text="Restore nuget packages from locations %(NugetLocations.Identity)"/>
-		<Exec Command="..\sdk\.nuget\NuGet.exe restore ..\sdk\AWSSDK.SyncManager.sln "/>
+		<Message Text="Restore nuget packages from locations $(nuget_location)"/>
+		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\AWSSDK.SyncManager.sln "/>
 	</Target>
 	
 	<Target Name="build-sdk" DependsOnTargets="restore-nuget;">
