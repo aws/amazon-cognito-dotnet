@@ -9,6 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <TextBlock Name="textBlock"
+                   Height="600"
+                   Margin="10,10,10,10"
+                   TextWrapping="Wrap"
+                   Width="380"
+                   VerticalAlignment="Top"
+                   />
     </Grid>
 </Page>

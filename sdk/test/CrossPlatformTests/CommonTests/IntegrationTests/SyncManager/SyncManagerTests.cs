@@ -57,9 +57,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         {
             RunAsSync(async () =>
             {
-
-                var applicationInfo = ServiceFactory.Instance.GetService<IApplicationInfo>();
-                string dbPath = Path.Combine(applicationInfo.SpecialFolder, DB_FILE_NAME);
+                string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
                 if (poolid != null)
                     await DeleteIdentityPool(poolid).ConfigureAwait(false);
@@ -89,6 +87,16 @@ namespace CommonTests.IntegrationTests.SyncManager
                     }
                 }
             });
+        }
+
+        [OneTimeSetUp]
+        public void InitializeLogger()
+        {
+            var logConfig = AWSConfigs.LoggingConfig;
+            logConfig.LogMetrics = true;
+            logConfig.LogResponses = ResponseLoggingOption.Always;
+            logConfig.LogTo = LoggingOptions.SystemDiagnostics;
+            logConfig.LogMetricsFormat = LogMetricsFormatOption.JSON;
         }
 
         #endregion

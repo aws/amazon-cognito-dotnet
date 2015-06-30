@@ -56,8 +56,8 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 #if __IOS_
             SQLitePCL.CurrentPlatform.Init()
 #endif
-            var applicationInfo = ServiceFactory.Instance.GetService<IApplicationInfo>();
-            string dbPath = Path.Combine(applicationInfo.SpecialFolder, DB_FILE_NAME);
+            
+            string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
             connection = new SQLiteConnection(dbPath);
 

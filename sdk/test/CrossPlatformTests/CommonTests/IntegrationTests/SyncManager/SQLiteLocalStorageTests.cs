@@ -24,8 +24,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         [TearDown]
         public void Cleaup()
         {
-            var applicationInfo = ServiceFactory.Instance.GetService<IApplicationInfo>();
-            string dbPath = Path.Combine(applicationInfo.SpecialFolder, DB_FILE_NAME);
+            string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
             //drop all the tables from the db
             using (SQLiteConnection connection = new SQLiteConnection(dbPath))
@@ -46,8 +45,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         [Test(TestOf = typeof(AmazonCognitoSyncClient))]
         public void SqliteInitializationTest()
         {
-            var applicationInfo = ServiceFactory.Instance.GetService<IApplicationInfo>();
-            string dbPath = Path.Combine(applicationInfo.SpecialFolder, DB_FILE_NAME);
+            string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
             using (SQLiteLocalStorage storage = new SQLiteLocalStorage())
             { }
@@ -75,9 +73,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         [Test(TestOf = typeof(AmazonCognitoSyncClient))]
         public void SQliteDatasetsTests()
         {
-            var applicationInfo = ServiceFactory.Instance.GetService<IApplicationInfo>();
-            string dbPath = Path.Combine(applicationInfo.SpecialFolder, DB_FILE_NAME);
-
+            string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
             string randomId = "old";
             string randomDataset = Guid.NewGuid().ToString();
