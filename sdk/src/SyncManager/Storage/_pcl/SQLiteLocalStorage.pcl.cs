@@ -53,10 +53,10 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         private void SetupDatabase()
         {
-#if __IOS_
-            SQLitePCL.CurrentPlatform.Init()
+#if __IOS__
+            SQLitePCL.CurrentPlatform.Init();
 #endif
-            
+
             string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
 
             connection = new SQLiteConnection(dbPath);
@@ -239,7 +239,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             lock (sqlite_lock)
             {
-                string checkRecordExistsQuery = "SELECT count(*) FROM " + SQLiteLocalStorage.TABLE_RECORDS +
+                string checkRecordExistsQuery = "SELECT count(*) FROM " + SQLiteLocalStorage.TABLE_RECORDS + " WHERE " +
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
                     RecordColumns.DATASET_NAME + " = @whereDatasetName AND " +
                     RecordColumns.KEY + " = @whereKey ";
@@ -317,7 +317,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         private static DatasetMetadata SqliteStmtToDatasetMetadata(ISQLiteStatement stmt)
         {
             return new DatasetMetadata(
-                stmt.GetText(DatasetColumns.DATASET_NAME),
+                stmt.DataType(RecordColumns.DATASET_NAME) == SQLiteType.NULL ?string.Empty:stmt.GetText(DatasetColumns.DATASET_NAME),
                 new DateTime(long.Parse(stmt.GetText(DatasetColumns.CREATION_TIMESTAMP))),
                 new DateTime(long.Parse(stmt.GetText(DatasetColumns.LAST_MODIFIED_TIMESTAMP))),
                 stmt.DataType(DatasetColumns.LAST_MODIFIED_BY) == SQLiteType.NULL ? string.Empty : stmt.GetText(DatasetColumns.LAST_MODIFIED_BY),
@@ -329,7 +329,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         private static Record SqliteStmtToRecord(ISQLiteStatement stmt)
         {
             return new Record(stmt.GetText(RecordColumns.KEY),
-                stmt.GetText(RecordColumns.VALUE),
+                               stmt.GetText(RecordColumns.VALUE),
                                stmt.GetInteger(RecordColumns.SYNC_COUNT),
                                new DateTime(long.Parse(stmt.GetText(RecordColumns.LAST_MODIFIED_TIMESTAMP))),
                                stmt.DataType(RecordColumns.LAST_MODIFIED_BY) == SQLiteType.NULL ? string.Empty : stmt.GetText(RecordColumns.LAST_MODIFIED_BY),

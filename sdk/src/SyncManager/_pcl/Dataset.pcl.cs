@@ -34,7 +34,8 @@ namespace Amazon.CognitoSync.SyncManager
 
         internal Dataset()
         {
-            reachability = new NetworkReachability();
+            reachability = ServiceFactory.Instance.GetService<INetworkReachability>();
+            reachability.NetworkReachabilityChanged += HandleNetworkChange;
         }
 
         #region Dispose Methods
@@ -83,7 +84,6 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         public async void SynchronizeOnConnectivity(CancellationToken cancellationToken = default(CancellationToken))
         {
-            NetworkReachability reachability = new NetworkReachability();
             if (reachability.NetworkStatus != NetworkStatus.NotReachable)
             {
                 await SynchronizeHelperAsync(cancellationToken).ConfigureAwait(false);
