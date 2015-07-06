@@ -61,6 +61,6 @@
     
     <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.dll" target="lib\Xamarin.iOS10" />
     <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.xml" target="lib\Xamarin.iOS10" />
-    
+    <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.pdb" target="lib\Xamarin.iOS10" />
   </files>
 </package>
