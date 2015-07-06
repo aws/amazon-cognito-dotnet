@@ -24,3 +24,4 @@
 /sdk/test/CrossPlatformTests/CommonTests/Resources/settings.json
 /sdk/.nuget
 /Deployment
+/sdk/sample/TODOList/packages

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ApplicationName">TODOList</string>
-  <string name="app_id">809434219126221</string>
+  <string name="app_id"></string>
   <string name="app_name">TODOList</string>
   <string name="cancelled">Cancelled</string>
   <string name="permission_not_granted">Unable to perform selected action because permissions were not granted.</string>

@@ -26,7 +26,7 @@ namespace TODOList.iOS
         UIViewController viewController;
 
 
-        string appId = "809434219126221";
+        string appId = "";
         string appName = "TODOList";
 
         //
