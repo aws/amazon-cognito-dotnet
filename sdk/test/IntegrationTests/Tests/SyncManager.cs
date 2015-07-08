@@ -1,3 +1,4 @@
+//#define INCLUDE_FACEBOOK_TESTS
 
 using Amazon;
 using Amazon.CognitoIdentity;
@@ -15,11 +16,15 @@ using System.Data.SQLite;
 using System.Threading;
 using System.Threading.Tasks;
 
+
+
 namespace AWSSDK_DotNet.IntegrationTests.Tests
 {
     [TestClass]
     public class SyncManager
     {
+        //tests that require facebook app id and secret are currently disabled.
+
 
         //identity related components
         public static int MaxResults = 15;
@@ -35,12 +40,13 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
             Unauthenticated = 2
         }
 
+#if INCLUDE_FACEBOOK_TESTS
         // Facebook information required to run Facebook tests
         public const string FacebookAppId = "";
         public const string FacebookAppSecret = "";
         private const string FacebookProvider = "graph.facebook.com";
         FacebookUtilities.FacebookCreateUserResponse facebookUser = null;
-
+#endif
         private static RegionEndpoint TEST_REGION = RegionEndpoint.USEast1;
 
         private List<string> roleNames = new List<string>();
@@ -64,9 +70,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
 
             CleanupCreatedRoles();
 
+#if INCLUDE_FACEBOOK_TESTS
             if (facebookUser != null)
                 FacebookUtilities.DeleteFacebookUser(facebookUser);
-
+#endif
             //drop all the tables from the db
             using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_NAME)))
             {
@@ -92,8 +99,8 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
             }
         }
 
-        [TestMethod]
-        [TestCategory("SyncManager")]
+        //[TestMethod]
+        //[TestCategory("SyncManager")]
         public void AuthenticatedCredentialsTest()
         {
             CognitoAWSCredentials authCred = AuthCredentials;
@@ -186,8 +193,8 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         /// <summary>
         /// Test Case: 
         /// </summary>
-        [TestMethod]
-        [TestCategory("SyncManager")]
+        //[TestMethod]
+        //[TestCategory("SyncManager")]
         public void MergeTest()
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -490,11 +497,12 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     Thread.Sleep(2000);
                 }
 
+#if INCLUDE_FACEBOOK_TESTS
                 facebookUser = FacebookUtilities.CreateFacebookUser(FacebookAppId, FacebookAppSecret);
 
                 _AuthCredentials = new SQLiteCognitoAWSCredentials(poolid, TEST_REGION);
                 _AuthCredentials.AddLogin(FacebookProvider, facebookUser.AccessToken);
-
+#endif
                 //create facebook token
                 return _AuthCredentials;
             }
@@ -533,8 +541,11 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
             var request = new CreateIdentityPoolRequest
             {
                 IdentityPoolName = poolName,
-                AllowUnauthenticatedIdentities = true,
+                AllowUnauthenticatedIdentities = true
+#if INCLUDE_FACEBOOK_TESTS
+                ,
                 SupportedLoginProviders = new Dictionary<string, string>() { { FacebookProvider, FacebookAppId } }
+#endif
             };
 
             var createPoolResult = Client.CreateIdentityPool(request);
@@ -726,12 +737,16 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     RoleName = roleName
                 });
 
+                Thread.Sleep(2000);
+
                 identityClient.PutRolePolicy(new Amazon.IdentityManagement.Model.PutRolePolicyRequest
                 {
                     PolicyDocument = allowPolicy,
                     PolicyName = policyName,
                     RoleName = response.Role.RoleName
                 });
+
+                Thread.Sleep(2000);
 
                 roleArn = response.Role.Arn;
                 roleNames.Add(roleName);
@@ -758,11 +773,12 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     PolicyName = policyName,
                     RoleName = roleName
                 });
-
+                Thread.Sleep(2000);
                 identityClient.DeleteRole(new Amazon.IdentityManagement.Model.DeleteRoleRequest
                 {
                     RoleName = roleName
                 });
+                Thread.Sleep(2000);
             }
         }
 
