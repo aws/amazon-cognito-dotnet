@@ -28,6 +28,7 @@ using System.Text;
 
 using Amazon.Runtime.Internal.Util;
 using Amazon.Util;
+using System.Globalization;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
@@ -69,21 +70,21 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region table datastructure
 
-        internal static readonly string TABLE_DATASETS = "datasets";
-        internal static readonly string TABLE_RECORDS = "records";
+        internal const string TABLE_DATASETS = "datasets";
+        internal const string TABLE_RECORDS = "records";
 
         static class DatasetColumns
         {
-            internal static readonly string IDENTITY_ID = "identity_id";
-            internal static readonly string DATASET_NAME = "dataset_name";
-            internal static readonly string CREATION_TIMESTAMP = "creation_timestamp";
-            internal static readonly string LAST_MODIFIED_TIMESTAMP = "last_modified_timestamp";
-            internal static readonly string LAST_MODIFIED_BY = "last_modified_by";
-            internal static readonly string STORAGE_SIZE_BYTES = "storage_size_bytes";
-            internal static readonly string RECORD_COUNT = "record_count";
-            internal static readonly string LAST_SYNC_COUNT = "last_sync_count";
-            internal static readonly string LAST_SYNC_TIMESTAMP = "last_sync_timestamp";
-            internal static readonly string LAST_SYNC_RESULT = "last_sync_result";
+            internal const string IDENTITY_ID = "identity_id";
+            internal const string DATASET_NAME = "dataset_name";
+            internal const string CREATION_TIMESTAMP = "creation_timestamp";
+            internal const string LAST_MODIFIED_TIMESTAMP = "last_modified_timestamp";
+            internal const string LAST_MODIFIED_BY = "last_modified_by";
+            internal const string STORAGE_SIZE_BYTES = "storage_size_bytes";
+            internal const string RECORD_COUNT = "record_count";
+            internal const string LAST_SYNC_COUNT = "last_sync_count";
+            internal const string LAST_SYNC_TIMESTAMP = "last_sync_timestamp";
+            internal const string LAST_SYNC_RESULT = "last_sync_result";
             internal static readonly string[] ALL = new string[] {
                 IDENTITY_ID, DATASET_NAME,
                 CREATION_TIMESTAMP, LAST_MODIFIED_TIMESTAMP, LAST_MODIFIED_BY,
@@ -155,15 +156,15 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         static class RecordColumns
         {
-            internal static readonly string IDENTITY_ID = "identity_id";
-            internal static readonly string DATASET_NAME = "dataset_name";
-            internal static readonly string KEY = "key";
-            internal static readonly string VALUE = "value";
-            internal static readonly string SYNC_COUNT = "sync_count";
-            internal static readonly string LAST_MODIFIED_TIMESTAMP = "last_modified_timestamp";
-            internal static readonly string LAST_MODIFIED_BY = "last_modified_by";
-            internal static readonly string DEVICE_LAST_MODIFIED_TIMESTAMP = "device_last_modified_timestamp";
-            internal static readonly string MODIFIED = "modified";
+            internal const string IDENTITY_ID = "identity_id";
+            internal const string DATASET_NAME = "dataset_name";
+            internal const string KEY = "key";
+            internal const string VALUE = "value";
+            internal const string SYNC_COUNT = "sync_count";
+            internal const string LAST_MODIFIED_TIMESTAMP = "last_modified_timestamp";
+            internal const string LAST_MODIFIED_BY = "last_modified_by";
+            internal const string DEVICE_LAST_MODIFIED_TIMESTAMP = "device_last_modified_timestamp";
+            internal const string MODIFIED = "modified";
             internal static readonly string[] ALL = new string[] {
                 IDENTITY_ID, DATASET_NAME, KEY, VALUE, SYNC_COUNT, LAST_MODIFIED_TIMESTAMP,
                 LAST_MODIFIED_BY, DEVICE_LAST_MODIFIED_TIMESTAMP, MODIFIED
@@ -262,6 +263,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// </summary>
         /// <param name="identityId">Identity Id</param>
         /// <param name="datasetName">Dataset name.</param>
+#if BCL
+        [System.Security.SecuritySafeCritical]
+#endif
         public void CreateDataset(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -394,8 +398,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             lock (sqlite_lock)
             {
-                List<DatasetMetadata> datasets = new List<DatasetMetadata>();
-
                 string query = DatasetColumns.BuildQuery(
                 DatasetColumns.IDENTITY_ID + " = @whereIdentityId "
                 );
@@ -411,6 +413,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// <param name="identityId">Identity identifier.</param>
         /// <param name="datasetName">Dataset name.</param>
         /// <exception cref="DataStorageException"></exception>
+#if BCL
+        [System.Security.SecuritySafeCritical]
+#endif
         public DatasetMetadata GetDatasetMetadata(string identityId, string datasetName)
         {
             lock (sqlite_lock)
@@ -454,8 +459,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             lock (sqlite_lock)
             {
-                List<Record> records = new List<Record>();
-
                 string query =
                 RecordColumns.BuildQuery(
                     RecordColumns.IDENTITY_ID + " = @whereIdentityId AND " +
@@ -674,7 +677,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                               + " WHERE " + DatasetColumns.IDENTITY_ID + " = @" + DatasetColumns.IDENTITY_ID
                               + " AND " + DatasetColumns.DATASET_NAME + " = @old" + DatasetColumns.DATASET_NAME + " ";
 
-                        string timestamp = AWSSDKUtils.ConvertToUnixEpochMilliSeconds(DateTime.UtcNow).ToString();
+                        string timestamp = AWSSDKUtils.ConvertToUnixEpochMilliSeconds(DateTime.UtcNow).ToString(CultureInfo.InvariantCulture);
 
                         Statement updateDatasetStatement = new Statement()
                         {
@@ -905,6 +908,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+#if BCL
+        [System.Security.SecuritySafeCritical]
+#endif
         private bool UpdateDatasetMetadataInternal(string identityId, DatasetMetadata metadata)
         {
             lock (sqlite_lock)

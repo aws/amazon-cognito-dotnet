@@ -27,7 +27,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
     /// <summary>
     /// A Utility class for all the dataset operations
     /// </summary>
-    public class DatasetUtils
+    public static class DatasetUtils
     {
         /// <summary>
         /// Valid dataset name pattern

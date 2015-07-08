@@ -14,6 +14,7 @@ namespace CustomTasks
     {
         public string Assemblies { get; set; }
         public string FxCopProject { get; set; }
+        public string BinSuffix { get; set; }
 
         public override bool Execute()
         {
@@ -21,15 +22,17 @@ namespace CustomTasks
                 throw new ArgumentNullException("Assemblies");
             if (string.IsNullOrEmpty(FxCopProject))
                 throw new ArgumentNullException("FxCopProject");
+            if (string.IsNullOrEmpty(BinSuffix))
+                throw new ArgumentNullException("BinSuffix");
 
             Assemblies = Path.GetFullPath(Assemblies);
             Log.LogMessage("Assemblies = " + Assemblies);
 
             FxCopProject = Path.GetFullPath(FxCopProject);
             Log.LogMessage("FxCopProject = " + FxCopProject);
-			
+
             Log.LogMessage("Updating project...");
-            FxCop.UpdateFxCopProject(Assemblies, FxCopProject);
+            FxCop.UpdateFxCopProject(Assemblies, FxCopProject, BinSuffix);
             Log.LogMessage("Project updated");
 
             return true;
@@ -38,82 +41,42 @@ namespace CustomTasks
 
     public static class FxCop
     {
-        public static void UpdateFxCopProject(string assembliesFolder, string fxCopProjectPath)
+        public static void UpdateFxCopProject(string assembliesFolder, string fxCopProjectPath, string binSuffix)
         {
             var allAssemblies = Directory.GetFiles(assembliesFolder, "*.dll").ToList();
-
-            // move core assembly to the end of the list
-            var coreAssembly = allAssemblies.Single(a => a.IndexOf(CoreAssemblyName, StringComparison.OrdinalIgnoreCase) >= 0);
-            allAssemblies.Remove(coreAssembly);
-            allAssemblies.Add(coreAssembly);
 
             var doc = new XmlDocument();
             doc.Load(fxCopProjectPath);
 
+            var referenceDirectoriesNode = doc.SelectSingleNode(AssemblyReferenceDirectoriesXpath);
+
             var targetsNode = doc.SelectSingleNode(TargetsXpath);
-            RemoveAllTargets(doc, targetsNode);
+            RemoveAllNodes(doc, targetsNode, TargetXpath);
+            ResetReferenceDirectories(doc, referenceDirectoriesNode, DirectoriesXpath);
 
             foreach (var assembly in allAssemblies)
             {
                 var assemblyName = Path.GetFileName(assembly).ToLower();
-                var isCore = string.Equals(CoreAssemblyName, assemblyName, StringComparison.OrdinalIgnoreCase);
+                var assemblyFolderName = assemblyName.Split('.')[1];
 
                 var newTarget = AddChildNode(targetsNode, "Target");
                 AddAttribute(newTarget, "Name", MakeRelativePath(assembly));
                 AddAttribute(newTarget, "Analyze", "True");
 
-                if (isCore)
-                {
-                    AddCoreAssembly(coreAssembly, newTarget);
-                }
-                else
-                {
-                    /*
-                    <Target Name="$(ProjectDir)/Deployment/assemblies/net35/AWSSDK.AutoScaling.dll" Analyze="True" AnalyzeAllChildren="True" />
-                    */
-                    AddAttribute(newTarget, "AnalyzeAllChildren", "True");
-                }
+                var dirNode = AddChildNode(referenceDirectoriesNode, "Directory");
+
+                /*
+                <Target Name="$(ProjectDir)/Deployment/assemblies/net35/AWSSDK.SyncManager.dll" Analyze="True" AnalyzeAllChildren="True" />
+                */
+                AddAttribute(newTarget, "AnalyzeAllChildren", "True");
+
+                // Add assembly reference directory for each service
+                // <Directory>$(ProjectDir)/src/bin/Release/net35/</Directory>
+                dirNode.InnerText = string.Format("$(ProjectDir)/src/bin/Release/{0}/", binSuffix);
+
             }
             doc.Save(fxCopProjectPath);
         }
-
-        private static void AddCoreAssembly(string coreAssemblyPath, XmlNode newTarget)
-        {
-            AddAttribute(newTarget, "AnalyzeAllChildren", "False");
-
-            var assemblyName = Path.GetFileName(coreAssemblyPath).ToLower();
-            var coreAssembly = Assembly.LoadFrom(coreAssemblyPath);
-            /*
-  <Target Name="$(ProjectDir)/Deployment/assemblies/net35/AWSSDK.Core.dll" Analyze="True" AnalyzeAllChildren="False">
-   <Modules AnalyzeAllChildren="False">
-    <Module Name="awssdk.core.dll" Analyze="True" AnalyzeAllChildren="False">
-     <Namespaces AnalyzeAllChildren="False">
-      <Namespace Name="" Analyze="True" AnalyzeAllChildren="True" />
-                */
-
-            var modulesNode = AddChildNode(newTarget, "Modules");
-            AddAttribute(modulesNode, "AnalyzeAllChildren", "False");
-
-            var moduleNode = AddChildNode(modulesNode, "Module");
-            AddAttribute(moduleNode, "Name", assemblyName);
-            AddAttribute(moduleNode, "Analyze", "True");
-            AddAttribute(moduleNode, "AnalyzeAllChildren", "False");
-
-            var namespacesNode = AddChildNode(moduleNode, "Namespaces");
-            AddAttribute(namespacesNode, "AnalyzeAllChildren", "False");
-
-            var namespaces = GetNamespacesToExamine(coreAssembly);
-            foreach (var ns in namespaces.OrderBy(k => k, StringComparer.Ordinal))
-            {
-                var namespaceNode = AddChildNode(namespacesNode, "Namespace");
-                AddAttribute(namespaceNode, "Name", ns);
-                AddAttribute(namespaceNode, "Analyze", "True");
-                AddAttribute(namespaceNode, "AnalyzeAllChildren", "True");
-            }
-            var resourcesNode = AddChildNode(moduleNode, "Resources");
-            AddAttribute(resourcesNode, "AnalyzeAllChildren", "True");
-        }
-
 
         public static HashSet<string> NamespacePrefixesToSkip = new HashSet<string>(StringComparer.Ordinal)
         {
@@ -123,6 +86,8 @@ namespace CustomTasks
         };
         public const string NamespacesXpath = "FxCopProject/Targets/Target/Modules/Module/Namespaces";
         public const string TargetsXpath = "FxCopProject/Targets";
+        public const string AssemblyReferenceDirectoriesXpath = "FxCopProject/Targets/AssemblyReferenceDirectories";
+        public const string DirectoriesXpath = "FxCopProject/Targets/AssemblyReferenceDirectories/Directory";
         public const string TargetXpath = "FxCopProject/Targets/Target";
         public const string CoreAssemblyName = "AWSSDK.Core.dll";
 
@@ -180,12 +145,17 @@ namespace CustomTasks
             parent.AppendChild(node);
             return node;
         }
-        private static void RemoveAllTargets(XmlDocument doc, XmlNode targetsNode)
+        private static void RemoveAllNodes(XmlDocument doc, XmlNode targetsNode, string xpath)
         {
-            var allTargetNodes = doc.SelectNodes(TargetXpath);
-            foreach (XmlNode targetNode in allTargetNodes)
-                targetsNode.RemoveChild(targetNode);
+            var matchingNodes = doc.SelectNodes(xpath);
+            foreach (XmlNode node in matchingNodes)
+                targetsNode.RemoveChild(node);
+        }
 
+        private static void ResetReferenceDirectories(XmlDocument doc,
+            XmlNode referenceDirectoriesNode, string xpath)
+        {
+            RemoveAllNodes(doc, referenceDirectoriesNode, xpath);
         }
     }
 }

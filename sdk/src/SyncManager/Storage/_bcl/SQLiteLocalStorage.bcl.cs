@@ -21,21 +21,25 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Globalization;
+using System.Security;
+using System.Security.Permissions;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
+
     public partial class SQLiteLocalStorage : ILocalStorage
     {
 
         //datetime is converted to ticks and stored as string
-
         private SQLiteConnection connection;
 
         #region dispose methods
         /// <summary>
         /// Releases the resources consumed by this object if disposing is true. 
         /// </summary>
-        public virtual void Dispose(bool disposing)
+        [SecuritySafeCritical]
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -47,7 +51,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region helper methods
-
+        [SecuritySafeCritical]
         private void SetupDatabase()
         {
 
@@ -55,7 +59,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             if (!File.Exists(DB_FILE_NAME))
                 SQLiteConnection.CreateFile(DB_FILE_NAME);
 
-            connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_NAME));
+            connection = new SQLiteConnection(string.Format(CultureInfo.InvariantCulture, "Data Source={0};Version=3;", DB_FILE_NAME));
             connection.Open();
             string createDatasetTable = "CREATE TABLE IF NOT EXISTS " + TABLE_DATASETS + "("
                         + DatasetColumns.IDENTITY_ID + " TEXT NOT NULL,"
@@ -66,7 +70,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                         + DatasetColumns.STORAGE_SIZE_BYTES + " INTEGER DEFAULT 0,"
                         + DatasetColumns.RECORD_COUNT + " INTEGER DEFAULT 0,"
                         + DatasetColumns.LAST_SYNC_COUNT + " INTEGER NOT NULL DEFAULT 0,"
-                        + DatasetColumns.LAST_SYNC_TIMESTAMP + " INTEGER DEFAULT '0',"
+                        + DatasetColumns.LAST_SYNC_TIMESTAMP + " TEXT DEFAULT '0',"
                         + DatasetColumns.LAST_SYNC_RESULT + " TEXT,"
                         + "UNIQUE (" + DatasetColumns.IDENTITY_ID + ", "
                         + DatasetColumns.DATASET_NAME + ")"
@@ -104,6 +108,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [SecuritySafeCritical]
         internal void CreateDatasetHelper(string query, params object[] parameters)
         {
             using (var command = new SQLiteCommand(connection))
@@ -114,6 +119,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [System.Security.SecurityCritical]
         internal DatasetMetadata GetMetadataHelper(string identityId, string datasetName)
         {
             string query = DatasetColumns.BuildQuery(
@@ -138,6 +144,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return metadata;
         }
 
+        [SecuritySafeCritical]
         internal List<DatasetMetadata> GetDatasetMetadataHelper(string query, params string[] parameters)
         {
             List<DatasetMetadata> datasetMetadataList = new List<DatasetMetadata>();
@@ -157,6 +164,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return datasetMetadataList;
         }
 
+        [SecuritySafeCritical]
         internal Record GetRecordHelper(string query, params string[] parameters)
         {
             Record record = null;
@@ -175,6 +183,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return record;
         }
 
+        [SecuritySafeCritical]
         internal List<Record> GetRecordsHelper(string query, params string[] parameters)
         {
             List<Record> records = new List<Record>();
@@ -193,6 +202,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return records;
         }
 
+        [SecuritySafeCritical]
         internal long GetLastSyncCountHelper(string query, params string[] parameters)
         {
             long lastSyncCount = 0;
@@ -205,13 +215,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     if (reader.HasRows && reader.Read())
                     {
                         var nvc = reader.GetValues();
-                        lastSyncCount = long.Parse(nvc[DatasetColumns.LAST_SYNC_COUNT]);
+                        lastSyncCount = long.Parse(nvc[DatasetColumns.LAST_SYNC_COUNT], CultureInfo.InvariantCulture);
                     }
                 }
             }
             return lastSyncCount;
         }
 
+        [SecuritySafeCritical]
         internal List<Record> GetModifiedRecordsHelper(string query, params object[] parameters)
         {
             List<Record> records = new List<Record>();
@@ -230,6 +241,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return records;
         }
 
+        [SecuritySafeCritical]
         internal void ExecuteMultipleHelper(List<Statement> statements)
         {
             using (var transaction = connection.BeginTransaction())
@@ -248,6 +260,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [SecuritySafeCritical]
         internal void UpdateLastSyncCountHelper(string query, params object[] parameters)
         {
             using (var command = connection.CreateCommand())
@@ -258,6 +271,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [SecuritySafeCritical]
         internal void UpdateLastModifiedTimestampHelper(string query, params object[] parameters)
         {
             using (var command = connection.CreateCommand())
@@ -268,6 +282,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [SecuritySafeCritical]
         internal void UpdateOrInsertRecord(string identityId, string datasetName, Record record)
         {
             lock (sqlite_lock)
@@ -330,6 +345,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         #endregion
 
         #region private methods
+        [SecuritySafeCritical]
         private static void BindData(SQLiteCommand command, params object[] parameters)
         {
             string query = command.CommandText;
@@ -339,7 +355,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 var date = parameters[count] as DateTime?;
                 if (date.HasValue)
                 {
-                    command.Parameters.Add(new SQLiteParameter(match.Groups[1].Value, date.Value.Ticks));
+                    command.Parameters.Add(new SQLiteParameter(match.Groups[1].Value, date.Value.Ticks.ToString(CultureInfo.InvariantCulture.NumberFormat)));
                 }
                 else
                 {
@@ -349,26 +365,28 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
+        [SecuritySafeCritical]
         private static DatasetMetadata SqliteStmtToDatasetMetadata(SQLiteDataReader reader)
         {
             var nvc = reader.GetValues();
             return new DatasetMetadata(
                 nvc[DatasetColumns.DATASET_NAME],
-                new DateTime(long.Parse(nvc[DatasetColumns.CREATION_TIMESTAMP])),
-                new DateTime(long.Parse(nvc[DatasetColumns.LAST_MODIFIED_TIMESTAMP])),
+                new DateTime(long.Parse(nvc[DatasetColumns.CREATION_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
+                new DateTime(long.Parse(nvc[DatasetColumns.LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
                 nvc[DatasetColumns.LAST_MODIFIED_BY],
-                long.Parse(nvc[DatasetColumns.STORAGE_SIZE_BYTES]),
-                long.Parse(nvc[DatasetColumns.RECORD_COUNT])
+                long.Parse(nvc[DatasetColumns.STORAGE_SIZE_BYTES], CultureInfo.InvariantCulture.NumberFormat),
+                long.Parse(nvc[DatasetColumns.RECORD_COUNT], CultureInfo.InvariantCulture.NumberFormat)
             );
         }
 
+        [SecuritySafeCritical]
         private static Record SqliteStmtToRecord(SQLiteDataReader reader)
         {
             var nvc = reader.GetValues();
             return new Record(nvc[RecordColumns.KEY], nvc[RecordColumns.VALUE],
-                               int.Parse(nvc[RecordColumns.SYNC_COUNT]), new DateTime(long.Parse(nvc[RecordColumns.LAST_MODIFIED_TIMESTAMP])),
-                               nvc[RecordColumns.LAST_MODIFIED_BY], new DateTime(long.Parse(nvc[RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP])),
-                               int.Parse(nvc[RecordColumns.MODIFIED]) == 1);
+                               int.Parse(nvc[RecordColumns.SYNC_COUNT], CultureInfo.InvariantCulture), new DateTime(long.Parse(nvc[RecordColumns.LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
+                               nvc[RecordColumns.LAST_MODIFIED_BY], new DateTime(long.Parse(nvc[RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
+                               int.Parse(nvc[RecordColumns.MODIFIED], CultureInfo.InvariantCulture) == 1);
         }
         #endregion
 
@@ -379,6 +397,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// </summary>
         /// <param name="key"></param>
         /// <param name="identity"></param>
+        [SecuritySafeCritical]
         public void CacheIdentity(string key, string identity)
         {
             string query = "INSERT INTO kvstore(key,value) values ( @key , @value )";
@@ -395,13 +414,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
+        [SecuritySafeCritical]
         public string GetIdentity(string key)
         {
             string query = "SELECT value FROM kvstore WHERE key = @key ";
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = query;
-                BindData(command,  key);
+                BindData(command, key);
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -415,13 +435,14 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// Delete the cached identity id
         /// </summary>
         /// <param name="key"></param>
+        [SecuritySafeCritical]
         public void DeleteCachedIdentity(string key)
         {
             string query = "delete from kvstore where key = @key ";
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = query;
-                BindData(command,  key);
+                BindData(command, key);
                 command.ExecuteNonQuery();
             }
         }

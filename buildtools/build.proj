@@ -39,7 +39,7 @@
 			Properties="Configuration=Release;AWSKeyFile=$(CustomSnkFileLocation)" />
 	</Target>
  
-	<Target Name="test-sdk" DependsOnTargets="init;build-sdk;run-unit-tests;run-integ-tests" />
+	<Target Name="test-sdk" DependsOnTargets="init;build-sdk;fxcop;run-unit-tests;run-integ-tests" />
 
 	<Target Name="run-unit-tests" DependsOnTargets="init;build-sdk">
 		<Exec Command="$(vstest2013) /Platform:x64 /logger:trx /inIsolation ..\sdk\test\UnitTests\bin\Release\net45\AWSSDK.UnitTests.Net45.dll"/>
@@ -69,8 +69,7 @@
 
 	<Target Name="fxcop" DependsOnTargets="init;copy-assemblies" Condition="Exists('$(fxcopcmdexe)')">
 		<!-- Update FxCop project files -->
-		<UpdateFxCopProject Assemblies="$(Deployment)\assemblies\net35" FxCopProject="..\sdk\SDK-3.5.FxCop" />
-		<UpdateFxCopProject Assemblies="$(Deployment)\assemblies\net45" FxCopProject="..\sdk\SDK-4.5.FxCop" />
+		<UpdateFxCopProject Assemblies="$(Deployment)\assemblies\net45" FxCopProject="..\sdk\SDK-4.5.FxCop" BinSuffix="net45" />
 
 		<!-- Compile custom FxCop rules -->
 		<MSBuild Projects="..\buildtools\CustomFxCopRules\CustomFxCopRules.sln"

@@ -16,6 +16,7 @@
 //
 
 using System;
+using System.Globalization;
 namespace Amazon.CognitoSync.SyncManager
 {
     /// <summary>
@@ -110,7 +111,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format(
+            return string.Format(CultureInfo.InvariantCulture,
                 "DatasetName:[{0}], CreationDate:[{1}], LastModifiedDate:[{2}], LastModifiedBy:[{3}], StorageSizeBytes:[{4}], RecordCount:[{5}]",
                 DatasetName, CreationDate, LastModifiedDate, LastModifiedBy, StorageSizeBytes, RecordCount);
         }

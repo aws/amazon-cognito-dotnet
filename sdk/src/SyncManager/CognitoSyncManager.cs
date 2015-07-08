@@ -99,10 +99,6 @@ namespace Amazon.CognitoSync.SyncManager
                 throw new ArgumentNullException("cognitoCredentials");
             }
 
-            if (string.IsNullOrEmpty(cognitoCredentials.IdentityPoolId))
-            {
-                throw new ArgumentNullException("cognitoCredentials.IdentityPoolId");
-            }
             this.CognitoCredentials = cognitoCredentials;
 
             Local = new SQLiteLocalStorage();
@@ -137,6 +133,7 @@ namespace Amazon.CognitoSync.SyncManager
 
             if (disposing)
             {
+                Remote.Dispose();
                 CognitoCredentials.IdentityChangedEvent -= this.IdentityChanged;
                 _disposed = true;
             }
@@ -161,7 +158,7 @@ namespace Amazon.CognitoSync.SyncManager
         public Dataset OpenOrCreateDataset(string datasetName)
         {
             DatasetUtils.ValidateDatasetName(datasetName);
-            Local.CreateDataset(GetIdentityId(), datasetName);
+            Local.CreateDataset(IdentityId, datasetName);
             return new Dataset(datasetName, CognitoCredentials, Local, Remote);
         }
 
@@ -174,7 +171,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <returns>List of datasets</returns>
         public List<DatasetMetadata> ListDatasets()
         {
-            return Local.GetDatasetMetadata(GetIdentityId());
+            return Local.GetDatasetMetadata(IdentityId);
         }
 
         /// <summary>
@@ -214,9 +211,12 @@ namespace Amazon.CognitoSync.SyncManager
         /// Unknown Identity Will be returned
         /// </summary>
         /// <returns>Identity ID</returns>
-        protected string GetIdentityId()
+        protected string IdentityId
         {
-            return DatasetUtils.GetIdentityId(CognitoCredentials);
+            get
+            {
+                return DatasetUtils.GetIdentityId(CognitoCredentials);
+            }
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Amazon.CognitoSync.SyncManager
         public async Task<List<DatasetMetadata>> RefreshDatasetMetadataAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             List<DatasetMetadata> response = await Remote.GetDatasetMetadataAsync(cancellationToken);
-            Local.UpdateDatasetMetadata(GetIdentityId(), response);
+            Local.UpdateDatasetMetadata(IdentityId, response);
             return response;
         }
 

@@ -18,6 +18,7 @@
 using System;
 
 using Amazon.CognitoSync.SyncManager.Internal;
+using System.Globalization;
 
 namespace Amazon.CognitoSync.SyncManager
 {
@@ -120,9 +121,9 @@ namespace Amazon.CognitoSync.SyncManager
             this._key = key;
             this._value = value;
             this._syncCount = syncCount;
-            this._lastModifiedDate = lastModifiedDate != null? lastModifiedDate.Value.ToUniversalTime() : lastModifiedDate;
+            this._lastModifiedDate = lastModifiedDate != null ? lastModifiedDate.Value.ToUniversalTime() : lastModifiedDate;
             this._lastModifiedBy = lastModifiedBy;
-            this._deviceLastModifiedDate = deviceLastModifiedDate != null? deviceLastModifiedDate.Value.ToUniversalTime() : deviceLastModifiedDate;
+            this._deviceLastModifiedDate = deviceLastModifiedDate != null ? deviceLastModifiedDate.Value.ToUniversalTime() : deviceLastModifiedDate;
             this._modified = modified;
         }
 
@@ -145,7 +146,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format(
+            return string.Format(CultureInfo.InvariantCulture,
                 "Key:[{0}], Value:[{1}], SyncCount:[{2}], LastModifiedDate:[{3}], LastModifiedBy:[{4}], DeviceLastModifiedDate:[{5}], IsModified:[{6}]",
                 Key, Value, SyncCount, LastModifiedDate, LastModifiedBy, DeviceLastModifiedDate, IsModified);
         }

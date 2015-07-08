@@ -55,5 +55,5 @@ using System.Runtime.CompilerServices;
 #endif
 
 #if BCL
-[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: System.Security.AllowPartiallyTrustedCallers()]
 #endif

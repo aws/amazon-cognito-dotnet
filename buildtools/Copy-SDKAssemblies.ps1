@@ -55,7 +55,7 @@ Function Copy-SDKAssemblies
         # The platforms to copy. Defaults to all if not specified.
         [Parameter()]
         [string[]]
-        $Platforms = @("net35","net45","pcl"),
+        $Platforms = @("net45","pcl"),
         
         # The public key token that all assemblies should have. Optional.
         [Parameter()]
@@ -73,6 +73,7 @@ Function Copy-SDKAssemblies
         }
 
         $dir = Get-Item $SourceRoot
+        $servicename = $dir.Name
 
         foreach ($p in $Platforms)
         {
@@ -109,7 +110,6 @@ Function Copy-SDKAssemblies
 
 #Script code
 #$ErrorActionPreference = "Stop"
-
 Copy-SDKAssemblies -SourceRoot ..\sdk\src\ -Destination ..\Deployment\assemblies -PublicKeyToken $PublicKeyTokenToCheck -Platforms @("net45","pcl","Xamarin.iOS10")
 
 #Write-Verbose "Copying assembly versions manifest..."

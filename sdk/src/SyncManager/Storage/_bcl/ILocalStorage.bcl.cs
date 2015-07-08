@@ -12,6 +12,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         /// <param name="key"></param>
         /// <param name="identity"></param>
+        [System.Security.SecuritySafeCritical]
         void CacheIdentity(string key, string identity);
 
         /// <summary>
@@ -19,6 +20,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
+        [System.Security.SecuritySafeCritical]
         string GetIdentity(string key);
 
 
@@ -26,6 +28,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// Removes the Identity Id identified by the key from the cache
         /// </summary>
         /// <param name="key"></param>
+        [System.Security.SecuritySafeCritical]
         void DeleteCachedIdentity(string key);
     }
 }

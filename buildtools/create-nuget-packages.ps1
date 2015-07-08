@@ -13,8 +13,6 @@ If (Test-Path $OutputDirectory)
 New-Item $OutputDirectory -type directory
 
 $nuspecs = Get-ChildItem -Recurse ..\*.nuspec
-Write-Output "found " + $nuspecs.length + " nuspecs"
-
 foreach($nuspec in $nuspecs) 
 {
 	Write-Output "Create package: " + $nuspec.FullName

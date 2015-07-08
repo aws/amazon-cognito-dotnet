@@ -31,14 +31,14 @@ namespace Amazon.CognitoSync.SyncManager
     /// <summary>
     /// A sync success event
     /// </summary>
-    public class SyncSuccessEvent : EventArgs
+    public class SyncSuccessEventArgs : EventArgs
     {
         /// <summary>
         /// list of updated records
         /// </summary>
         public List<Record> UpdatedRecords { get; private set; }
 
-        internal SyncSuccessEvent(List<Record> updatedRecords)
+        internal SyncSuccessEventArgs(List<Record> updatedRecords)
         {
             this.UpdatedRecords = updatedRecords;
         }
@@ -47,14 +47,14 @@ namespace Amazon.CognitoSync.SyncManager
     /// <summary>
     /// A sync failure event
     /// </summary>
-    public class SyncFailureEvent : EventArgs
+    public class SyncFailureEventArgs : EventArgs
     {
         /// <summary>
         /// exception which triggered the failure event
         /// </summary>
         public Exception Exception { get; private set; }
 
-        internal SyncFailureEvent(Exception exception)
+        internal SyncFailureEventArgs(Exception exception)
         {
             this.Exception = exception;
         }
@@ -87,27 +87,61 @@ namespace Amazon.CognitoSync.SyncManager
         /// <summary>
         /// Max number of retries during synchronize before it gives up.
         /// </summary>
-        protected static readonly int MAX_RETRY = 3;
+        private const int MAX_RETRY = 3;
 
         /// <summary>
         /// The name of the dataset
         /// </summary>
-        protected readonly string DatasetName;
+        protected string DatasetName
+        {
+            get
+            {
+                return this._datasetName;
+            }
+        }
+
+        private string _datasetName;
 
         /// <summary>
         /// Instance of <see cref="Amazon.CognitoSync.SyncManager.ILocalStorage"/>
         /// </summary>
-        protected readonly ILocalStorage Local;
+        protected ILocalStorage Local
+        {
+            get
+            {
+                return this._local;
+            }
+        }
+
+        private ILocalStorage _local;
+
+
 
         /// <summary>
         /// Instance of <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/>
         /// </summary>
-        protected readonly IRemoteDataStorage Remote;
+        private IRemoteDataStorage _remote;
+
+        protected IRemoteDataStorage Remote
+        {
+            get
+            {
+                return this._remote;
+            }
+        }
 
         /// <summary>
         /// Instance of <see cref="Amazon.CognitoIdentity.CognitoAWSCredentials"/>
         /// </summary>
-        protected readonly CognitoAWSCredentials CognitoCredentials;
+        protected CognitoAWSCredentials CognitoCredentials
+        {
+            get
+            {
+                return this._cognitoCredentials;
+            }
+        }
+
+        private CognitoAWSCredentials _cognitoCredentials;
 
         private Boolean waitingForConnectivity = false;
         private bool _disposed;
@@ -125,10 +159,10 @@ namespace Amazon.CognitoSync.SyncManager
         public Dataset(string datasetName, CognitoAWSCredentials cognitoCredentials, ILocalStorage local, IRemoteDataStorage remote)
             : this()
         {
-            this.DatasetName = datasetName;
-            this.CognitoCredentials = cognitoCredentials;
-            this.Local = local;
-            this.Remote = remote;
+            this._datasetName = datasetName;
+            this._cognitoCredentials = cognitoCredentials;
+            this._local = local;
+            this._remote = remote;
             _logger = Logger.GetLogger(this.GetType());
         }
 
@@ -156,7 +190,7 @@ namespace Amazon.CognitoSync.SyncManager
         {
             get
             {
-                return Local.GetDatasetMetadata(GetIdentityId(), DatasetName);
+                return Local.GetDatasetMetadata(IdentityId, DatasetName);
             }
         }
 
@@ -166,7 +200,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         public void Delete()
         {
-            Local.DeleteDataset(GetIdentityId(), DatasetName);
+            Local.DeleteDataset(IdentityId, DatasetName);
         }
 
         /// <summary>
@@ -176,7 +210,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="key">key of the record in the dataset.</param>
         public string Get(string key)
         {
-            return Local.GetValue(GetIdentityId(), DatasetName,
+            return Local.GetValue(IdentityId, DatasetName,
                                   DatasetUtils.ValidateRecordKey(key));
         }
 
@@ -187,7 +221,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="key">key of the record in the dataset.</param>
         public Record GetRecord(string key)
         {
-            return Local.GetRecord(GetIdentityId(), DatasetName, DatasetUtils.ValidateRecordKey(key));
+            return Local.GetRecord(IdentityId, DatasetName, DatasetUtils.ValidateRecordKey(key));
         }
 
         /// <summary>
@@ -195,26 +229,32 @@ namespace Amazon.CognitoSync.SyncManager
         /// as deleted records are excluded.
         /// </summary>
         /// <returns>Key/Value representation of all records, excluding deleted ones</returns>
-        public IDictionary<string, string> GetAll()
+        public IDictionary<string, string> All
         {
-            IDictionary<string, string> map = new Dictionary<string, string>();
-            foreach (Record record in Local.GetRecords(GetIdentityId(), DatasetName))
+            get
             {
-                if (!record.IsDeleted)
+                IDictionary<string, string> map = new Dictionary<string, string>();
+                foreach (Record record in Local.GetRecords(IdentityId, DatasetName))
                 {
-                    map.Add(record.Key, record.Value);
+                    if (!record.IsDeleted)
+                    {
+                        map.Add(record.Key, record.Value);
+                    }
                 }
+                return map;
             }
-            return map;
         }
 
         /// <summary>
         /// Retrieves all raw records, including those marked as deleted, from local storage.
         /// </summary>
         /// <returns>List of all raw records</returns>
-        public IList<Record> GetAllRecords()
+        public IList<Record> AllRecords
         {
-            return Local.GetRecords(GetIdentityId(), DatasetName);
+            get
+            {
+                return Local.GetRecords(IdentityId, DatasetName);
+            }
         }
 
         /// <summary>
@@ -226,7 +266,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="key">The key of a record</param>
         public long GetSizeInBytes(string key)
         {
-            return DatasetUtils.ComputeRecordSize(Local.GetRecord(GetIdentityId(),
+            return DatasetUtils.ComputeRecordSize(Local.GetRecord(IdentityId,
                 DatasetName, DatasetUtils.ValidateRecordKey(key)));
         }
 
@@ -236,14 +276,17 @@ namespace Amazon.CognitoSync.SyncManager
         /// The size is calculated as sum of UTF-8 string length of key and value for all the records
         /// </summary>
         /// <returns>The total size in bytes</returns>
-        public long GetTotalSizeInBytes()
+        public long TotalSizeInBytes
         {
-            long size = 0;
-            foreach (Record record in Local.GetRecords(GetIdentityId(), DatasetName))
+            get
             {
-                size += DatasetUtils.ComputeRecordSize(record);
+                long size = 0;
+                foreach (Record record in Local.GetRecords(IdentityId, DatasetName))
+                {
+                    size += DatasetUtils.ComputeRecordSize(record);
+                }
+                return size;
             }
-            return size;
         }
 
         /// <summary>
@@ -253,7 +296,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="key">Key identifying a record</param>
         public bool IsModified(string key)
         {
-            Record record = Local.GetRecord(GetIdentityId(), DatasetName,
+            Record record = Local.GetRecord(IdentityId, DatasetName,
                                              DatasetUtils.ValidateRecordKey(key));
             return (record != null && record.IsModified);
         }
@@ -273,7 +316,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <see cref="Amazon.CognitoSync.SyncManager.Dataset"/></param>
         public void Put(string key, string value)
         {
-            Local.PutValue(GetIdentityId(), DatasetName,
+            Local.PutValue(IdentityId, DatasetName,
                            DatasetUtils.ValidateRecordKey(key), value);
         }
 
@@ -287,7 +330,7 @@ namespace Amazon.CognitoSync.SyncManager
             {
                 DatasetUtils.ValidateRecordKey(key);
             }
-            Local.PutAllValues(GetIdentityId(), DatasetName, values);
+            Local.PutAllValues(IdentityId, DatasetName, values);
         }
 
         /// <summary>
@@ -297,7 +340,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="key">Key identifying the Record</param>
         public void Remove(string key)
         {
-            Local.PutValue(GetIdentityId(), DatasetName, DatasetUtils.ValidateRecordKey(key), null);
+            Local.PutValue(IdentityId, DatasetName, DatasetUtils.ValidateRecordKey(key), null);
         }
 
         /// <summary>
@@ -308,7 +351,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// <param name="remoteRecords">A list of records to save into local storage</param>
         public void Resolve(List<Record> remoteRecords)
         {
-            Local.PutRecords(GetIdentityId(), DatasetName, remoteRecords);
+            Local.PutRecords(IdentityId, DatasetName, remoteRecords);
         }
 
         #endregion
@@ -343,14 +386,14 @@ namespace Amazon.CognitoSync.SyncManager
                 }
 
                 waitingForConnectivity = false;
-                
+
                 //make a call to fetch the identity id before the synchronization starts
                 await CognitoCredentials.GetIdentityIdAsync().ConfigureAwait(false);
 
                 // there could be potential merges that could have happened due to reparenting from the previous step,
                 // check and call onDatasetMerged
                 bool resume = true;
-                List<string> mergedDatasets = GetLocalMergedDatasets();
+                List<string> mergedDatasets = LocalMergedDatasets;
                 if (mergedDatasets.Count > 0)
                 {
                     _logger.InfoFormat("Detected merge datasets - {0}", DatasetName);
@@ -367,7 +410,7 @@ namespace Amazon.CognitoSync.SyncManager
                     return;
                 }
 
-                RunSyncOperationAsync(MAX_RETRY,cancellationToken);
+                RunSyncOperationAsync(MAX_RETRY, cancellationToken);
             }
             catch (Exception e)
             {
@@ -376,34 +419,43 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
-        internal List<string> GetLocalMergedDatasets()
+        internal List<string> LocalMergedDatasets
         {
-            List<string> mergedDatasets = new List<string>();
-            string prefix = DatasetName + ".";
-            foreach (DatasetMetadata dataset in Local.GetDatasetMetadata(GetIdentityId()))
+            get
             {
-                if (dataset.DatasetName.ToLower().StartsWith(prefix.ToLower()))
+                List<string> mergedDatasets = new List<string>();
+                string prefix = DatasetName + ".";
+                foreach (DatasetMetadata dataset in Local.GetDatasetMetadata(IdentityId))
                 {
-                    mergedDatasets.Add(dataset.DatasetName);
+                    if (dataset.DatasetName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                    {
+                        mergedDatasets.Add(dataset.DatasetName);
+                    }
                 }
+                return mergedDatasets;
             }
-            return mergedDatasets;
         }
 
-        internal String GetIdentityId()
+        internal String IdentityId
         {
-            return DatasetUtils.GetIdentityId(CognitoCredentials);
+            get
+            {
+                return DatasetUtils.GetIdentityId(CognitoCredentials);
+            }
         }
 
-        internal List<Record> GetModifiedRecords()
+        internal List<Record> ModifiedRecords
         {
-            return Local.GetModifiedRecords(GetIdentityId(), DatasetName);
+            get
+            {
+                return Local.GetModifiedRecords(IdentityId, DatasetName);
+            }
         }
 
         private async void RunSyncOperationAsync(int retry, CancellationToken cancellationToken)
         {
 
-            long lastSyncCount = Local.GetLastSyncCount(GetIdentityId(), DatasetName);
+            long lastSyncCount = Local.GetLastSyncCount(IdentityId, DatasetName);
 
             // if dataset is deleted locally, push it to remote
             if (lastSyncCount == -1)
@@ -424,7 +476,7 @@ namespace Amazon.CognitoSync.SyncManager
                     return;
                 }
 
-                Local.PurgeDataset(GetIdentityId(), DatasetName);
+                Local.PurgeDataset(IdentityId, DatasetName);
                 _logger.InfoFormat("OnSyncSuccess: dataset delete is pushed to remote - {0}", this.DatasetName);
                 EndSynchronizeAndCleanup();
                 FireSyncSuccessEvent(new List<Record>());
@@ -435,7 +487,7 @@ namespace Amazon.CognitoSync.SyncManager
             DatasetUpdates datasetUpdates = null;
             try
             {
-                datasetUpdates = await Remote.ListUpdatesAsync(DatasetName, lastSyncCount,cancellationToken);
+                datasetUpdates = await Remote.ListUpdatesAsync(DatasetName, lastSyncCount, cancellationToken);
             }
             catch (Exception listUpdatesException)
             {
@@ -457,7 +509,7 @@ namespace Amazon.CognitoSync.SyncManager
                     }
                     else
                     {
-                        this.RunSyncOperationAsync(--retry,cancellationToken);
+                        this.RunSyncOperationAsync(--retry, cancellationToken);
                     }
                     return;
                 }
@@ -478,8 +530,8 @@ namespace Amazon.CognitoSync.SyncManager
                 if (resume)
                 {
                     // remove both records and metadata
-                    Local.DeleteDataset(GetIdentityId(), DatasetName);
-                    Local.PurgeDataset(GetIdentityId(), DatasetName);
+                    Local.DeleteDataset(IdentityId, DatasetName);
+                    Local.PurgeDataset(IdentityId, DatasetName);
                     _logger.InfoFormat("OnSyncSuccess");
                     EndSynchronizeAndCleanup();
                     FireSyncSuccessEvent(new List<Record>());
@@ -503,7 +555,7 @@ namespace Amazon.CognitoSync.SyncManager
                 List<Record> conflictRecords = new List<Record>();
                 foreach (Record remoteRecord in remoteRecords)
                 {
-                    Record localRecord = Local.GetRecord(GetIdentityId(),
+                    Record localRecord = Local.GetRecord(IdentityId,
                                                           DatasetName,
                                                           remoteRecord.Key);
                     // only when local is changed and its value is different
@@ -543,18 +595,18 @@ namespace Amazon.CognitoSync.SyncManager
                 if (remoteRecords.Count > 0)
                 {
                     _logger.InfoFormat("save {0} records to local", remoteRecords.Count);
-                    Local.PutRecords(GetIdentityId(), DatasetName, remoteRecords);
+                    Local.PutRecords(IdentityId, DatasetName, remoteRecords);
                 }
 
 
                 // new last sync count
                 _logger.InfoFormat("updated sync count {0}", datasetUpdates.SyncCount);
-                Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
+                Local.UpdateLastSyncCount(IdentityId, DatasetName,
                                           datasetUpdates.SyncCount);
             }
 
             // push changes to remote
-            List<Record> localChanges = this.GetModifiedRecords();
+            List<Record> localChanges = this.ModifiedRecords;
             long maxPatchSyncCount = 0;
             foreach (Record r in localChanges)
             {
@@ -573,7 +625,7 @@ namespace Amazon.CognitoSync.SyncManager
                     List<Record> result = await Remote.PutRecordsAsync(DatasetName, localChanges, datasetUpdates.SyncSessionToken, cancellationToken).ConfigureAwait(false);
 
                     // update local meta data
-                    Local.ConditionallyPutRecords(GetIdentityId(), DatasetName, result, localChanges);
+                    Local.ConditionallyPutRecords(IdentityId, DatasetName, result, localChanges);
 
                     // verify the server sync count is increased exactly by one, aka no
                     // other updates were made during this update.
@@ -587,7 +639,7 @@ namespace Amazon.CognitoSync.SyncManager
                     if (newSyncCount == lastSyncCount + 1)
                     {
                         _logger.InfoFormat("updated sync count {0}", newSyncCount);
-                        Local.UpdateLastSyncCount(GetIdentityId(), DatasetName,
+                        Local.UpdateLastSyncCount(IdentityId, DatasetName,
                                                   newSyncCount);
                     }
 
@@ -610,9 +662,9 @@ namespace Amazon.CognitoSync.SyncManager
                         //it's possible there is a local dirty record with a stale sync count this will fix it
                         if (lastSyncCount > maxPatchSyncCount)
                         {
-                            Local.UpdateLastSyncCount(GetIdentityId(), DatasetName, maxPatchSyncCount);
+                            Local.UpdateLastSyncCount(IdentityId, DatasetName, maxPatchSyncCount);
                         }
-                        this.RunSyncOperationAsync(--retry,cancellationToken);
+                        this.RunSyncOperationAsync(--retry, cancellationToken);
                     }
                     return;
                 }
@@ -648,12 +700,12 @@ namespace Amazon.CognitoSync.SyncManager
         /// several retries, then updatedRecords will be what are pulled down
         /// from remote in the last retry.   
         /// </summary>
-        public event EventHandler<SyncSuccessEvent> OnSyncSuccess;
+        public event EventHandler<SyncSuccessEventArgs> OnSyncSuccess;
 
         /// <summary>
         /// This is called when an exception occurs during sync
         /// </summary>
-        public event EventHandler<SyncFailureEvent> OnSyncFailure;
+        public event EventHandler<SyncFailureEventArgs> OnSyncFailure;
 
         /// <summary>
         /// Fires a Sync Success Event
@@ -663,7 +715,7 @@ namespace Amazon.CognitoSync.SyncManager
         {
             if (OnSyncSuccess != null)
             {
-                OnSyncSuccess(this, new SyncSuccessEvent(records));
+                OnSyncSuccess(this, new SyncSuccessEventArgs(records));
             }
         }
 
@@ -675,7 +727,7 @@ namespace Amazon.CognitoSync.SyncManager
         {
             if (OnSyncFailure != null)
             {
-                OnSyncFailure(this, new SyncFailureEvent(exception));
+                OnSyncFailure(this, new SyncFailureEventArgs(exception));
             }
         }
         #endregion
@@ -753,11 +805,11 @@ namespace Amazon.CognitoSync.SyncManager
         {
             if (OnSyncSuccess != null)
                 foreach (Delegate d in OnSyncSuccess.GetInvocationList())
-                    OnSyncSuccess -= (EventHandler<SyncSuccessEvent>)d;
+                    OnSyncSuccess -= (EventHandler<SyncSuccessEventArgs>)d;
 
             if (OnSyncFailure != null)
                 foreach (Delegate d in OnSyncFailure.GetInvocationList())
-                    OnSyncFailure -= (EventHandler<SyncFailureEvent>)d;
+                    OnSyncFailure -= (EventHandler<SyncFailureEventArgs>)d;
 
             if (OnSyncConflict != null)
                 foreach (Delegate d in OnSyncConflict.GetInvocationList())

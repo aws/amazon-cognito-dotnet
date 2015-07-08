@@ -14,8 +14,6 @@
 // for the specific language governing permissions and 
 // limitations under the License.
 //
-#pragma warning disable 0649
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,12 +32,31 @@ namespace Amazon.CognitoSync.SyncManager.Internal
     /// <summary>
     /// An <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/> implementation 
     /// using Cognito Sync service on which we can invoke actions like creating a dataset, or record
-    /// </summary>
-    public class CognitoSyncStorage : IRemoteDataStorage
+    /// </summar>y
+    public class CognitoSyncStorage : IRemoteDataStorage, IDisposable
     {
         private readonly string identityPoolId;
         private readonly AmazonCognitoSyncClient client;
         private readonly CognitoAWSCredentials cognitoCredentials;
+
+        #region Dispose
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                if (client != null)
+                    client.Dispose();
+            }
+        }
+
+        #endregion
 
         #region Constructor
 
@@ -132,7 +149,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             ListRecordsResponse listRecordsResponse = await client.ListRecordsAsync(request, cancellationToken).ConfigureAwait(false);
             foreach (Amazon.CognitoSync.Model.Record remoteRecord in listRecordsResponse.Records)
             {
-                records.Add(this.ModelToRecord(remoteRecord));
+                records.Add(ModelToRecord(remoteRecord));
             }
             // update last evaluated key
             nextToken = listRecordsResponse.NextToken;
@@ -184,7 +201,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             List<RecordPatch> patches = new List<RecordPatch>();
             foreach (Record record in records)
             {
-                patches.Add(this.RecordToPatch(record));
+                patches.Add(RecordToPatch(record));
             }
             request.RecordPatches = patches;
             List<Record> updatedRecords = new List<Record>();
@@ -273,7 +290,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return cognitoCredentials.GetIdentityId();
         }
 
-        private RecordPatch RecordToPatch(Record record)
+        private static RecordPatch RecordToPatch(Record record)
         {
             RecordPatch patch = new RecordPatch();
             patch.Key = record.Key;
@@ -283,7 +300,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             return patch;
         }
 
-        private DatasetMetadata ModelToDatasetMetadata(Amazon.CognitoSync.Model.Dataset model)
+        private static DatasetMetadata ModelToDatasetMetadata(Amazon.CognitoSync.Model.Dataset model)
         {
             return new DatasetMetadata(
                 model.DatasetName,
@@ -295,7 +312,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 );
         }
 
-        private Record ModelToRecord(Amazon.CognitoSync.Model.Record model)
+        private static Record ModelToRecord(Amazon.CognitoSync.Model.Record model)
         {
             return new Record(
                 model.Key,
@@ -307,7 +324,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                 false);
         }
 
-        private SyncManagerException HandleException(Exception e, string message)
+        private static SyncManagerException HandleException(Exception e, string message)
         {
             var ase = e as AmazonServiceException;
 
