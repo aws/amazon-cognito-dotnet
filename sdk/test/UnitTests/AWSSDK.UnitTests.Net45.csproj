@@ -56,23 +56,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="AWSSDK.CognitoIdentity, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.CognitoIdentity">
       <HintPath>..\..\packages\AWSSDK.CognitoIdentity.3.0.0.4-preview\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.CognitoSync, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.CognitoSync">
       <HintPath>..\..\packages\AWSSDK.CognitoSync.3.0.0.4-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.Core">
       <HintPath>..\..\packages\AWSSDK.Core.3.0.0.5-preview\lib\net45\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.IdentityManagement, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.IdentityManagement">
       <HintPath>..\..\packages\AWSSDK.IdentityManagement.3.0.0.4-preview\lib\net45\AWSSDK.IdentityManagement.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.SecurityToken, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.SecurityToken">
       <HintPath>..\..\packages\AWSSDK.SecurityToken.3.0.0.4-preview\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
       <Private>True</Private>
     </Reference>

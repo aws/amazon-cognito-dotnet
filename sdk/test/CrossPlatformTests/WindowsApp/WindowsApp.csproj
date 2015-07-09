@@ -158,7 +158,7 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
+    <Reference Include="AWSSDK.Core">
       <HintPath>..\..\..\packages\AWSSDK.Core.3.0.0.5-preview\lib\windows8\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
