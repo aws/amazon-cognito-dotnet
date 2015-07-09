@@ -263,9 +263,6 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         /// </summary>
         /// <param name="identityId">Identity Id</param>
         /// <param name="datasetName">Dataset name.</param>
-#if BCL
-        [System.Security.SecuritySafeCritical]
-#endif
         public void CreateDataset(string identityId, string datasetName)
         {
             lock (sqlite_lock)

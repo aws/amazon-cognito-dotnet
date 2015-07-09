@@ -67,7 +67,7 @@ namespace TODOListPortableLibrary
         {
             List<Task> tasks = new List<Task>();
             Dataset dataset = SyncManagerInstance.OpenOrCreateDataset(TASK_DATASET);
-            var records = dataset.GetAllRecords();
+            var records = dataset.AllRecords;
             foreach (var record in records)
             {
                 tasks.Add(JsonConvert.DeserializeObject<Task>(record.Value));
@@ -91,7 +91,7 @@ namespace TODOListPortableLibrary
         public async System.Threading.Tasks.Task Synchronize(Action action)
         {
             Dataset dataset = SyncManagerInstance.OpenOrCreateDataset(TASK_DATASET);
-            dataset.OnSyncSuccess += (object sender, SyncSuccessEvent e) =>
+            dataset.OnSyncSuccess += (object sender, SyncSuccessEventArgs e) =>
             {
                 action();
             };

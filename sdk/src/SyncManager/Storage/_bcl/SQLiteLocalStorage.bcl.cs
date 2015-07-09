@@ -119,7 +119,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
             }
         }
 
-        [System.Security.SecurityCritical]
+        [SecuritySafeCritical]
         internal DatasetMetadata GetMetadataHelper(string identityId, string datasetName)
         {
             string query = DatasetColumns.BuildQuery(
