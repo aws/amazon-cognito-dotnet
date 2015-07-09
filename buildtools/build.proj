@@ -46,7 +46,7 @@
 		<Exec Command="$(vstest2013) /Platform:x86 /logger:trx /inIsolation ..\sdk\test\UnitTests\bin\Release\net45\AWSSDK.UnitTests.Net45.dll"/>
 	</Target>
 	<!-- Condition="'$(RunIntegTests)' != '' And '$(RunIntegTests)' != 'false'" -->
-	<Target Name="run-integ-tests" DependsOnTargets="init;build-sdk" >
+	<Target Name="run-integ-tests" DependsOnTargets="init;build-sdk" Condition="'$(RunIntegTests)' != '' And '$(RunIntegTests)' != 'false'">
 		<Exec Command="$(vstest2013) /Platform:x64 /logger:trx /inIsolation ..\sdk\test\IntegrationTests\bin\Release\net45\AWSSDK.IntegrationTests.Net45.dll" />
 		<Exec Command="$(vstest2013) /Platform:x86 /logger:trx /inIsolation ..\sdk\test\IntegrationTests\bin\Release\net45\AWSSDK.IntegrationTests.Net45.dll" />
 	</Target>
