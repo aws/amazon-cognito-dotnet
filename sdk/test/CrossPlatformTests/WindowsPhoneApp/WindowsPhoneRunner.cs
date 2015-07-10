@@ -17,6 +17,8 @@ namespace WindowsPhoneApp
         {
             _dispatcher = dispatcher;
             _output = textBlock;
+
+           
         }
 
         protected override void WriteLine(string message)
