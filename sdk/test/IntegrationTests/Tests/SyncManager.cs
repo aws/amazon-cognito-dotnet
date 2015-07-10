@@ -530,7 +530,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         {
             get
             {
-                if (_client == null) _client = new AmazonCognitoIdentityClient(new StoredProfileAWSCredentials());
+                if (_client == null) _client = new AmazonCognitoIdentityClient();
                 return _client;
             }
         }
