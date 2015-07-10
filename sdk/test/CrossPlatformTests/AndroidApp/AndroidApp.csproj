@@ -126,7 +126,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <AndroidAsset Include="Assets\credentials.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
