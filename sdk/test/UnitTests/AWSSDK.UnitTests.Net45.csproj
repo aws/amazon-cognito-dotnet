@@ -65,7 +65,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.Core">
-      <HintPath>..\..\packages\AWSSDK.Core.3.0.0.5-preview\lib\net45\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.Core.3.0.0.6-preview\lib\net45\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.IdentityManagement">
