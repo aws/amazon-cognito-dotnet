@@ -83,7 +83,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.IdentityManagement">
-      <HintPath>..\..\..\packages\AWSSDK.IdentityManagement.3.0.0.5-preview\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.IdentityManagement.dll</HintPath>
+      <HintPath>..\..\..\packages\AWSSDK.IdentityManagement.3.0.1.0-preview\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.IdentityManagement.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SecurityToken">
