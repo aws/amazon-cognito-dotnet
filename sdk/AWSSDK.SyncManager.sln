@@ -48,11 +48,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsApp", "test\CrossPlatformTests\WindowsApp\WindowsApp.csproj", "{2F684898-327A-4937-A83B-7B4F0A2E636E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
+		{D8590BBA-340E-4368-A96A-E5298FA40BCA} = {D8590BBA-340E-4368-A96A-E5298FA40BCA}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsPhoneApp", "test\CrossPlatformTests\WindowsPhoneApp\WindowsPhoneApp.csproj", "{B0E217AF-B014-4805-9F86-B299ADAAC6A2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
+		{D8590BBA-340E-4368-A96A-E5298FA40BCA} = {D8590BBA-340E-4368-A96A-E5298FA40BCA}
 	EndProjectSection
 EndProject
 Global
