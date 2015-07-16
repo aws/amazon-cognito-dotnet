@@ -46,8 +46,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8E0A5B
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsApp", "test\CrossPlatformTests\WindowsApp\WindowsApp.csproj", "{2F684898-327A-4937-A83B-7B4F0A2E636E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsPhoneApp", "test\CrossPlatformTests\WindowsPhoneApp\WindowsPhoneApp.csproj", "{B0E217AF-B014-4805-9F86-B299ADAAC6A2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
