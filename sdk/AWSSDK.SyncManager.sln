@@ -48,13 +48,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsApp", "test\CrossPlatformTests\WindowsApp\WindowsApp.csproj", "{2F684898-327A-4937-A83B-7B4F0A2E636E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
-		{D8590BBA-340E-4368-A96A-E5298FA40BCA} = {D8590BBA-340E-4368-A96A-E5298FA40BCA}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsPhoneApp", "test\CrossPlatformTests\WindowsPhoneApp\WindowsPhoneApp.csproj", "{B0E217AF-B014-4805-9F86-B299ADAAC6A2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{569D0C97-4009-47A9-BAB9-8A2B9FB6D913} = {569D0C97-4009-47A9-BAB9-8A2B9FB6D913}
-		{D8590BBA-340E-4368-A96A-E5298FA40BCA} = {D8590BBA-340E-4368-A96A-E5298FA40BCA}
 	EndProjectSection
 EndProject
 Global
@@ -350,7 +348,7 @@ Global
 		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|Mixed Platforms.ActiveCfg = Release|iPhoneSimulator
-		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|Mixed Platforms.Build.0 = Release|iPhone
+		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|Mixed Platforms.Build.0 = Release|iPhoneSimulator
 		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|x64.ActiveCfg = Release|iPhoneSimulator
 		{B3B2DB10-CC6B-4C03-8E5E-B603B83BB694}.Release|x86.ActiveCfg = Release|iPhoneSimulator
 		{CEBC6CAA-5DF4-4A02-969F-8A218830C274}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU

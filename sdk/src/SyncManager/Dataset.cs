@@ -115,13 +115,11 @@ namespace Amazon.CognitoSync.SyncManager
 
         private ILocalStorage _local;
 
-
+        private IRemoteDataStorage _remote;
 
         /// <summary>
         /// Instance of <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/>
         /// </summary>
-        private IRemoteDataStorage _remote;
-
         protected IRemoteDataStorage Remote
         {
             get

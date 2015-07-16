@@ -32,7 +32,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
     /// <summary>
     /// An <see cref="Amazon.CognitoSync.SyncManager.IRemoteDataStorage"/> implementation 
     /// using Cognito Sync service on which we can invoke actions like creating a dataset, or record
-    /// </summar>y
+    /// </summary>
     public class CognitoSyncStorage : IRemoteDataStorage, IDisposable
     {
         private readonly string identityPoolId;
@@ -41,12 +41,19 @@ namespace Amazon.CognitoSync.SyncManager.Internal
 
         #region Dispose
 
+        /// <summary>
+        /// Dispose this Object
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Dispose this Object
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if(disposing)
