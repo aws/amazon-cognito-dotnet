@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props" Condition="Exists('..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F684898-327A-4937-A83B-7B4F0A2E636E}</ProjectGuid>
+    <ProjectGuid>{C7D874AD-6010-4143-B976-59BFE8EBC176}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsApp</RootNamespace>
@@ -18,7 +18,7 @@
     <PackageCertificateKeyFile>WindowsApp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>0045df72</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>7728e40c</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -107,10 +107,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <ProjectReference Include="..\..\..\src\AWSSDK.SyncManager.PCL.csproj">
-      <Project>{d8590bba-340e-4368-a96a-e5298fa40bca}</Project>
-      <Name>AWSSDK.SyncManager.PCL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CommonTests\CommonTests.csproj">
       <Project>{569d0c97-4009-47a9-bab9-8a2b9fb6d913}</Project>
       <Name>CommonTests</Name>
@@ -158,12 +154,12 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.Core">
+    <Reference Include="AWSSDK.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=71c852f8be1c371d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\AWSSDK.Core.3.0.0.6-preview\lib\windows8\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.0.5610.33197, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\NUnit.3.0.0-beta-2\lib\portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.0.5674.19281, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NUnit.3.0.0-beta-3\lib\portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PCLCrypto, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d4421c8a4786956c, processorArchitecture=MSIL">
