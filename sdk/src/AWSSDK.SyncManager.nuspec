@@ -8,7 +8,7 @@
     <description>Amazon Cognito is a service that makes it easy to save user data, such as app preferences or game state, in the AWS Cloud without writing any backend code or managing any infrastructure. With Amazon Cognito, you can focus on creating great app experiences instead of having to worry about building and managing a backend solution to handle identity management, network state, storage, and sync.</description> 
     <language>en-US</language>
     <licenseUrl>http://aws.amazon.com/asl/</licenseUrl>    
-    <projectUrl>https://github.com/aws/aws-sdk-net/tree/modularization/</projectUrl>
+    <projectUrl>https://github.com/aws/amazon-cognito-dotnet</projectUrl>
     <tags>AWS Amazon cloud CognitoSync</tags>
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
 	<requireLicenseAcceptance>true</requireLicenseAcceptance>

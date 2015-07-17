@@ -27,40 +27,6 @@ using System.Threading.Tasks;
 
 namespace Amazon.CognitoSync.SyncManager
 {
-
-    /// <summary>
-    /// A sync success event
-    /// </summary>
-    public class SyncSuccessEventArgs : EventArgs
-    {
-        /// <summary>
-        /// list of updated records
-        /// </summary>
-        public List<Record> UpdatedRecords { get; private set; }
-
-        internal SyncSuccessEventArgs(List<Record> updatedRecords)
-        {
-            this.UpdatedRecords = updatedRecords;
-        }
-    }
-
-    /// <summary>
-    /// A sync failure event
-    /// </summary>
-    public class SyncFailureEventArgs : EventArgs
-    {
-        /// <summary>
-        /// exception which triggered the failure event
-        /// </summary>
-        public Exception Exception { get; private set; }
-
-        internal SyncFailureEventArgs(Exception exception)
-        {
-            this.Exception = exception;
-        }
-    }
-
-
     /// <summary>
     /// Dataset is the container of <see cref="Amazon.CognitoSync.SyncManager.Record"/>s. It can have up to 1k
     /// <see cref="Amazon.CognitoSync.SyncManager.Record"/> or 1 MB in size. A typical use of Dataset is the
@@ -152,9 +118,9 @@ namespace Amazon.CognitoSync.SyncManager
         /// </summary>
         /// <param name="datasetName">The name of the dataset</param>
         /// <param name="cognitoCredentials">The Cognito Credentials associated with the dataset</param>
-        /// <param name="local">local storage, can be InMemoryStorage or SQLiteStorage or Some Custom Storage Class which implements <see cref="Amazon.CognitoSync.SyncManager.ILocalStorage"/></param>
-        /// <param name="remote">remote storage</param>
-        public Dataset(string datasetName, CognitoAWSCredentials cognitoCredentials, ILocalStorage local, IRemoteDataStorage remote)
+        /// <param name="local">Local storage, can be InMemoryStorage or SQLiteStorage or Some Custom Storage Class which implements <see cref="Amazon.CognitoSync.SyncManager.ILocalStorage"/></param>
+        /// <param name="remote">Remote storage</param>
+        internal Dataset(string datasetName, CognitoAWSCredentials cognitoCredentials, ILocalStorage local, IRemoteDataStorage remote)
             : this()
         {
             this._datasetName = datasetName;
@@ -193,8 +159,8 @@ namespace Amazon.CognitoSync.SyncManager
         }
 
         /// <summary>
-        /// Delete this <see cref="Amazon.CognitoSync.SyncManager.Dataset"/>. No more following operations can be done 
-        /// on this dataset, or else <see cref="DatasetNotFoundException"/> will be thrown.
+        /// Delete this <see cref="Amazon.CognitoSync.SyncManager.Dataset"/>. You cannot do any more operations
+        /// on this dataset.
         /// </summary>
         public void Delete()
         {
@@ -205,7 +171,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// Gets the value of a <see cref="Record"/> with the given key. If the
         /// <see cref="Amazon.CognitoSync.SyncManager.Record"/> doesn't exist or is marked deleted, null will be returned.
         /// </summary>
-        /// <param name="key">key of the record in the dataset.</param>
+        /// <param name="key">Key of the record in the dataset.</param>
         public string Get(string key)
         {
             return Local.GetValue(IdentityId, DatasetName,
@@ -216,18 +182,18 @@ namespace Amazon.CognitoSync.SyncManager
         /// Gets the <see cref="Amazon.CognitoSync.SyncManager.Record"/> with the given key. If the
         /// <see cref="Amazon.CognitoSync.SyncManager.Record"/> doesn't exist or is marked deleted, null will be returned.
         /// </summary>
-        /// <param name="key">key of the record in the dataset.</param>
+        /// <param name="key">Key of the record in the dataset.</param>
         public Record GetRecord(string key)
         {
             return Local.GetRecord(IdentityId, DatasetName, DatasetUtils.ValidateRecordKey(key));
         }
 
         /// <summary>
-        /// Gets the Key/Value representation of all records of this dataset. Marked
+        /// Gets the Key/Value representation of all records of this dataset. Datasets marked
         /// as deleted records are excluded.
         /// </summary>
         /// <returns>Key/Value representation of all records, excluding deleted ones</returns>
-        public IDictionary<string, string> All
+        public IDictionary<string, string> ActiveRecords
         {
             get
             {
@@ -247,7 +213,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// Retrieves all raw records, including those marked as deleted, from local storage.
         /// </summary>
         /// <returns>List of all raw records</returns>
-        public IList<Record> AllRecords
+        public IList<Record> Records
         {
             get
             {
@@ -481,7 +447,7 @@ namespace Amazon.CognitoSync.SyncManager
             }
 
             // get latest modified records from remote
-            _logger.InfoFormat("get latest modified records since {0} for dataset {1}", lastSyncCount, this.DatasetName);
+            _logger.InfoFormat("Get latest modified records since {0} for dataset {1}", lastSyncCount, this.DatasetName);
             DatasetUpdates datasetUpdates = null;
             try
             {
@@ -592,13 +558,13 @@ namespace Amazon.CognitoSync.SyncManager
                 // save to local
                 if (remoteRecords.Count > 0)
                 {
-                    _logger.InfoFormat("save {0} records to local", remoteRecords.Count);
+                    _logger.InfoFormat("Save {0} records to local", remoteRecords.Count);
                     Local.PutRecords(IdentityId, DatasetName, remoteRecords);
                 }
 
 
                 // new last sync count
-                _logger.InfoFormat("updated sync count {0}", datasetUpdates.SyncCount);
+                _logger.InfoFormat("Updated sync count {0}", datasetUpdates.SyncCount);
                 Local.UpdateLastSyncCount(IdentityId, DatasetName,
                                           datasetUpdates.SyncCount);
             }
@@ -616,7 +582,7 @@ namespace Amazon.CognitoSync.SyncManager
             }
             if (localChanges.Count != 0)
             {
-                _logger.InfoFormat("push {0} records to remote", localChanges.Count);
+                _logger.InfoFormat("Push {0} records to remote", localChanges.Count);
 
                 try
                 {
@@ -636,7 +602,7 @@ namespace Amazon.CognitoSync.SyncManager
                     }
                     if (newSyncCount == lastSyncCount + 1)
                     {
-                        _logger.InfoFormat("updated sync count {0}", newSyncCount);
+                        _logger.InfoFormat("Updated sync count {0}", newSyncCount);
                         Local.UpdateLastSyncCount(IdentityId, DatasetName,
                                                   newSyncCount);
                     }
@@ -845,6 +811,39 @@ namespace Amazon.CognitoSync.SyncManager
         }
         #endregion
 
+    }
+
+
+    /// <summary>
+    /// A sync success event
+    /// </summary>
+    public class SyncSuccessEventArgs : EventArgs
+    {
+        /// <summary>
+        /// List of updated records
+        /// </summary>
+        public List<Record> UpdatedRecords { get; private set; }
+
+        internal SyncSuccessEventArgs(List<Record> updatedRecords)
+        {
+            this.UpdatedRecords = updatedRecords;
+        }
+    }
+
+    /// <summary>
+    /// A sync failure event
+    /// </summary>
+    public class SyncFailureEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Exception which triggered the failure event
+        /// </summary>
+        public Exception Exception { get; private set; }
+
+        internal SyncFailureEventArgs(Exception exception)
+        {
+            this.Exception = exception;
+        }
     }
 
 }

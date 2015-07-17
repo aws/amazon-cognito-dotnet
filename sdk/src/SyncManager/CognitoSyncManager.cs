@@ -29,7 +29,7 @@ using System.Threading;
 namespace Amazon.CognitoSync.SyncManager
 {
     /// <summary>
-    /// The Cognito Sync Manager for Dot Net allows your application to store data 
+    /// The Cognito Sync Manager allows your application to store data 
     /// in the cloud for your users and synchronize across other devices. The library 
     /// uses the sqlite for local storage API and defaults to inmemory where sqlite 
     /// is not available to create a local cache for the data, similar to our SDK. 
@@ -61,7 +61,7 @@ namespace Amazon.CognitoSync.SyncManager
         #region Constructor
 
         /// <summary>
-        /// Creates an instance of CognitoSyncManager using Cognito Credentials, the region is picked up from the config if it 
+        /// Creates an instance of CognitoSyncManager using Cognito Credentials, the region is picked up from the config if it available
         /// <code>
         /// CognitoSyncManager cognitoSyncManager = new CognitoSyncManager(credentials)
         /// </code>
@@ -154,7 +154,7 @@ namespace Amazon.CognitoSync.SyncManager
         /// </code>
         /// </summary>
         /// <returns>Dataset loaded from local storage</returns>
-        /// <param name="datasetName">DatasetName dataset name, must be [a-zA-Z0=9_.:-]+</param>
+        /// <param name="datasetName">DatasetName, must be [a-zA-Z0=9_.:-]+</param>
         public Dataset OpenOrCreateDataset(string datasetName)
         {
             DatasetUtils.ValidateDatasetName(datasetName);
@@ -164,7 +164,7 @@ namespace Amazon.CognitoSync.SyncManager
 
 
         /// <summary>
-        /// Retrieves a list of datasets from local storage. It may not reflects
+        /// Retrieves a list of datasets from local storage. It may not reflect the
         /// latest dataset on the remote storage until <see cref="Amazon.CognitoSync.SyncManager.CognitoSyncManager.RefreshDatasetMetadataAsync"/> is
         /// called.
         /// </summary>
@@ -202,7 +202,7 @@ namespace Amazon.CognitoSync.SyncManager
             var identityChangedEvent = e as Amazon.CognitoIdentity.CognitoAWSCredentials.IdentityChangedArgs;
             String oldIdentity = identityChangedEvent.OldIdentityId == null ? DatasetUtils.UNKNOWN_IDENTITY_ID : identityChangedEvent.OldIdentityId;
             String newIdentity = identityChangedEvent.NewIdentityId == null ? DatasetUtils.UNKNOWN_IDENTITY_ID : identityChangedEvent.NewIdentityId;
-            _logger.InfoFormat("identity change detected: {0}, {1}", oldIdentity, newIdentity);
+            _logger.InfoFormat("Identity change detected: {0}, {1}", oldIdentity, newIdentity);
             if (oldIdentity != newIdentity) Local.ChangeIdentityId(oldIdentity, newIdentity);
         }
 
@@ -218,7 +218,9 @@ namespace Amazon.CognitoSync.SyncManager
                 return DatasetUtils.GetIdentityId(CognitoCredentials);
             }
         }
+        #endregion
 
+        #region public methods
         /// <summary>
         /// Refreshes dataset metadata. Dataset metadata is pulled from remote
         /// storage and stored in local storage. Their record data isn't pulled down
@@ -234,7 +236,6 @@ namespace Amazon.CognitoSync.SyncManager
             Local.UpdateDatasetMetadata(IdentityId, response);
             return response;
         }
-
         #endregion
 
     }

@@ -328,8 +328,8 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     d.Put("testKey3", "the initial value");
 
                     //Initial properties
-                    var records = d.AllRecords;
-                    Record r = d.AllRecords[records.Count - 1];
+                    var records = d.Records;
+                    Record r = d.Records[records.Count - 1];
                     long initialSyncCount = r.SyncCount;
                     bool initialDirty = r.IsModified;
                     DateTime initialDate = r.DeviceLastModifiedDate.Value;
@@ -337,7 +337,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     d.OnSyncSuccess += delegate(object sender, SyncSuccessEventArgs e)
                     {
                         //Properties after Synchronize
-                        Record r2 = d.AllRecords[records.Count - 1];
+                        Record r2 = d.Records[records.Count - 1];
                         long synchronizedSyncCount = r2.SyncCount;
                         bool synchronizedDirty = r2.IsModified;
                         DateTime synchronizedDate = r2.DeviceLastModifiedDate.Value;
@@ -345,7 +345,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         d.Put("testKey3", "a new value");
 
                         //Properties after changing the content again
-                        Record r3 = d.AllRecords[records.Count - 1];
+                        Record r3 = d.Records[records.Count - 1];
                         long finalSyncCount = r3.SyncCount;
                         bool finalDirty = r3.IsModified;
                         DateTime finalDate = r3.DeviceLastModifiedDate.Value;
