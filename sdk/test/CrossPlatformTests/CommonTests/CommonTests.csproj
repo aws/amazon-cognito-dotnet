@@ -49,11 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\settings.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\README.txt" />
-    <EmbeddedResource Include="Resources\settings.json" />
+    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
