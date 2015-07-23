@@ -56,7 +56,13 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
 
             //check if database already exists
-			var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDomain.CurrentDomain.DomainManager.EntryAssembly.GetName().Name, DB_FILE_NAME);
+            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
+            
+            var directoryPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync");
+            if (!Directory.Exists(directoryPath))
+            {
+                DirectoryInfo di = Directory.CreateDirectory(directoryPath);
+            }
 
             if (!File.Exists(filePath))
                 SQLiteConnection.CreateFile(filePath);
