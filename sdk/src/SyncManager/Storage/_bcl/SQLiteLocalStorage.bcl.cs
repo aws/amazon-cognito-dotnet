@@ -56,10 +56,12 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
 
             //check if database already exists
-            if (!File.Exists(DB_FILE_NAME))
-                SQLiteConnection.CreateFile(DB_FILE_NAME);
+			var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppDomain.CurrentDomain.DomainManager.EntryAssembly.GetName().Name, DB_FILE_NAME);
 
-            connection = new SQLiteConnection(string.Format(CultureInfo.InvariantCulture, "Data Source={0};Version=3;", DB_FILE_NAME));
+            if (!File.Exists(filePath))
+                SQLiteConnection.CreateFile(filePath);
+
+            connection = new SQLiteConnection(string.Format(CultureInfo.InvariantCulture, "Data Source={0};Version=3;", filePath));
             connection.Open();
             string createDatasetTable = "CREATE TABLE IF NOT EXISTS " + TABLE_DATASETS + "("
                         + DatasetColumns.IDENTITY_ID + " TEXT NOT NULL,"
