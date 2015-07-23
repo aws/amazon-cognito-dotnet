@@ -54,19 +54,19 @@
   </Choose>
   <ItemGroup>
     <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.0.1.3-preview\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.0.1.4-preview\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.CognitoSync">
-      <HintPath>..\packages\AWSSDK.CognitoSync.3.0.0.5-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.CognitoSync.3.0.0.6-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.0.0.6-preview\lib\net45\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.Core.3.0.0.7-preview\lib\net45\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.0.0.5-preview\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.SecurityToken.3.0.0.6-preview\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
