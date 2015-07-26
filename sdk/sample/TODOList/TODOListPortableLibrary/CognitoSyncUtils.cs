@@ -67,7 +67,7 @@ namespace TODOListPortableLibrary
         {
             List<Task> tasks = new List<Task>();
             Dataset dataset = SyncManagerInstance.OpenOrCreateDataset(TASK_DATASET);
-            var records = dataset.AllRecords;
+            var records = dataset.Records;
             foreach (var record in records)
             {
                 tasks.Add(JsonConvert.DeserializeObject<Task>(record.Value));

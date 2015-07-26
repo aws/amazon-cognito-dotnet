@@ -57,23 +57,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\..\packages\AWSSDK.CognitoIdentity.3.0.0.6-preview\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.CognitoIdentity.3.1.0.0\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.CognitoSync">
-      <HintPath>..\..\packages\AWSSDK.CognitoSync.3.0.0.6-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.CognitoSync.3.1.0.0-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.Core">
-      <HintPath>..\..\packages\AWSSDK.Core.3.0.0.7-preview\lib\net45\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.Core.3.1.0.0\lib\net45\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.IdentityManagement">
-      <HintPath>..\..\packages\AWSSDK.IdentityManagement.3.0.1.1-preview\lib\net45\AWSSDK.IdentityManagement.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.IdentityManagement.3.1.0.0\lib\net45\AWSSDK.IdentityManagement.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\..\packages\AWSSDK.SecurityToken.3.0.0.6-preview\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.SecurityToken.3.1.0.0\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">

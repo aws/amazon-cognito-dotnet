@@ -3,7 +3,7 @@
   <metadata> 
     <id>AWSSDK.SyncManager</id>
     <title>AWSSDK - Amazon Cognito Sync Manager</title>
-    <version>3.0.0.6-preview</version> 
+    <version>3.1.0.0-preview</version> 
     <authors>Amazon Web Services</authors>
     <description>Amazon Cognito is a service that makes it easy to save user data, such as app preferences or game state, in the AWS Cloud without writing any backend code or managing any infrastructure. With Amazon Cognito, you can focus on creating great app experiences instead of having to worry about building and managing a backend solution to handle identity management, network state, storage, and sync.</description> 
     <language>en-US</language>
@@ -14,12 +14,12 @@
 	<requireLicenseAcceptance>true</requireLicenseAcceptance>
     <dependencies>
       <group targetFramework="net45">
-		<dependency id="AWSSDK.CognitoSync" version="[3.0.0.6-preview, 3.1-preview)" />
+		<dependency id="AWSSDK.CognitoSync" version="[3.1.0.0-preview, 3.2-preview)" />
 		<dependency id="System.Data.SQLite" version="1.0.97.0"/>
       </group>
 	  <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
 	    <dependency id="Microsoft.Net.Http" version="2.2.29" />
-		<dependency id="AWSSDK.CognitoSync" version="[3.0.0.6-preview, 3.1-preview)" />
+		<dependency id="AWSSDK.CognitoSync" version="[3.1.0.0-preview, 3.2-preview)" />
 		<dependency id="SQLitePCL" version="3.8.7.2" />
 	  </group>
     </dependencies>
