@@ -4,6 +4,7 @@ using System.IO;
 using System.Data.SQLite;
 using System;
 using System.Collections.Generic;
+using Amazon.Util.Internal;
 
 namespace AWSSDK_DotNet.UnitTests
 {
@@ -11,14 +12,13 @@ namespace AWSSDK_DotNet.UnitTests
     public class SQLiteTests
     {
         static string DB_FILE_NAME = "aws_cognito_sync.db";
+        static string DB_FILE_PATH = InternalSDKUtils.DetermineAppLocalStoragePath(DB_FILE_NAME);
 
         [TestCleanup]
         public void Cleaup()
         {
             //drop all the tables from the db
-            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
-
-            using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
+            using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_PATH)))
             {
                 connection.Open();
 
@@ -45,13 +45,11 @@ namespace AWSSDK_DotNet.UnitTests
         [TestMethod]
         [TestCategory("Sqlite")]
         public void SqliteInitializationTest()
-        {
-            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
-
+        {          
             using (SQLiteLocalStorage storage = new SQLiteLocalStorage())
             { }
 
-            using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
+            using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_PATH)))
             {
                 connection.Open();
 
@@ -78,8 +76,6 @@ namespace AWSSDK_DotNet.UnitTests
         [TestCategory("Sqlite")]
         public void SQliteDatasetsTests()
         {
-            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
-
             string randomId = "old";
             string randomDataset = Guid.NewGuid().ToString();
             using (SQLiteLocalStorage storage = new SQLiteLocalStorage())
@@ -88,7 +84,7 @@ namespace AWSSDK_DotNet.UnitTests
                 storage.CreateDataset(randomId, randomDataset);
                 storage.PutValue(randomId, randomDataset, "Voldemort", "He who must not be named");
 
-                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
+                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_PATH)))
                 {
                     connection.Open();
 
@@ -139,7 +135,7 @@ namespace AWSSDK_DotNet.UnitTests
                 storage.ChangeIdentityId(randomId, Id);
                 randomId = Id;
 
-                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
+                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_PATH)))
                 {
                     connection.Open();
 
@@ -185,7 +181,7 @@ namespace AWSSDK_DotNet.UnitTests
 
                 storage.DeleteDataset(randomId, randomDataset);
 
-                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
+                using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", DB_FILE_PATH)))
                 {
                     connection.Open();
 

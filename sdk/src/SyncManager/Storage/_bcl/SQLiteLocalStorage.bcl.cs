@@ -24,6 +24,7 @@ using System.IO;
 using System.Globalization;
 using System.Security;
 using System.Security.Permissions;
+using Amazon.Util.Internal;
 
 namespace Amazon.CognitoSync.SyncManager.Internal
 {
@@ -56,9 +57,9 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
 
             //check if database already exists
-            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
-            
-            var directoryPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync");
+            var filePath = InternalSDKUtils.DetermineAppLocalStoragePath(DB_FILE_NAME);
+
+            var directoryPath = InternalSDKUtils.DetermineAppLocalStoragePath();
             if (!Directory.Exists(directoryPath))
             {
                 DirectoryInfo di = Directory.CreateDirectory(directoryPath);

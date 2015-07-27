@@ -99,6 +99,10 @@ namespace Amazon.CognitoSync.SyncManager
                 throw new ArgumentNullException("cognitoCredentials");
             }
 
+#if BCL
+            ValidateParameters();
+#endif
+
             this.CognitoCredentials = cognitoCredentials;
 
             Local = new SQLiteLocalStorage();
@@ -235,6 +239,17 @@ namespace Amazon.CognitoSync.SyncManager
             List<DatasetMetadata> response = await Remote.GetDatasetMetadataAsync(cancellationToken);
             Local.UpdateDatasetMetadata(IdentityId, response);
             return response;
+        }
+        #endregion
+
+        #region private methods
+        static void ValidateParameters()
+        {
+            if (string.IsNullOrEmpty(AWSConfigs.ApplicationName))
+            {
+                throw new ArgumentException("A valid application name needs to configured to use this API." +
+                    "The application name can be configured through app.config or by setting the Amazon.AWSConfigs.ApplicationName property.");
+            }
         }
         #endregion
 
