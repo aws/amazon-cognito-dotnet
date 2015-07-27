@@ -8,7 +8,7 @@ icons:
   - ..\awsmobile_128.png
   - ..\awsmobile_512.png
 publisher: Amazon Web Services
-name: AWS CognitoSync SDK
+name: AWSSDK - Amazon Cognito Sync
 id: aws-cognitosync-sdk
 samples: 
   - name: "CognitoSync-Sample"
