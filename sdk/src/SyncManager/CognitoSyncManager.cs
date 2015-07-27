@@ -243,6 +243,7 @@ namespace Amazon.CognitoSync.SyncManager
         #endregion
 
         #region private methods
+#if BCL
         static void ValidateParameters()
         {
             if (string.IsNullOrEmpty(AWSConfigs.ApplicationName))
@@ -251,6 +252,7 @@ namespace Amazon.CognitoSync.SyncManager
                     "The application name can be configured through app.config or by setting the Amazon.AWSConfigs.ApplicationName property.");
             }
         }
+#endif
         #endregion
 
     }
