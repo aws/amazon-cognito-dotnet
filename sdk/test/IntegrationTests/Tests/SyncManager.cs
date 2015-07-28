@@ -15,6 +15,7 @@ using System.IO;
 using System.Data.SQLite;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Util.Internal;
 
 
 
@@ -75,8 +76,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                 FacebookUtilities.DeleteFacebookUser(facebookUser);
 #endif
             //drop all the tables from the db
-
-            var filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CognitoSync", DB_FILE_NAME);
+            var filePath = InternalSDKUtils.DetermineAppLocalStoragePath(DB_FILE_NAME);
             if (File.Exists(filePath))
             {
                 using (SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", filePath)))
