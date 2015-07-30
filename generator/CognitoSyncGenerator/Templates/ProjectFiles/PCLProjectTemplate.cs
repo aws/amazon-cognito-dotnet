@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace CognitoSyncGenerator.templates
+namespace CognitoSyncGenerator.Templates.ProjectFiles
 {
     using System.Linq;
     using System.Text;
@@ -18,9 +18,9 @@ namespace CognitoSyncGenerator.templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\dev\DotNet\syncmanager\AWSDotNetSyncManager\generator\CognitoSyncGenerator\templates\Net45ProjectTemplate.tt"
+    #line 1 "C:\dev\DotNet\syncmanager\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\PCLProjectTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
-    public partial class Net45ProjectTemplate : Net45ProjectTemplateBase
+    public partial class PCLProjectTemplate : PCLProjectTemplateBase
     {
 #line hidden
         /// <summary>
@@ -39,7 +39,7 @@ namespace CognitoSyncGenerator.templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
-    public class Net45ProjectTemplateBase
+    public class PCLProjectTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

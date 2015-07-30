@@ -28,3 +28,11 @@
 /sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/*.appxupload
 /sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Test/*.appx
 /sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Test/*.appxsym
+/sdk/xamarin-component/CognitoSync/*.xam
+/sdk/test/CrossPlatformTests/WindowsApp/AppPackages/WindowsApp_1.0.0.0_ARM_Test
+/sdk/test/CrossPlatformTests/WindowsApp/AppPackages/WindowsApp_1.0.0.0_x86_Test
+/sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Debug_Test
+/sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Test/Dependencies/ARM
+/sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Test/Dependencies/x86
+/sdk/test/CrossPlatformTests/WindowsApp/AppPackages/WindowsApp_1.0.0.0_ARM.appxupload
+/sdk/test/CrossPlatformTests/WindowsApp/AppPackages/WindowsApp_1.0.0.0_x86.appxupload

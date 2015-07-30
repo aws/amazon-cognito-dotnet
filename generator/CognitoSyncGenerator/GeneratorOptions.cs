@@ -44,6 +44,10 @@ namespace CognitoSyncGenerator
         /// </summary>
         public string SdkRootFolder { get; set; }
 
+        /// <summary>
+        /// The root folder which contains service models
+        /// </summary>
+        public string Models { get; set; }
 
         /// <summary>
         /// If set, the contents of the generated subfolder hierarchy are deleted prior
@@ -56,9 +60,7 @@ namespace CognitoSyncGenerator
         {
             Verbose = false;
             WaitOnExit = false;
-
             SdkRootFolder = @"..\..\..\..\sdk";
-
             Clean = false;
         }
     }

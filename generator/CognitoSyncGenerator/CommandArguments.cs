@@ -195,6 +195,13 @@ namespace CognitoSyncGenerator
                 Parse = (arguments, argValue) => arguments.ParsedOptions.Clean = true, 
                 HelpText = "Deletes all content in the 'Generated' subfolder for services prior to generation.\n"
                             + "The default behavior is to keep existing generated content."
+            },
+            new ArgDeclaration
+            {
+                OptionName = "models", 
+                ShortName = "md", 
+                Parse = (arguments, argValue) => arguments.ParsedOptions.Clean = true, 
+                HelpText = "The location of the service models to get documentation."
             }
         };
 
