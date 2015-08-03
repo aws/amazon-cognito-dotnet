@@ -22,7 +22,8 @@ namespace CognitoSyncGenerator
 
             try
             {
-                
+                var generator = new GeneratorDriver(options);
+                generator.Execute();
             }
             catch (Exception e)
             {

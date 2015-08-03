@@ -24,6 +24,7 @@
 /sdk/test/CrossPlatformTests/CommonTests/Resources/settings.json
 /sdk/.nuget
 /Deployment
+/generator/packages
 /sdk/sample/TODOList/packages
 /sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/*.appxupload
 /sdk/test/CrossPlatformTests/WindowsPhoneApp/AppPackages/WindowsPhoneApp_1.0.0.0_x86_Test/*.appx

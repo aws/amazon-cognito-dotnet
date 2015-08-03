@@ -1,0 +1,56 @@
+﻿{
+    "AssemblyName": "SyncManager",
+    "Version": "3.1.0.0",
+    "InPreview": true,
+    "Dependencies": [
+        {
+            "Name": "Core",
+            "Version": "3.1.0.0",
+            "ReferencePaths": {
+                "iOS": "lib\\Xamarin.iOS10\\AWSSDK.Core.dll",
+                "PCL": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.Core.dll",
+                "BCL45": "lib\\net45\\AWSSDK.Core.dll"
+            }
+        },
+        {
+            "Name": "SecurityToken",
+            "Version": "3.1.0.0",
+            "ReferencePaths": {
+                "iOS": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.SecurityToken.dll",
+                "PCL": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.SecurityToken.dll",
+                "BCL45": "lib\\net45\\AWSSDK.SecurityToken.dll"
+            }
+        },
+        {
+            "Name": "CognitoIdentity",
+            "Version": "3.1.0.0",
+            "ReferencePaths": {
+                "iOS": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.CognitoIdentity.dll",
+                "PCL": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.CognitoIdentity.dll",
+                "BCL45": "lib\\net45\\AWSSDK.CognitoIdentity.dll"
+            }
+        },
+        {
+            "Name": "CognitoSync",
+            "Version": "3.1.0.0",
+            "Primary": true,
+            "InPreview": true,
+            "ReferencePaths": {
+                "iOS": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.CognitoSync.dll",
+                "PCL": "lib\\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\\AWSSDK.CognitoSync.dll",
+                "BCL45": "lib\\net45\\AWSSDK.CognitoSync.dll"
+            }
+        },
+        {
+            "Name": "IdentityManagement",
+            "Version": "3.1.0.0",
+            "TestOnly": true
+        },
+        {
+            "Name": "SimpleNotificationService",
+            "Version": "3.1.0.0",
+            "TestOnly": true
+        }
+    ],
+    "EnableXamarinComponent": true
+}

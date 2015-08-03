@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,10 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandArguments.cs" />
+    <Compile Include="GeneratorDriver.cs" />
     <Compile Include="GeneratorOptions.cs" />
-    <Compile Include="NugetReferences.cs" />
+    <Compile Include="ManifestConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates\BaseGenerator.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="Templates\Component\Component.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -60,6 +70,16 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>GettingStarted.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Templates\SourceFiles\AssemblyInfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Templates\SourceFiles\NuSpec.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NuSpec.tt</DependentUpon>
     </Compile>
     <Compile Include="Templates\ProjectFiles\IOSProjectTemplate.cs">
       <AutoGen>True</AutoGen>
@@ -76,9 +96,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PCLProjectTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Include="Templates\SourceFiles\PackagesConfig.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PackagesConfig.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Manifest\_manifest.json" />
+    <None Include="packages.config" />
+    <None Include="Templates\BaseGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>BaseGenerator.cs</LastGenOutput>
+    </None>
     <None Include="Templates\Component\Component.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>Component.cs</LastGenOutput>
@@ -91,6 +122,14 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>GettingStarted.cs</LastGenOutput>
     </None>
+    <None Include="Templates\SourceFiles\AssemblyInfo.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
+    </None>
+    <None Include="Templates\SourceFiles\NuSpec.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>NuSpec.cs</LastGenOutput>
+    </None>
     <None Include="Templates\ProjectFiles\IOSProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>IOSProjectTemplate.cs</LastGenOutput>
@@ -102,6 +141,10 @@
     <None Include="Templates\ProjectFiles\PCLProjectTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>PCLProjectTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="Templates\SourceFiles\PackagesConfig.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>PackagesConfig.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

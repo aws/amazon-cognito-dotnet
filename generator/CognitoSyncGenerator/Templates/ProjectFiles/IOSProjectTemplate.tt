@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" inherits="BaseGenerator" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -10,14 +10,14 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid><#=this.Session["ProjectGuid"]#></ProjectGuid>
+    <ProjectGuid>{C69BAD61-901B-44C6-8989-1B06CEF1C491}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Amazon.CognitoSync.SyncManager</RootNamespace>
     <AssemblyName>AWSSDK.SyncManager</AssemblyName>
-	<IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-	<BaseIntermediateOutputPath>obj\Xamarin.iOS10</BaseIntermediateOutputPath>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <BaseIntermediateOutputPath>obj\Xamarin.iOS10</BaseIntermediateOutputPath>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,45 +25,29 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\Xamarin.iOS10</OutputPath>
-    <DefineConstants>DEBUG;TRACE;PCL;AWS_ASYNC_API;LOCAL_FILE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;__UNIFIED__;__MOBILE__;__IOS__;PCL;AWS_ASYNC_API;LOCAL_FILE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchDebug>true</MtouchDebug>
-	<NoWarn>419,1570,1591</NoWarn>
     <CodesignKey>iPhone Developer</CodesignKey>
-<#
-    if(this.Session.ContainsKey("SupressWarnings"))
-    {
-#>
-	<NoWarn><#=this.Session["SupressWarnings"]#></NoWarn>
-<#
-    }
-#>
+    <NoWarn>419,1570,1591</NoWarn>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<DocumentationFile>bin\Debug\\<#=this.Session["BinSubfolder"]#>\\<#=this.Session["AssemblyName"]#>.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Xamarin.iOS10\AWSSDK.SyncManager.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\Xamarin.iOS10</OutputPath>
-    <DefineConstants>TRACE;PCL;AWS_ASYNC_API;LOCAL_FILE</DefineConstants>
+    <DefineConstants>TRACE;;PCL;__IOS__;AWS_ASYNC_API;LOCAL_FILE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-	<NoWarn>419,1570,1591</NoWarn>
-    <DocumentationFile>bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.xml</DocumentationFile>
     <CodesignKey>iPhone Developer</CodesignKey>
-<#
-    if(this.Session.ContainsKey("SupressWarnings"))
-    {
-#>
-	<NoWarn><#=this.Session["SupressWarnings"]#></NoWarn>
-<#
-    }
-#>
+    <NoWarn>419,1570,1591</NoWarn>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-	<DocumentationFile>bin\Release\\<#=this.Session["BinSubfolder"]#>\\<#=this.Session["AssemblyName"]#>.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -71,20 +55,7 @@
   <Choose>
     <When Condition=" '$(AWSKeyFile)' == '' ">
       <PropertyGroup>
-<#
-    if(this.Session.ContainsKey("KeyFilePath"))
-    {
-#>
-		<AssemblyOriginatorKeyFile><#=this.Session["KeyFilePath"]#></AssemblyOriginatorKeyFile>
-<#
-    }
-	else
-    {
-#>
-        <AssemblyOriginatorKeyFile>..\..\..\awssdk.dll.snk</AssemblyOriginatorKeyFile>
-<#
-    }
-#>
+        <AssemblyOriginatorKeyFile>..\awssdk.dll.snk</AssemblyOriginatorKeyFile>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -94,97 +65,75 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-<#
-    foreach(string subDirectory in ((IList<string>)this.Session["SourceDirectories"]))
-    {
-#>
-    <Compile Include="<#=subDirectory#>\*.cs">
+    <Compile Include="SyncManager\*.cs">
       <SubType>Code</SubType>
     </Compile>
-<#
-    }
-#>
-  </ItemGroup>
-  <ItemGroup>
-<#
-    if(this.Session.ContainsKey("IndividualFileIncludes"))
-    {
-        foreach(string file in ((IList<string>)this.Session["IndividualFileIncludes"]))
-        {
-            if(file.EndsWith(".cs"))
-            {
-#>
-    <Compile Include="<#=file#>">
+    <Compile Include="SyncManager\_pcl\*.cs">
       <SubType>Code</SubType>
     </Compile>
-<#
-            }
-            else
-            {
-#>
-    <EmbeddedResource Include="<#=file#>">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-<#
-            }
-        }
-    }
-#>
+    <Compile Include="SyncManager\Exceptions\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SyncManager\Model\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SyncManager\Storage\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SyncManager\Storage\_pcl\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SyncManager\Util\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
-<#
-    if(this.Session.ContainsKey("ProjectReferences"))
-    {
-        foreach(var projectReferences in (List<ProjectFileCreator.ProjectReference>)this.Session["ProjectReferences"])
-        {
-#>
-  <ItemGroup>
-    <ProjectReference Include="<#=projectReferences.IncludePath#>">
-        <Project><#=projectReferences.ProjectGuid#></Project>
-        <Name><#=projectReferences.Name#></Name>
-    </ProjectReference>
-  </ItemGroup>
-<#
-        }
-    }
-#>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-	<None Include="packages.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-
- <#
-    foreach(var nugetReferences in List<NugetReferences>)
-	{
- #>
-    <Reference Include="<#=nugetReferences.Name#>">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>\<#=nugetReferences.Name#>.<#=nugetReferences.Version#>\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoIdentity.dll</HintPath>
+<#
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
+#>
+    <Reference Include="<#= Prefix #>.<#= dependency.Name #>">
+      <HintPath><#=this.Config.PackagesPath#>\\<#=Prefix#>.<#=dependency.Name#>.<#=dependency.Version#><#=dependency.InPreview?PreviewFlag:""#>\\<#=dependency.ReferencePaths["iOS"]#></HintPath>
       <Private>True</Private>
-    </Reference>	
- <#
-	}
- #>
+    </Reference>
+<#
+			}
+#>
     <Reference Include="System" />
-	<Reference Include="System.Net" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-	<Reference Include="Xamarin.iOS" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="SQLitePCL, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
+      <HintPath>..\packages\SQLitePCL.3.8.7.2\lib\Xamarin.iOS10\SQLitePCL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLitePCL.Ext, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
+      <HintPath>..\packages\SQLitePCL.3.8.7.2\lib\Xamarin.iOS10\SQLitePCL.Ext.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PCLCrypto">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>PCLCrypto.1.0.2.15130\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\PCLCrypto.dll</HintPath>
+      <HintPath>..\packages\PCLCrypto.1.0.2.15130\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\PCLCrypto.dll</HintPath>
     </Reference>
     <Reference Include="PCLStorage">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
     </Reference>
     <Reference Include="PCLStorage.Abstractions">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-net45+wp8+wpa81+win8+monoandroid+monotouch+Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Extensions">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Primitives">
-      <HintPath><#=this.Session["NugetPackagesLocation"]#>Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

@@ -1,9 +1,14 @@
+﻿<#@ template language="C#" inherits="BaseGenerator" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
 <?xml version="1.0" encoding="utf-8"?>
 <package> 
   <metadata> 
     <id>AWSSDK.SyncManager</id>
     <title>AWSSDK - Amazon Cognito Sync Manager</title>
-    <version>3.1.0.0-preview</version> 
+    <version><#=this.Config.Version#><#=this.Config.InPreview?"-preview":""#></version> 
     <authors>Amazon Web Services</authors>
     <description>Amazon Cognito is a service that makes it easy to save user data, such as app preferences or game state, in the AWS Cloud without writing any backend code or managing any infrastructure. With Amazon Cognito, you can focus on creating great app experiences instead of having to worry about building and managing a backend solution to handle identity management, network state, storage, and sync.</description> 
     <language>en-US</language>
@@ -11,18 +16,45 @@
     <projectUrl>https://github.com/aws/amazon-cognito-dotnet</projectUrl>
     <tags>AWS Amazon cloud CognitoSync</tags>
     <iconUrl>http://media.amazonwebservices.com/aws_singlebox_01.png</iconUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+	<requireLicenseAcceptance>true</requireLicenseAcceptance>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="AWSSDK.CognitoSync" version="[3.1.0.0-preview, 3.2-preview)" />
-        <dependency id="System.Data.SQLite" version="1.0.97.0"/>
+<#
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
+
+				if(dependency.Primary )
+				{
+					var verTokens = dependency.Version.Split('.');
+					var versionRange = string.Format("[{0}{3}, {1}.{2}{3})", dependency.Version, verTokens[0], int.Parse(verTokens[1]) + 1, dependency.InPreview?PreviewFlag:"");
+#>
+		<dependency id="<#=Prefix#>.<#=dependency.Name#>" version="<#=versionRange#>" />
+<#
+				}
+			}
+#>
+		<dependency id="System.Data.SQLite" version="1.0.97.0"/>
       </group>
-      <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
+	  <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
       <group targetFramework="net45">
-        <dependency id="AWSSDK.CognitoSync" version="[3.1.0.0-preview, 3.2-preview)" />
-        <dependency id="Microsoft.Net.Http" version="2.2.29" />
-        <dependency id="SQLitePCL" version="3.8.7.2" />
-      </group>
+<#
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.Primary)
+				{
+					var verTokens = dependency.Version.Split('.');
+					var versionRange = string.Format("[{0}{3}, {1}.{2}{3})", dependency.Version, verTokens[0], int.Parse(verTokens[1]) + 1, dependency.InPreview?PreviewFlag:"");
+#>
+		<dependency id="<#=Prefix#>.<#=dependency.Name#>" version="<#=versionRange#>" />
+<#
+				}
+			}
+#>
+	    <dependency id="Microsoft.Net.Http" version="2.2.29" />
+		<dependency id="SQLitePCL" version="3.8.7.2" />
+	  </group>
     </dependencies>
   </metadata>
   <files>

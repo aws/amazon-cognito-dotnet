@@ -18,292 +18,211 @@ namespace CognitoSyncGenerator.Templates.ProjectFiles
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\dev\DotNet\syncmanager\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+    #line 1 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
-    public partial class Net45ProjectTemplate : Net45ProjectTemplateBase
+    public partial class Net45ProjectTemplate : BaseGenerator
     {
 #line hidden
         /// <summary>
         /// Create the template output
         /// </summary>
-        public virtual string TransformText()
+        public override string TransformText()
         {
+            this.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<Project ToolsVersion=\"12.0\" DefaultTarge" +
+                    "ts=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n  <Impo" +
+                    "rt Project=\"$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.pro" +
+                    "ps\" Condition=\"Exists(\'$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft" +
+                    ".Common.props\')\" />\r\n  <PropertyGroup>\r\n    <Configuration Condition=\" \'$(Config" +
+                    "uration)\' == \'\' \">Debug</Configuration>\r\n    <Platform Condition=\" \'$(Platform)\'" +
+                    " == \'\' \">AnyCPU</Platform>\r\n    <ProjectGuid>{75252F5A-D3F2-4A4E-ADDC-560E1E3C20" +
+                    "66}</ProjectGuid>\r\n    <OutputType>Library</OutputType>\r\n    <AppDesignerFolder>" +
+                    "Properties</AppDesignerFolder>\r\n    <RootNamespace>Amazon.CognitoSync.SyncManage" +
+                    "r</RootNamespace>\r\n    <AssemblyName>AWSSDK.SyncManager</AssemblyName>\r\n    <Tar" +
+                    "getFrameworkVersion>v4.5</TargetFrameworkVersion>\r\n    <FileAlignment>512</FileA" +
+                    "lignment>\r\n    <BaseIntermediateOutputPath>obj\\net45</BaseIntermediateOutputPath" +
+                    ">\r\n    <SolutionDir Condition=\"$(SolutionDir) == \'\' Or $(SolutionDir) == \'*Undef" +
+                    "ined*\'\">..\\</SolutionDir>\r\n    <NuGetPackageImportStamp>592082a5</NuGetPackageIm" +
+                    "portStamp>\r\n    <RestorePackages>true</RestorePackages>\r\n  </PropertyGroup>\r\n  <" +
+                    "PropertyGroup Condition=\" \'$(Configuration)|$(Platform)\' == \'Debug|AnyCPU\' \">\r\n " +
+                    "   <DebugSymbols>true</DebugSymbols>\r\n    <DebugType>full</DebugType>\r\n    <Opti" +
+                    "mize>false</Optimize>\r\n    <OutputPath>bin\\Debug\\net45</OutputPath>\r\n    <Define" +
+                    "Constants>DEBUG;TRACE;;BCL;BCL45;AWS_ASYNC_API;CODE_ANALYSIS;LOCAL_FILE</DefineC" +
+                    "onstants>\r\n    <ErrorReport>prompt</ErrorReport>\r\n    <WarningLevel>4</WarningLe" +
+                    "vel>\r\n    <DocumentationFile>bin\\Debug\\net45\\AWSSDK.SyncManager.XML</Documentati" +
+                    "onFile>\r\n    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnal" +
+                    "ysisModuleSuppressionsFile>\r\n  </PropertyGroup>\r\n  <PropertyGroup Condition=\" \'$" +
+                    "(Configuration)|$(Platform)\' == \'Release|AnyCPU\' \">\r\n    <DebugType>pdbonly</Deb" +
+                    "ugType>\r\n    <Optimize>true</Optimize>\r\n    <OutputPath>bin\\Release\\net45</Outpu" +
+                    "tPath>\r\n    <DefineConstants>TRACE;;BCL;BCL45;AWS_ASYNC_API;CODE_ANALYSIS;LOCAL_" +
+                    "FILE</DefineConstants>\r\n    <ErrorReport>prompt</ErrorReport>\r\n    <WarningLevel" +
+                    ">4</WarningLevel>\r\n    <DocumentationFile>bin\\Release\\net45\\AWSSDK.SyncManager.X" +
+                    "ML</DocumentationFile>\r\n    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressio" +
+                    "ns.cs</CodeAnalysisModuleSuppressionsFile>\r\n  </PropertyGroup>\r\n  <PropertyGroup" +
+                    ">\r\n    <SignAssembly>true</SignAssembly>\r\n  </PropertyGroup>\r\n  <Choose>\r\n    <W" +
+                    "hen Condition=\" \'$(AWSKeyFile)\' == \'\' \">\r\n      <PropertyGroup>\r\n        <Assemb" +
+                    "lyOriginatorKeyFile>..\\awssdk.dll.snk</AssemblyOriginatorKeyFile>\r\n      </Prope" +
+                    "rtyGroup>\r\n    </When>\r\n    <Otherwise>\r\n      <PropertyGroup>\r\n        <Assembl" +
+                    "yOriginatorKeyFile>$(AWSKeyFile)</AssemblyOriginatorKeyFile>\r\n      </PropertyGr" +
+                    "oup>\r\n    </Otherwise>\r\n  </Choose>\r\n  <ItemGroup>\r\n");
+            
+            #line 61 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
+
+            
+            #line default
+            #line hidden
+            this.Write("    <Reference Include=\"");
+            
+            #line 67 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 67 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\">\r\n      <HintPath>");
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.PackagesPath));
+            
+            #line default
+            #line hidden
+            this.Write("\\");
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Version));
+            
+            #line default
+            #line hidden
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.InPreview?PreviewFlag:""));
+            
+            #line default
+            #line hidden
+            this.Write("\\");
+            
+            #line 68 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.ReferencePaths["BCL45"]));
+            
+            #line default
+            #line hidden
+            this.Write("</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n");
+            
+            #line 71 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\ProjectFiles\Net45ProjectTemplate.tt"
+
+			}
+
+            
+            #line default
+            #line hidden
+            this.Write("    <Reference Include=\"EntityFramework, Version=6.0.0.0, Culture=neutral, Public" +
+                    "KeyToken=b77a5c561934e089, processorArchitecture=MSIL\">\r\n      <HintPath>..\\pack" +
+                    "ages\\EntityFramework.6.0.0\\lib\\net45\\EntityFramework.dll</HintPath>\r\n      <Priv" +
+                    "ate>True</Private>\r\n    </Reference>\r\n    <Reference Include=\"EntityFramework.Sq" +
+                    "lServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, proc" +
+                    "essorArchitecture=MSIL\">\r\n      <HintPath>..\\packages\\EntityFramework.6.0.0\\lib\\" +
+                    "net45\\EntityFramework.SqlServer.dll</HintPath>\r\n      <Private>True</Private>\r\n " +
+                    "   </Reference>\r\n    <Reference Include=\"Mono.Security, Version=4.0.0.0, Culture" +
+                    "=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL\">\r\n      <" +
+                    "HintPath>..\\packages\\Mono.Security.3.2.3.0\\lib\\net45\\Mono.Security.dll</HintPath" +
+                    ">\r\n      <Private>True</Private>\r\n    </Reference>\r\n    <Reference Include=\"PCLC" +
+                    "rypto, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d4421c8a4786956c, proces" +
+                    "sorArchitecture=MSIL\">\r\n      <HintPath>..\\packages\\PCLCrypto.1.0.2.15130\\lib\\ne" +
+                    "t40-Client\\PCLCrypto.dll</HintPath>\r\n      <Private>True</Private>\r\n    </Refere" +
+                    "nce>\r\n    <Reference Include=\"PCLStorage, Version=1.0.2.0, Culture=neutral, Publ" +
+                    "icKeyToken=286fe515a2c35b64, processorArchitecture=MSIL\">\r\n      <HintPath>..\\pa" +
+                    "ckages\\PCLStorage.1.0.2\\lib\\net45\\PCLStorage.dll</HintPath>\r\n      <Private>True" +
+                    "</Private>\r\n    </Reference>\r\n    <Reference Include=\"PCLStorage.Abstractions, V" +
+                    "ersion=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchi" +
+                    "tecture=MSIL\">\r\n      <HintPath>..\\packages\\PCLStorage.1.0.2\\lib\\net45\\PCLStorag" +
+                    "e.Abstractions.dll</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n" +
+                    "    <Reference Include=\"System\" />\r\n    <Reference Include=\"System.ComponentMode" +
+                    "l.DataAnnotations\" />\r\n    <Reference Include=\"System.Configuration\" />\r\n    <Re" +
+                    "ference Include=\"System.Core\" />\r\n    <Reference Include=\"System.Data.SQLite, Ve" +
+                    "rsion=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchi" +
+                    "tecture=MSIL\">\r\n      <HintPath>..\\packages\\System.Data.SQLite.Core.1.0.97.0\\lib" +
+                    "\\net45\\System.Data.SQLite.dll</HintPath>\r\n      <Private>True</Private>\r\n    </R" +
+                    "eference>\r\n    <Reference Include=\"System.Data.SQLite.EF6, Version=1.0.97.0, Cul" +
+                    "ture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL\">\r\n   " +
+                    "   <HintPath>..\\packages\\System.Data.SQLite.EF6.1.0.97.0\\lib\\net45\\System.Data.S" +
+                    "QLite.EF6.dll</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n    <" +
+                    "Reference Include=\"System.Data.SQLite.Linq, Version=1.0.97.0, Culture=neutral, P" +
+                    "ublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL\">\r\n      <HintPath>.." +
+                    "\\packages\\System.Data.SQLite.Linq.1.0.97.0\\lib\\net45\\System.Data.SQLite.Linq.dll" +
+                    "</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n    <Reference Inc" +
+                    "lude=\"System.Net.Http\" />\r\n    <Reference Include=\"System.Net.Http.Extensions, V" +
+                    "ersion=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArch" +
+                    "itecture=MSIL\">\r\n      <HintPath>..\\packages\\Microsoft.Net.Http.2.2.29\\lib\\net45" +
+                    "\\System.Net.Http.Extensions.dll</HintPath>\r\n      <Private>True</Private>\r\n    <" +
+                    "/Reference>\r\n    <Reference Include=\"System.Net.Http.Primitives, Version=4.2.29." +
+                    "0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL\"" +
+                    ">\r\n      <HintPath>..\\packages\\Microsoft.Net.Http.2.2.29\\lib\\net45\\System.Net.Ht" +
+                    "tp.Primitives.dll</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n " +
+                    "   <Reference Include=\"System.Net.Http.WebRequest\" />\r\n    <Reference Include=\"S" +
+                    "ystem.Xml.Linq\" />\r\n    <Reference Include=\"System.Data.DataSetExtensions\" />\r\n " +
+                    "   <Reference Include=\"Microsoft.CSharp\" />\r\n    <Reference Include=\"System.Data" +
+                    "\" />\r\n    <Reference Include=\"System.Xml\" />\r\n    <Reference Include=\"Validation" +
+                    ", Version=2.0.0.0, Culture=neutral, PublicKeyToken=2fc06f0d701809a7, processorAr" +
+                    "chitecture=MSIL\">\r\n      <HintPath>..\\packages\\Validation.2.0.6.15003\\lib\\portab" +
+                    "le-net40+sl50+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\\Validation." +
+                    "dll</HintPath>\r\n      <Private>True</Private>\r\n    </Reference>\r\n  </ItemGroup>\r" +
+                    "\n  <ItemGroup>\r\n    <Compile Include=\"Properties\\AssemblyInfo.cs\" />\r\n    <Compi" +
+                    "le Include=\"SyncManager\\*.cs\">\r\n      <SubType>Code</SubType>\r\n    </Compile>\r\n " +
+                    "   <Compile Include=\"SyncManager\\_bcl\\*.cs\">\r\n      <SubType>Code</SubType>\r\n   " +
+                    " </Compile>\r\n    <Compile Include=\"SyncManager\\Exceptions\\*.cs\">\r\n      <SubType" +
+                    ">Code</SubType>\r\n    </Compile>\r\n    <Compile Include=\"SyncManager\\Model\\*.cs\">\r" +
+                    "\n      <SubType>Code</SubType>\r\n    </Compile>\r\n    <Compile Include=\"SyncManage" +
+                    "r\\Storage\\*.cs\">\r\n      <SubType>Code</SubType>\r\n    </Compile>\r\n    <Compile In" +
+                    "clude=\"SyncManager\\Storage\\_bcl\\*.cs\">\r\n      <SubType>Code</SubType>\r\n    </Com" +
+                    "pile>\r\n    <Compile Include=\"SyncManager\\Util\\*.cs\">\r\n      <SubType>Code</SubTy" +
+                    "pe>\r\n    </Compile>\r\n  </ItemGroup>\r\n  <ItemGroup />\r\n  <ItemGroup>\r\n    <None I" +
+                    "nclude=\"packages.config\" />\r\n  </ItemGroup>\r\n  <Import Project=\"$(MSBuildToolsPa" +
+                    "th)\\Microsoft.CSharp.targets\" />\r\n  <Import Project=\"..\\packages\\System.Data.SQL" +
+                    "ite.Core.1.0.97.0\\build\\net45\\System.Data.SQLite.Core.targets\" Condition=\"Exists" +
+                    "(\'..\\packages\\System.Data.SQLite.Core.1.0.97.0\\build\\net45\\System.Data.SQLite.Co" +
+                    "re.targets\')\" />\r\n  <Import Project=\"..\\packages\\Microsoft.Bcl.Build.1.0.21\\buil" +
+                    "d\\Microsoft.Bcl.Build.targets\" Condition=\"Exists(\'..\\packages\\Microsoft.Bcl.Buil" +
+                    "d.1.0.21\\build\\Microsoft.Bcl.Build.targets\')\" />\r\n  <Import Project=\"$(SolutionD" +
+                    "ir)\\.nuget\\NuGet.targets\" Condition=\"Exists(\'$(SolutionDir)\\.nuget\\NuGet.targets" +
+                    "\')\" />\r\n  <Target Name=\"EnsureNuGetPackageBuildImports\" BeforeTargets=\"PrepareFo" +
+                    "rBuild\">\r\n    <PropertyGroup>\r\n      <ErrorText>This project references NuGet pa" +
+                    "ckage(s) that are missing on this computer. Enable NuGet Package Restore to down" +
+                    "load them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322" +
+                    "105. The missing file is {0}.</ErrorText>\r\n    </PropertyGroup>\r\n    <Error Cond" +
+                    "ition=\"!Exists(\'$(SolutionDir)\\.nuget\\NuGet.targets\')\" Text=\"$([System.String]::" +
+                    "Format(\'$(ErrorText)\', \'$(SolutionDir)\\.nuget\\NuGet.targets\'))\" />\r\n  </Target>\r" +
+                    "\n  <!-- To modify your build process, add your task inside one of the targets be" +
+                    "low and uncomment it. \r\n       Other similar extension points exist, see Microso" +
+                    "ft.Common.targets.\r\n  <Target Name=\"BeforeBuild\">\r\n  </Target>\r\n  <Target Name=\"" +
+                    "AfterBuild\">\r\n  </Target>\r\n  -->\r\n</Project>");
             return this.GenerationEnvironment.ToString();
         }
     }
     
     #line default
     #line hidden
-    #region Base class
-    /// <summary>
-    /// Base class for this transformation
-    /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
-    public class Net45ProjectTemplateBase
-    {
-        #region Fields
-        private global::System.Text.StringBuilder generationEnvironmentField;
-        private global::System.CodeDom.Compiler.CompilerErrorCollection errorsField;
-        private global::System.Collections.Generic.List<int> indentLengthsField;
-        private string currentIndentField = "";
-        private bool endsWithNewline;
-        private global::System.Collections.Generic.IDictionary<string, object> sessionField;
-        #endregion
-        #region Properties
-        /// <summary>
-        /// The string builder that generation-time code is using to assemble generated output
-        /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
-        {
-            get
-            {
-                if ((this.generationEnvironmentField == null))
-                {
-                    this.generationEnvironmentField = new global::System.Text.StringBuilder();
-                }
-                return this.generationEnvironmentField;
-            }
-            set
-            {
-                this.generationEnvironmentField = value;
-            }
-        }
-        /// <summary>
-        /// The error collection for the generation process
-        /// </summary>
-        public System.CodeDom.Compiler.CompilerErrorCollection Errors
-        {
-            get
-            {
-                if ((this.errorsField == null))
-                {
-                    this.errorsField = new global::System.CodeDom.Compiler.CompilerErrorCollection();
-                }
-                return this.errorsField;
-            }
-        }
-        /// <summary>
-        /// A list of the lengths of each indent that was added with PushIndent
-        /// </summary>
-        private System.Collections.Generic.List<int> indentLengths
-        {
-            get
-            {
-                if ((this.indentLengthsField == null))
-                {
-                    this.indentLengthsField = new global::System.Collections.Generic.List<int>();
-                }
-                return this.indentLengthsField;
-            }
-        }
-        /// <summary>
-        /// Gets the current indent we use when adding lines to the output
-        /// </summary>
-        public string CurrentIndent
-        {
-            get
-            {
-                return this.currentIndentField;
-            }
-        }
-        /// <summary>
-        /// Current transformation session
-        /// </summary>
-        public virtual global::System.Collections.Generic.IDictionary<string, object> Session
-        {
-            get
-            {
-                return this.sessionField;
-            }
-            set
-            {
-                this.sessionField = value;
-            }
-        }
-        #endregion
-        #region Transform-time helpers
-        /// <summary>
-        /// Write text directly into the generated output
-        /// </summary>
-        public void Write(string textToAppend)
-        {
-            if (string.IsNullOrEmpty(textToAppend))
-            {
-                return;
-            }
-            // If we're starting off, or if the previous text ended with a newline,
-            // we have to append the current indent first.
-            if (((this.GenerationEnvironment.Length == 0) 
-                        || this.endsWithNewline))
-            {
-                this.GenerationEnvironment.Append(this.currentIndentField);
-                this.endsWithNewline = false;
-            }
-            // Check if the current text ends with a newline
-            if (textToAppend.EndsWith(global::System.Environment.NewLine, global::System.StringComparison.CurrentCulture))
-            {
-                this.endsWithNewline = true;
-            }
-            // This is an optimization. If the current indent is "", then we don't have to do any
-            // of the more complex stuff further down.
-            if ((this.currentIndentField.Length == 0))
-            {
-                this.GenerationEnvironment.Append(textToAppend);
-                return;
-            }
-            // Everywhere there is a newline in the text, add an indent after it
-            textToAppend = textToAppend.Replace(global::System.Environment.NewLine, (global::System.Environment.NewLine + this.currentIndentField));
-            // If the text ends with a newline, then we should strip off the indent added at the very end
-            // because the appropriate indent will be added when the next time Write() is called
-            if (this.endsWithNewline)
-            {
-                this.GenerationEnvironment.Append(textToAppend, 0, (textToAppend.Length - this.currentIndentField.Length));
-            }
-            else
-            {
-                this.GenerationEnvironment.Append(textToAppend);
-            }
-        }
-        /// <summary>
-        /// Write text directly into the generated output
-        /// </summary>
-        public void WriteLine(string textToAppend)
-        {
-            this.Write(textToAppend);
-            this.GenerationEnvironment.AppendLine();
-            this.endsWithNewline = true;
-        }
-        /// <summary>
-        /// Write formatted text directly into the generated output
-        /// </summary>
-        public void Write(string format, params object[] args)
-        {
-            this.Write(string.Format(global::System.Globalization.CultureInfo.CurrentCulture, format, args));
-        }
-        /// <summary>
-        /// Write formatted text directly into the generated output
-        /// </summary>
-        public void WriteLine(string format, params object[] args)
-        {
-            this.WriteLine(string.Format(global::System.Globalization.CultureInfo.CurrentCulture, format, args));
-        }
-        /// <summary>
-        /// Raise an error
-        /// </summary>
-        public void Error(string message)
-        {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
-            error.ErrorText = message;
-            this.Errors.Add(error);
-        }
-        /// <summary>
-        /// Raise a warning
-        /// </summary>
-        public void Warning(string message)
-        {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
-            error.ErrorText = message;
-            error.IsWarning = true;
-            this.Errors.Add(error);
-        }
-        /// <summary>
-        /// Increase the indent
-        /// </summary>
-        public void PushIndent(string indent)
-        {
-            if ((indent == null))
-            {
-                throw new global::System.ArgumentNullException("indent");
-            }
-            this.currentIndentField = (this.currentIndentField + indent);
-            this.indentLengths.Add(indent.Length);
-        }
-        /// <summary>
-        /// Remove the last indent that was added with PushIndent
-        /// </summary>
-        public string PopIndent()
-        {
-            string returnValue = "";
-            if ((this.indentLengths.Count > 0))
-            {
-                int indentLength = this.indentLengths[(this.indentLengths.Count - 1)];
-                this.indentLengths.RemoveAt((this.indentLengths.Count - 1));
-                if ((indentLength > 0))
-                {
-                    returnValue = this.currentIndentField.Substring((this.currentIndentField.Length - indentLength));
-                    this.currentIndentField = this.currentIndentField.Remove((this.currentIndentField.Length - indentLength));
-                }
-            }
-            return returnValue;
-        }
-        /// <summary>
-        /// Remove any indentation
-        /// </summary>
-        public void ClearIndent()
-        {
-            this.indentLengths.Clear();
-            this.currentIndentField = "";
-        }
-        #endregion
-        #region ToString Helpers
-        /// <summary>
-        /// Utility class to produce culture-oriented representation of an object as a string.
-        /// </summary>
-        public class ToStringInstanceHelper
-        {
-            private System.IFormatProvider formatProviderField  = global::System.Globalization.CultureInfo.InvariantCulture;
-            /// <summary>
-            /// Gets or sets format provider to be used by ToStringWithCulture method.
-            /// </summary>
-            public System.IFormatProvider FormatProvider
-            {
-                get
-                {
-                    return this.formatProviderField ;
-                }
-                set
-                {
-                    if ((value != null))
-                    {
-                        this.formatProviderField  = value;
-                    }
-                }
-            }
-            /// <summary>
-            /// This is called from the compile/run appdomain to convert objects within an expression block to a string
-            /// </summary>
-            public string ToStringWithCulture(object objectToConvert)
-            {
-                if ((objectToConvert == null))
-                {
-                    throw new global::System.ArgumentNullException("objectToConvert");
-                }
-                System.Type t = objectToConvert.GetType();
-                System.Reflection.MethodInfo method = t.GetMethod("ToString", new System.Type[] {
-                            typeof(System.IFormatProvider)});
-                if ((method == null))
-                {
-                    return objectToConvert.ToString();
-                }
-                else
-                {
-                    return ((string)(method.Invoke(objectToConvert, new object[] {
-                                this.formatProviderField })));
-                }
-            }
-        }
-        private ToStringInstanceHelper toStringHelperField = new ToStringInstanceHelper();
-        /// <summary>
-        /// Helper to produce culture-oriented representation of an object as a string
-        /// </summary>
-        public ToStringInstanceHelper ToStringHelper
-        {
-            get
-            {
-                return this.toStringHelperField;
-            }
-        }
-        #endregion
-    }
-    #endregion
 }

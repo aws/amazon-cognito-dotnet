@@ -171,15 +171,7 @@ namespace CognitoSyncGenerator
                 HasValue = true,
                 Parse = (arguments, argValue) => arguments.ParsedOptions.Manifest = argValue, 
                 HelpText = "The name and location of the control manifest listing all supported services for generation."
-            },    
-            new ArgDeclaration
-            {
-                OptionName = "versions", 
-                ShortName = "vs", 
-                HasValue = true,
-                Parse = (arguments, argValue) => arguments.ParsedOptions.Versions = argValue, 
-                HelpText = "The name and location of the manifest listing versions of all supported services."
-            },    
+            },   
             new ArgDeclaration
             {
                 OptionName = "sdkroot", 
@@ -187,21 +179,6 @@ namespace CognitoSyncGenerator
                 HasValue = true,
                 Parse = (arguments, argValue) => arguments.ParsedOptions.SdkRootFolder = argValue, 
                 HelpText = "The root folder beneath which the source and test code for the SDK is arranged."
-            },
-            new ArgDeclaration
-            {
-                OptionName = "clean", 
-                ShortName = "c", 
-                Parse = (arguments, argValue) => arguments.ParsedOptions.Clean = true, 
-                HelpText = "Deletes all content in the 'Generated' subfolder for services prior to generation.\n"
-                            + "The default behavior is to keep existing generated content."
-            },
-            new ArgDeclaration
-            {
-                OptionName = "models", 
-                ShortName = "md", 
-                Parse = (arguments, argValue) => arguments.ParsedOptions.Clean = true, 
-                HelpText = "The location of the service models to get documentation."
             }
         };
 

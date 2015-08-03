@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -87,6 +87,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.1.0.0\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.SecurityToken">
+      <HintPath>..\packages\AWSSDK.SecurityToken.3.1.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SecurityToken.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="AWSSDK.CognitoIdentity">
       <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoIdentity.dll</HintPath>
       <Private>True</Private>
@@ -95,20 +103,12 @@
       <HintPath>..\packages\AWSSDK.CognitoSync.3.1.0.0-preview\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.CognitoSync.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.1.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SecurityToken.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.1.0.0\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="SQLitePCL, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLitePCL.3.8.7.2\lib\Xamarin.iOS10\SQLitePCL.dll</HintPath>
       <Private>True</Private>

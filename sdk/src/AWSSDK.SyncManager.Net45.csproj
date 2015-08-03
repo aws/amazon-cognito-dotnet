@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -53,20 +53,20 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.0.0\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="AWSSDK.CognitoSync">
-      <HintPath>..\packages\AWSSDK.CognitoSync.3.1.0.0-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.1.0.0\lib\net45\AWSSDK.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SecurityToken">
       <HintPath>..\packages\AWSSDK.SecurityToken.3.1.0.0\lib\net45\AWSSDK.SecurityToken.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoIdentity">
+      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.1.0.0\lib\net45\AWSSDK.CognitoIdentity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoSync">
+      <HintPath>..\packages\AWSSDK.CognitoSync.3.1.0.0-preview\lib\net45\AWSSDK.CognitoSync.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
