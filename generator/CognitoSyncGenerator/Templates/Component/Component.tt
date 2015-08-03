@@ -5,7 +5,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 %YAML 1.2
 ---
-summary: AWS <#=this.Session["BaseName"]#> SDK for Xamarin
+summary: AWS CognitoSync SDK for Xamarin
 getting-started: GettingStarted.md
 details: Details.md
 license: ..\License.md
@@ -13,56 +13,64 @@ icons:
   - ..\awsmobile_128.png
   - ..\awsmobile_512.png
 publisher: Amazon Web Services
-name: <#=this.Session["ComponentTitle"]#>
-id: aws-<#=this.Session["BaseName"].ToString().ToLowerInvariant()#>-sdk
+name: AWSSDK - Amazon Cognito Sync
+id: aws-cognitosync-sdk
 samples: 
-  - name: "<#=this.Session["BaseName"]#>-Sample"
-    path: <#=this.Session["SolutionFilePath"] #>
+  - name: "CognitoSync-Sample"
+    path: "..\\..\\sample\\TODOList\\TODOList.sln"
 publisher-url: http://aws.amazon.com/mobile/sdk/
 packages:
   android:
 <#
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 #>
-  - <#=awsDependencyKVP.Key#>, Version=<#=awsDependencyKVP.Value#>
+  - <#=Prefix#>.<#=dependency.Name#>, Version=<#=dependency.Version#><#=dependency.InPreview?PreviewFlag:""#>
 <#
-    }
+			}
 #>
-  - <#=this.Session["AssemblyName"]#>,Version=<#=this.Session["AssemblyVersion"]#><#=this.Session["NuGetPreviewFlag"]#>
+  - <#=Prefix#>.<#=this.Config.AssemblyName#>,Version=<#=this.Config.Version#><#=this.Config.InPreview?PreviewFlag:""#>
   ios-unified:
 <#
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 #>
-  - <#=awsDependencyKVP.Key#>, Version=<#=awsDependencyKVP.Value#>
+  - <#=Prefix#>.<#=dependency.Name#>, Version=<#=dependency.Version#><#=dependency.InPreview?PreviewFlag:""#>
 <#
-    }
+			}
 #>
-  - <#=this.Session["AssemblyName"]#>,Version=<#=this.Session["AssemblyVersion"]#><#=this.Session["NuGetPreviewFlag"]#>
+  - <#=Prefix#>.<#=this.Config.AssemblyName#>,Version=<#=this.Config.Version#><#=this.Config.InPreview?PreviewFlag:""#>
   winphone-8.0:
 <#
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 #>
-  - <#=awsDependencyKVP.Key#>, Version=<#=awsDependencyKVP.Value#>
+  - <#=Prefix#>.<#=dependency.Name#>, Version=<#=dependency.Version#><#=dependency.InPreview?PreviewFlag:""#>
 <#
-    }
+			}
 #>
-  - <#=this.Session["AssemblyName"]#>,Version=<#=this.Session["AssemblyVersion"]#><#=this.Session["NuGetPreviewFlag"]#>
+  - <#=Prefix#>.<#=this.Config.AssemblyName#>,Version=<#=this.Config.Version#><#=this.Config.InPreview?PreviewFlag:""#>
   winphone-8.1:
 <#
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 #>
-  - <#=awsDependencyKVP.Key#>, Version=<#=awsDependencyKVP.Value#>
+  - <#=Prefix#>.<#=dependency.Name#>, Version=<#=dependency.Version#><#=dependency.InPreview?PreviewFlag:""#>
 <#
-    }
+			}
 #>
-  - <#=this.Session["AssemblyName"]#>,Version=<#=this.Session["AssemblyVersion"]#><#=this.Session["NuGetPreviewFlag"]#>
+  - <#=Prefix#>.<#=this.Config.AssemblyName#>,Version=<#=this.Config.Version#><#=this.Config.InPreview?PreviewFlag:""#>
 <#
 //component doesnot support preview flags like nuget, so we dont add that
 #>
-version: <#=this.Session["AssemblyVersion"]#>
+version: <#=this.Config.Version#>
 is-shell: true
 ...

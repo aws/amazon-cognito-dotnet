@@ -28,6 +28,27 @@ namespace CognitoSyncGenerator.Templates.Component
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\r\n<p><h1>Amazon Cognito Sync</h1></p>\r\n<p>Amazon Cognito Sync provides an AWS ser" +
+                    "vice and client library that enable cross-device syncing of application-related " +
+                    "user data. High-level client libraries are available for both iOS and Android. Y" +
+                    "ou can use these libraries to persist data locally so that it\'s available even i" +
+                    "f the device is offline. Developer credentials don\'t need to be stored on the mo" +
+                    "bile device to access the service. You can use Amazon Cognito to obtain a normal" +
+                    "ized user ID and credentials. User data is persisted in a dataset that can store" +
+                    " up to 1 MB of key-value pairs, and you can have up to 20 datasets per user iden" +
+                    "tity.</p>\r\n<p>With Amazon Cognito Sync, the data stored for each identity is acc" +
+                    "essible only to credentials assigned to that identity. In order to use the Cogni" +
+                    "to Sync service, you need to make API calls using credentials retrieved with Ama" +
+                    "zon Cognito Identity service.</p>\r\n<p>If you want to use Cognito Sync in an Andr" +
+                    "oid or iOS application, you will probably want to make API calls via the AWS Mob" +
+                    "ile SDK. To learn more, see the Developer Guide for Android and the Developer Gu" +
+                    "ide for iOS.</p>\r\n\r\n<p><h3>AWS Mobile SDK for Xamarin</h3><p>\r\n<p>The AWS Mobile" +
+                    " SDK for Xamarin provides a set of .NET libraries, code samples, and documentati" +
+                    "on to help developers build connected mobile applications for iOS, Android, Wind" +
+                    "ows 8, and Windows Phone devices. Mobile apps written using Xamarin call native " +
+                    "platform APIs so they have the look and feel of native applications. The .NET li" +
+                    "braries in the SDK provide C# wrappers around the AWS REST API implemented by AW" +
+                    "S services.</p>");
             return this.GenerationEnvironment.ToString();
         }
     }

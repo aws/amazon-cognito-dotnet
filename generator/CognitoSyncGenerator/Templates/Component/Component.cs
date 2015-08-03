@@ -28,258 +28,327 @@ namespace CognitoSyncGenerator.Templates.Component
         /// </summary>
         public override string TransformText()
         {
-            this.Write("%YAML 1.2\r\n---\r\nsummary: AWS ");
-            
-            #line 8 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["BaseName"]));
-            
-            #line default
-            #line hidden
-            this.Write(" SDK for Xamarin\r\ngetting-started: GettingStarted.md\r\ndetails: Details.md\r\nlicens" +
-                    "e: ..\\License.md\r\nicons: \r\n  - ..\\awsmobile_128.png\r\n  - ..\\awsmobile_512.png\r\np" +
-                    "ublisher: Amazon Web Services\r\nname: ");
-            
-            #line 16 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["ComponentTitle"]));
-            
-            #line default
-            #line hidden
-            this.Write("\r\nid: aws-");
-            
-            #line 17 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["BaseName"].ToString().ToLowerInvariant()));
-            
-            #line default
-            #line hidden
-            this.Write("-sdk\r\nsamples: \r\n  - name: \"");
-            
-            #line 19 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["BaseName"]));
-            
-            #line default
-            #line hidden
-            this.Write("-Sample\"\r\n    path: ");
-            
-            #line 20 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["SolutionFilePath"]));
-            
-            #line default
-            #line hidden
-            this.Write("\r\npublisher-url: http://aws.amazon.com/mobile/sdk/\r\npackages:\r\n  android:\r\n");
+            this.Write(@"%YAML 1.2
+---
+summary: AWS CognitoSync SDK for Xamarin
+getting-started: GettingStarted.md
+details: Details.md
+license: ..\License.md
+icons: 
+  - ..\awsmobile_128.png
+  - ..\awsmobile_512.png
+publisher: Amazon Web Services
+name: AWSSDK - Amazon Cognito Sync
+id: aws-cognitosync-sdk
+samples: 
+  - name: ""CognitoSync-Sample""
+    path: ""..\\..\\sample\\TODOList\\TODOList.sln""
+publisher-url: http://aws.amazon.com/mobile/sdk/
+packages:
+  android:
+");
             
             #line 24 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 28 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Key));
+            #line 30 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 30 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
             
             #line default
             #line hidden
             this.Write(", Version=");
             
-            #line 28 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Value));
+            #line 30 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Version));
+            
+            #line default
+            #line hidden
+            
+            #line 30 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 29 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 31 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    }
+			}
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 32 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyName"]));
+            #line 34 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 34 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.AssemblyName));
             
             #line default
             #line hidden
             this.Write(",Version=");
             
-            #line 32 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyVersion"]));
+            #line 34 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.Version));
             
             #line default
             #line hidden
             
-            #line 32 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["NuGetPreviewFlag"]));
+            #line 34 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n  ios-unified:\r\n");
             
-            #line 34 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 36 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 38 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Key));
+            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
             
             #line default
             #line hidden
             this.Write(", Version=");
             
-            #line 38 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Value));
+            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Version));
+            
+            #line default
+            #line hidden
+            
+            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 39 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 43 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    }
+			}
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyName"]));
+            #line 46 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 46 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.AssemblyName));
             
             #line default
             #line hidden
             this.Write(",Version=");
             
-            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyVersion"]));
+            #line 46 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.Version));
             
             #line default
             #line hidden
             
-            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["NuGetPreviewFlag"]));
+            #line 46 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n  winphone-8.0:\r\n");
             
-            #line 44 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 48 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 48 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Key));
+            #line 54 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 54 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
             
             #line default
             #line hidden
             this.Write(", Version=");
             
-            #line 48 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Value));
+            #line 54 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Version));
+            
+            #line default
+            #line hidden
+            
+            #line 54 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 49 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 55 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    }
+			}
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 52 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyName"]));
+            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.AssemblyName));
             
             #line default
             #line hidden
             this.Write(",Version=");
             
-            #line 52 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyVersion"]));
+            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.Version));
             
             #line default
             #line hidden
             
-            #line 52 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["NuGetPreviewFlag"]));
+            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n  winphone-8.1:\r\n");
             
-            #line 54 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 60 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    foreach(var awsDependencyKVP in ((IDictionary<string, string>)this.Session["AWSDependencies"]))
-    {
+			foreach(var dependency in this.Config.Dependencies)
+			{
+				if(dependency.TestOnly)
+					continue;
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Key));
+            #line 66 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 66 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
             
             #line default
             #line hidden
             this.Write(", Version=");
             
-            #line 58 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(awsDependencyKVP.Value));
+            #line 66 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Version));
+            
+            #line default
+            #line hidden
+            
+            #line 66 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(dependency.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 59 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 67 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
-    }
+			}
 
             
             #line default
             #line hidden
             this.Write("  - ");
             
-            #line 62 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyName"]));
+            #line 70 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 70 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.AssemblyName));
             
             #line default
             #line hidden
             this.Write(",Version=");
             
-            #line 62 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyVersion"]));
+            #line 70 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.Version));
             
             #line default
             #line hidden
             
-            #line 62 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["NuGetPreviewFlag"]));
+            #line 70 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.InPreview?PreviewFlag:""));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 63 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            #line 71 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
 
 //component doesnot support preview flags like nuget, so we dont add that
 
@@ -288,8 +357,8 @@ namespace CognitoSyncGenerator.Templates.Component
             #line hidden
             this.Write("version: ");
             
-            #line 66 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Session["AssemblyVersion"]));
+            #line 74 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\Component\Component.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Config.Version));
             
             #line default
             #line hidden

@@ -1,4 +1,5 @@
 ﻿using CognitoSyncGenerator.Templates;
+using CognitoSyncGenerator.Templates.Component;
 using CognitoSyncGenerator.Templates.ProjectFiles;
 using CognitoSyncGenerator.Templates.SourceFiles;
 using System;
@@ -41,7 +42,7 @@ namespace CognitoSyncGenerator
 
             ExecuteNugetFileGenerators();
 
-            //GenerateXamarinComponents();
+            GenerateXamarinComponents();
 
             UpdateOtherProjects();
 
@@ -101,8 +102,38 @@ namespace CognitoSyncGenerator
             WriteFile(sourceFolder, string.Empty, "packages.config", text);
         }
 
-        private void GenerateXamarinComponents(BaseGenerator generator)
+        private void GenerateXamarinComponents()
         {
+            var componentsFolder = Path.Combine(options.SdkRootFolder, "xamarin-component", "CognitoSync");
+            BaseGenerator generator = new Component() { Config = manifestConfig };
+            var text = ConvertHtmlToMarkDown(generator.TransformText());
+            WriteFile(componentsFolder, string.Empty, "component.yaml", text);
+
+            generator = new Details() { Config = manifestConfig };
+            text = ConvertHtmlToMarkDown(generator.TransformText());
+            WriteFile(componentsFolder, string.Empty, "Details.md", text);
+
+            generator = new GettingStarted() { Config = manifestConfig };
+            text = ConvertHtmlToMarkDown(generator.TransformText());
+            WriteFile(componentsFolder, string.Empty, "GettingStarted.md", text);
+        }
+
+        string ConvertHtmlToMarkDown(string text)
+        {
+            var htmlText = text.Replace("<fullname>", "<h1>").Replace("</fullname>", "</h1>");
+            htmlText = htmlText.Replace("<note>", "<i>").Replace("</note>", "</i>");
+            var converter = new ReverseMarkdown.Converter(new ReverseMarkdown.Config(unknownTagsConverter: "raise", githubFlavored: true));
+            try
+            {
+                var markdownText = converter.Convert(htmlText);
+                return markdownText;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("html text = {0}", text);
+                Console.WriteLine(e.StackTrace);
+                throw e;
+            }
 
         }
 
@@ -113,7 +144,6 @@ namespace CognitoSyncGenerator
             {
                 regexMatches.Add(@"\\(" + Prefix + "." + d.Name + @")[.0-9]{8}([-a-z]{8})?\\", string.Format("\\{0}.{1}.{2}{3}\\", Prefix, d.Name, d.Version, d.InPreview ? BaseGenerator.PreviewFlag : ""));
             }
-
 
             var syncManagerExp = @"\\(" + Prefix + "." + manifestConfig.AssemblyName + @")[.0-9]{8}([-a-z]{8})?\\";
             var syncManagerReplaceExp = string.Format(@"\{0}.{1}.{2}{3}\", Prefix, manifestConfig.AssemblyName, manifestConfig.Version, manifestConfig.InPreview ? BaseGenerator.PreviewFlag : "");

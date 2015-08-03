@@ -1,4 +1,5 @@
 ﻿{
+    "BaseName": "CognitoSync",
     "AssemblyName": "SyncManager",
     "Version": "3.1.0.0",
     "InPreview": true,
@@ -65,7 +66,7 @@
         "sample\\TODOList\\TODOList.iOS\\TODOList.iOS.csproj",
         "sample\\TODOList\\TODOListPortableLibrary\\TODOList.PCL.csproj"
     ],
-    "PackagesFiles": [ 
+    "PackagesFiles": [
         "test\\CrossPlatformTests\\AndroidApp\\packages.config",
         "test\\CrossPlatformTests\\CommonTests\\packages.config",
         "test\\CrossPlatformTests\\iOSApp\\packages.config",
