@@ -104,9 +104,9 @@ namespace CognitoSyncGenerator.Templates.SourceFiles
             #line hidden
             this.Write("\t\t<dependency id=\"System.Data.SQLite\" version=\"1.0.97.0\"/>\r\n      </group>\r\n\t  <g" +
                     "roup targetFramework=\"portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinio" +
-                    "s10\">\r\n      <group targetFramework=\"net45\">\r\n");
+                    "s10\">\r\n");
             
-            #line 42 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
+            #line 41 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
 
 			foreach(var dependency in this.Config.Dependencies)
 			{
@@ -120,28 +120,28 @@ namespace CognitoSyncGenerator.Templates.SourceFiles
             #line hidden
             this.Write("\t\t<dependency id=\"");
             
-            #line 50 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
+            #line 49 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Prefix));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 50 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
+            #line 49 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(dependency.Name));
             
             #line default
             #line hidden
             this.Write("\" version=\"");
             
-            #line 50 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
+            #line 49 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(versionRange));
             
             #line default
             #line hidden
             this.Write("\" />\r\n");
             
-            #line 51 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
+            #line 50 "C:\dev\dotnet\AWSDotNetSyncManager\generator\CognitoSyncGenerator\Templates\SourceFiles\NuSpec.tt"
 
 				}
 			}

@@ -30,9 +30,19 @@
 	<Target Name="restore-nuget">
 		<Message Text="Restore nuget packages from locations $(nuget_location)"/>
 		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\AWSSDK.SyncManager.sln "/>
+		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\generator\CognitoSyncGenerator.sln"/>
 	</Target>
 	
-	<Target Name="build-sdk" DependsOnTargets="restore-nuget;">
+	<Target Name="run-generator" DependsOnTargets="restore-nuget">
+		<Message Text="Build and run code generator"/>		
+		<MSBuild Projects="..\generator\CognitoSyncGenerator.sln"
+			Targets="Clean;Build"
+			Properties="Configuration=Release" />
+		<Exec Command="CognitoSyncGenerator.exe" 
+			WorkingDirectory="..\generator\CognitoSyncGenerator\bin\Release"/>
+	</Target>
+	
+	<Target Name="build-sdk" DependsOnTargets="restore-nuget;run-generator">
 		<Message Text="Compile the SDK"/>
 		<MSBuild Projects="..\sdk\AWSSDK.SyncManager.sln"
 			Targets="Clean;Build"

@@ -38,7 +38,6 @@
 		<dependency id="System.Data.SQLite" version="1.0.97.0"/>
       </group>
 	  <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
-      <group targetFramework="net45">
 <#
 			foreach(var dependency in this.Config.Dependencies)
 			{
