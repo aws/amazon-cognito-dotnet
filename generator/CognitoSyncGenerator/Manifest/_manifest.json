@@ -52,5 +52,30 @@
             "TestOnly": true
         }
     ],
+    "OtherProjects": [
+        "test\\CrossPlatformTests\\AndroidApp\\AndroidApp.csproj",
+        "test\\CrossPlatformTests\\CommonTests\\CommonTests.csproj",
+        "test\\CrossPlatformTests\\iOSApp\\iOSApp.csproj",
+        "test\\CrossPlatformTests\\WindowsApp\\WindowsApp.csproj",
+        "test\\CrossPlatformTests\\WindowsConsoleApp\\WindowsConsoleApp.csproj",
+        "test\\CrossPlatformTests\\WindowsPhoneApp\\WindowsPhoneApp.csproj",
+        "test\\IntegrationTests\\AWSSDK.IntegrationTests.Net45.csproj",
+        "test\\UnitTests\\AWSSDK.UnitTests.Net45.csproj",
+        "sample\\TODOList\\TODOList.Android\\TODOList.Android.csproj",
+        "sample\\TODOList\\TODOList.iOS\\TODOList.iOS.csproj",
+        "sample\\TODOList\\TODOListPortableLibrary\\TODOList.PCL.csproj"
+    ],
+    "PackagesFiles": [ 
+        "test\\CrossPlatformTests\\AndroidApp\\packages.config",
+        "test\\CrossPlatformTests\\CommonTests\\packages.config",
+        "test\\CrossPlatformTests\\iOSApp\\packages.config",
+        "test\\CrossPlatformTests\\WindowsApp\\packages.config",
+        "test\\CrossPlatformTests\\WindowsPhoneApp\\packages.config",
+        "test\\IntegrationTests\\packages.config",
+        "test\\UnitTests\\packages.config",
+        "sample\\TODOList\\TODOList.Android\\packages.config",
+        "sample\\TODOList\\TODOList.iOS\\packages.config",
+        "sample\\TODOList\\TODOListPortableLibrary\\packages.config"
+    ],
     "EnableXamarinComponent": true
 }

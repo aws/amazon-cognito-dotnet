@@ -42,6 +42,10 @@ namespace CognitoSyncGenerator
 
         public List<Dependency> Dependencies { get; set; }
 
+        public List<string> OtherProjects { get; set; }
+
+        public List<string> PackagesFiles { get; set; } 
+
         public class Dependency
         {
             public string Name { get; set; }

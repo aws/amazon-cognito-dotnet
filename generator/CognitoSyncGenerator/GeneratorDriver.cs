@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CognitoSyncGenerator
@@ -41,6 +42,10 @@ namespace CognitoSyncGenerator
             ExecuteNugetFileGenerators();
 
             //GenerateXamarinComponents();
+
+            UpdateOtherProjects();
+
+            UpdatePackageConfigs();
 
         }
 
@@ -98,6 +103,80 @@ namespace CognitoSyncGenerator
 
         private void GenerateXamarinComponents(BaseGenerator generator)
         {
+
+        }
+
+        private void UpdateOtherProjects()
+        {
+            Dictionary<string, string> regexMatches = new Dictionary<string, string>();
+            foreach (var d in manifestConfig.Dependencies)
+            {
+                regexMatches.Add(@"\\(" + Prefix + "." + d.Name + @")[.0-9]{8}([-a-z]{8})?\\", string.Format("\\{0}.{1}.{2}{3}\\", Prefix, d.Name, d.Version, d.InPreview ? BaseGenerator.PreviewFlag : ""));
+            }
+
+
+            var syncManagerExp = @"\\(" + Prefix + "." + manifestConfig.AssemblyName + @")[.0-9]{8}([-a-z]{8})?\\";
+            var syncManagerReplaceExp = string.Format(@"\{0}.{1}.{2}{3}\", Prefix, manifestConfig.AssemblyName, manifestConfig.Version, manifestConfig.InPreview ? BaseGenerator.PreviewFlag : "");
+            regexMatches.Add(syncManagerExp, syncManagerReplaceExp);
+
+
+            foreach (var proj in manifestConfig.OtherProjects)
+            {
+                var file = Path.Combine(options.SdkRootFolder, proj);
+                if (File.Exists(file))
+                {
+                    string projContent = File.ReadAllText(file, Encoding.UTF8);
+                    foreach (var kvp in regexMatches)
+                    {
+                        Regex regex = new Regex(kvp.Key);
+                        projContent = regex.Replace(projContent, kvp.Value);
+                    }
+
+                    File.WriteAllText(file, projContent, Encoding.UTF8);
+                    Console.WriteLine("..created/Updated {0}", file);
+                }
+                else
+                {
+                    throw new Exception(string.Format("file {0} doesnot exist", file));
+                }
+            }
+
+        }
+
+        private void UpdatePackageConfigs()
+        {
+            Dictionary<string, string> regexMatches = new Dictionary<string, string>();
+            foreach (var d in manifestConfig.Dependencies)
+            {
+                var exp = @"id=""" + Prefix + "." + d.Name + @"""\sversion=""[.0-9]{7}""";
+                var replaceExp = string.Format(@"id=""{0}.{1}"" version=""{2}{3}""", Prefix, d.Name, d.Version, d.InPreview ? BaseGenerator.PreviewFlag : "");
+                regexMatches.Add(exp, replaceExp);
+            }
+
+            var syncManagerExp = @"id=""" + Prefix + "." +manifestConfig.AssemblyName + @"""\sversion=""[.0-9]{7}""";
+            var syncManagerReplaceExp = string.Format(@"id=""{0}.{1}"" version=""{2}{3}""", Prefix, manifestConfig.AssemblyName, manifestConfig.Version, manifestConfig.InPreview ? BaseGenerator.PreviewFlag : "");
+            regexMatches.Add(syncManagerExp, syncManagerReplaceExp);
+
+            foreach (var pkg in manifestConfig.PackagesFiles)
+            {
+                var file = Path.Combine(options.SdkRootFolder, pkg);
+                if (File.Exists(file))
+                {
+                    string pkgContent = File.ReadAllText(file, Encoding.UTF8);
+                    foreach (var kvp in regexMatches)
+                    {
+                        Regex regex = new Regex(kvp.Key);
+                        pkgContent = regex.Replace(pkgContent, kvp.Value);
+                    }
+
+                    File.WriteAllText(file, pkgContent, Encoding.UTF8);
+                    Console.WriteLine("..created/Updated {0}", file);
+                }
+                else
+                {
+                    throw new Exception(string.Format("file {0} doesnot exist", file));
+                }
+            }
 
         }
 
