@@ -32,6 +32,11 @@ namespace iOSApp
             
         }
 
+        protected override string TestTypeNamePrefix
+        {
+            get { return "iOSApp"; }
+        }
+
         private void Write(string message, params object[] args)
         {
             var text = string.Format(message, args);

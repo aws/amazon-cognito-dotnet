@@ -17,6 +17,7 @@ using Amazon.CognitoSync.SyncManager;
 
 namespace CommonTests.IntegrationTests.SyncManager
 {
+    [TestFixture]
     public class SyncManagerTests : TestBase<AmazonCognitoSyncClient>
     {
 
@@ -34,12 +35,13 @@ namespace CommonTests.IntegrationTests.SyncManager
             Unauthenticated = 2
         }
 
+#if INCLUDE_FACEBOOK_TESTS
         // Facebook information required to run Facebook tests
         public const string FacebookAppId = "";
         public const string FacebookAppSecret = "";
         private const string FacebookProvider = "graph.facebook.com";
         static FacebookUtilities.FacebookCreateUserResponse facebookUser = null;
-
+#endif
         private static RegionEndpoint TEST_REGION = RegionEndpoint.USEast1;
 
         private static List<string> roleNames = new List<string>();
@@ -64,8 +66,10 @@ namespace CommonTests.IntegrationTests.SyncManager
 
                 await CleanupCreatedRoles().ConfigureAwait(false);
 
+#if INCLUDE_FACEBOOK_TESTS
                 if (facebookUser != null)
                     await FacebookUtilities.DeleteFacebookUserAsync(facebookUser).ConfigureAwait(false);
+#endif
 
                 if (_AuthCredentials != null)
                     _AuthCredentials.Clear();
@@ -103,6 +107,7 @@ namespace CommonTests.IntegrationTests.SyncManager
 
         #region test cases
 
+#if INCLUDE_FACEBOOK_TESTS
         [Test(TestOf = typeof(AmazonCognitoSyncClient))]
         public void AuthenticatedCredentialsTest()
         {
@@ -117,6 +122,7 @@ namespace CommonTests.IntegrationTests.SyncManager
             });
         }
 
+#endif
 
         [Test(TestOf = typeof(AmazonCognitoSyncClient))]
         public void DatasetLocalStorageTest()
@@ -194,6 +200,7 @@ namespace CommonTests.IntegrationTests.SyncManager
             }
         }
 
+#if INCLUDE_FACEBOOK_TESTS
         /// <summary>
         /// Test Case: 
         /// </summary>
@@ -315,7 +322,7 @@ namespace CommonTests.IntegrationTests.SyncManager
                 }
             }
         }
-
+#endif
         /// <summary>
         /// Test case: Check that the dataset metadata is modified appropriately when calling Synchronize.
         /// We test for the dirty bit, the sync count and the last modified timmestamp.
@@ -487,6 +494,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         private static CognitoAWSCredentials _AuthCredentials;
         private static CognitoAWSCredentials _UnauthCredentials;
 
+        #if INCLUDE_FACEBOOK_TESTS
         private CognitoAWSCredentials AuthCredentials
         {
             get
@@ -501,7 +509,7 @@ namespace CommonTests.IntegrationTests.SyncManager
 
                 RunAsSync(async () =>
                 {
-                    if(facebookUser == null)
+                    if (facebookUser == null)
                         facebookUser = await FacebookUtilities.CreateFacebookUser(FacebookAppId, FacebookAppSecret);
                 });
 
@@ -512,6 +520,7 @@ namespace CommonTests.IntegrationTests.SyncManager
                 return _AuthCredentials;
             }
         }
+#endif
 
         private CognitoAWSCredentials UnAuthCredentials
         {
@@ -545,8 +554,11 @@ namespace CommonTests.IntegrationTests.SyncManager
                 var request = new CreateIdentityPoolRequest
                 {
                     IdentityPoolName = pn,
-                    AllowUnauthenticatedIdentities = true,
-                    SupportedLoginProviders = new Dictionary<string, string>() { { FacebookProvider, FacebookAppId } }
+                    AllowUnauthenticatedIdentities = true
+#if INCLUDE_FACEBOOK_TESTS
+                ,
+                SupportedLoginProviders = new Dictionary<string, string>() { { FacebookProvider, FacebookAppId } }
+#endif
                 };
 
                 var createPoolResult = await IdentityClient.CreateIdentityPoolAsync(request);

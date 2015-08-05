@@ -54,7 +54,6 @@ namespace CommonTests.Framework
             return Execute();
         }
 
-
         public async Task<bool> ExecuteAllTestsAsync()
         {
             return await Task.Run(() => Execute());  
@@ -66,7 +65,7 @@ namespace CommonTests.Framework
             var currentAssembly = typeof(TestRunner).GetTypeInfo().Assembly;
             var options = new Dictionary<string, string>();
             var tests = runner.Load(currentAssembly, options);
-            
+
             var result = runner.Run(this, this.Filter);
             runner.WaitForCompletion(int.MaxValue);
 
@@ -118,6 +117,8 @@ namespace CommonTests.Framework
         {
 
         }
+
+        protected abstract string TestTypeNamePrefix { get; }
 
         #region ITestListener
 

@@ -20,6 +20,13 @@ namespace AndroidApp
         private TextView _textView = null;
         private Action<Action> _uiRunner = null;
 
+
+        protected override string TestTypeNamePrefix
+        {
+            get { return "AndroidApp"; }
+        }
+
+
         public AndroidRunner(Stream credentials, TextView txtView, Action<Action> uiRunner)
             : base()
         {

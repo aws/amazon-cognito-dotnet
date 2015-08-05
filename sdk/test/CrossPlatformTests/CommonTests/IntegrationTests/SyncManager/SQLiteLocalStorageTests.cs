@@ -42,7 +42,7 @@ namespace CommonTests.IntegrationTests.SyncManager
         }
 
 
-        [Test(TestOf = typeof(AmazonCognitoSyncClient))]
+        [Test]
         public void SqliteInitializationTest()
         {
             string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);
@@ -70,7 +70,7 @@ namespace CommonTests.IntegrationTests.SyncManager
             }
         }
 
-        [Test(TestOf = typeof(AmazonCognitoSyncClient))]
+        [Test]
         public void SQliteDatasetsTests()
         {
             string dbPath = Path.Combine(PCLStorage.FileSystem.Current.LocalStorage.Path, DB_FILE_NAME);

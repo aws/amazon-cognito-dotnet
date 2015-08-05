@@ -8,7 +8,7 @@ using Windows.UI.Core;
 
 namespace WindowsPhoneApp
 {
-    public class WindowsPhoneRunner:TestRunner
+    public class WindowsPhoneRunner : TestRunner
     {
         private Windows.UI.Core.CoreDispatcher _dispatcher;
         private Windows.UI.Xaml.Controls.TextBlock _output;
@@ -18,7 +18,12 @@ namespace WindowsPhoneApp
             _dispatcher = dispatcher;
             _output = textBlock;
 
-           
+
+        }
+
+        protected override string TestTypeNamePrefix
+        {
+            get { return "WindowsPhoneApp"; }
         }
 
         protected override void WriteLine(string message)

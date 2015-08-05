@@ -14,6 +14,13 @@ namespace WindowsApp
         private TextBlock _output;
         private Windows.UI.Core.CoreDispatcher _dispatcher;
 
+
+        protected override string TestTypeNamePrefix
+        {
+            get { return "WindowsRTApp"; }
+        }
+
+
         public WindowsAppRunner(CoreDispatcher dispatcher, TextBlock textBlock)
         {
             _dispatcher = dispatcher;
