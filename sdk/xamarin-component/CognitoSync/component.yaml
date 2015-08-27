@@ -5,8 +5,8 @@ getting-started: GettingStarted.md
 details: Details.md
 license: ..\License.md
 icons: 
-  - ..\awsmobile\_128.png
-  - ..\awsmobile\_512.png
+  - ..\awsmobile_128.png
+  - ..\awsmobile_512.png
 publisher: Amazon Web Services
 name: AWSSDK - Amazon Cognito Sync
 id: aws-cognitosync-sdk
