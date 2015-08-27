@@ -30,10 +30,11 @@
 	<Target Name="restore-nuget">
 		<Message Text="Restore nuget packages from locations $(nuget_location)"/>
 		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\AWSSDK.SyncManager.sln "/>
-		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\generator\CognitoSyncGenerator.sln"/>
 	</Target>
 	
-	<Target Name="run-generator" DependsOnTargets="restore-nuget">
+	<Target Name="run-generator">
+		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\generator\CognitoSyncGenerator.sln"/>
+		
 		<Message Text="Build and run code generator"/>		
 		<MSBuild Projects="..\generator\CognitoSyncGenerator.sln"
 			Targets="Clean;Build"
@@ -42,14 +43,14 @@
 			WorkingDirectory="..\generator\CognitoSyncGenerator\bin\Release"/>
 	</Target>
 	
-	<Target Name="build-sdk" DependsOnTargets="restore-nuget;run-generator">
+	<Target Name="build-sdk" DependsOnTargets="run-generator;restore-nuget">
 		<Message Text="Compile the SDK"/>
 		<MSBuild Projects="..\sdk\AWSSDK.SyncManager.sln"
 			Targets="Clean;Build"
 			Properties="Configuration=Release;AWSKeyFile=$(CustomSnkFileLocation)" />
 	</Target>
  
-	<Target Name="test-sdk" DependsOnTargets="init;build-sdk;fxcop;run-unit-tests;run-integ-tests" />
+	<Target Name="test-sdk" DependsOnTargets="init;run-generator;build-sdk;fxcop;run-unit-tests;run-integ-tests" />
 
 	<Target Name="run-unit-tests" DependsOnTargets="init;build-sdk">
 		<Exec Command="$(vstest2013) /Platform:x64 /logger:trx /inIsolation ..\sdk\test\UnitTests\bin\Release\net45\AWSSDK.UnitTests.Net45.dll"/>
