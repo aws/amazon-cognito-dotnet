@@ -60,7 +60,14 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
 
         protected static void RunAsSync(Func<Task> asyncFunc)
         {
-            Task.Run(asyncFunc).Wait();
+            try
+            {
+                asyncFunc().Wait();
+            }
+            finally
+            {
+                
+            }
         }
 
         [TestCleanup]
@@ -85,19 +92,19 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
 
                     using (SQLiteCommand cmd = connection.CreateCommand())
                     {
-                        cmd.CommandText = "DROP TABLE records";
+                        cmd.CommandText = "DROP TABLE IF EXISTS records";
                         cmd.ExecuteNonQuery();
                     }
 
                     using (SQLiteCommand cmd = connection.CreateCommand())
                     {
-                        cmd.CommandText = "DROP TABLE datasets";
+                        cmd.CommandText = "DROP TABLE IF EXISTS datasets";
                         cmd.ExecuteNonQuery();
                     }
 
                     using (SQLiteCommand cmd = connection.CreateCommand())
                     {
-                        cmd.CommandText = "DROP TABLE kvstore";
+                        cmd.CommandText = "DROP TABLE IF EXISTS kvstore";
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -190,7 +197,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         Assert.Fail();
                         return false;
                     };
-                    RunAsSync(async () => await d.SynchronizeAsync());
+                    d.SynchronizeAsync().Wait();
                 }
             }
         }

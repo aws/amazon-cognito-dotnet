@@ -374,7 +374,7 @@ namespace Amazon.CognitoSync.SyncManager
                     return;
                 }
 
-                RunSyncOperationAsync(MAX_RETRY, cancellationToken);
+                await RunSyncOperationAsync(MAX_RETRY, cancellationToken);
             }
             catch (Exception e)
             {
@@ -416,7 +416,7 @@ namespace Amazon.CognitoSync.SyncManager
             }
         }
 
-        private async void RunSyncOperationAsync(int retry, CancellationToken cancellationToken)
+        private async Task RunSyncOperationAsync(int retry, CancellationToken cancellationToken)
         {
 
             long lastSyncCount = Local.GetLastSyncCount(IdentityId, DatasetName);
@@ -473,7 +473,7 @@ namespace Amazon.CognitoSync.SyncManager
                     }
                     else
                     {
-                        this.RunSyncOperationAsync(--retry, cancellationToken);
+                        await this.RunSyncOperationAsync(--retry, cancellationToken);
                     }
                     return;
                 }
