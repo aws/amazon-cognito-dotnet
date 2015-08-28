@@ -8,6 +8,10 @@ If you have any questions, issues, or ideas, you can provide us feedback [here](
 
 * To get started with the AWS Sync Manager SDK for .NET/Xamarin, please reference the [AWS Mobile SDK for Xamarin Developer Guide](http://docs.aws.amazon.com/mobile/sdkforxamarin/developerguide)
 
+## Nuget Packages
+
+You can find the nuget package @ [AWSSDK.SyncManager](https://www.nuget.org/packages/AWSSDK.SyncManager/). 
+
 ## Samples
 
 ### [Cognito Sync Samples](https://github.com/aws/amazon-cognito-dotnet/trees/master/--/sdk/sample)
