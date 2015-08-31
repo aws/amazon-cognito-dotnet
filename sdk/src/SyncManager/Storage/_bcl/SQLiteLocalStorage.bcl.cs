@@ -393,8 +393,8 @@ namespace Amazon.CognitoSync.SyncManager.Internal
         {
             var nvc = reader.GetValues();
             return new Record(nvc[RecordColumns.KEY], nvc[RecordColumns.VALUE],
-                               int.Parse(nvc[RecordColumns.SYNC_COUNT], CultureInfo.InvariantCulture), new DateTime(long.Parse(nvc[RecordColumns.LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
-                               nvc[RecordColumns.LAST_MODIFIED_BY], new DateTime(long.Parse(nvc[RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat)),
+                               int.Parse(nvc[RecordColumns.SYNC_COUNT], CultureInfo.InvariantCulture), new DateTime(long.Parse(nvc[RecordColumns.LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat), DateTimeKind.Utc),
+                               nvc[RecordColumns.LAST_MODIFIED_BY], new DateTime(long.Parse(nvc[RecordColumns.DEVICE_LAST_MODIFIED_TIMESTAMP], CultureInfo.InvariantCulture.NumberFormat), DateTimeKind.Utc),
                                int.Parse(nvc[RecordColumns.MODIFIED], CultureInfo.InvariantCulture) == 1);
         }
         #endregion

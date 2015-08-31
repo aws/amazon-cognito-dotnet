@@ -128,7 +128,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SyncManager">
-      <HintPath>..\packages\AWSSDK.SyncManager.3.1.0.1\lib\Xamarin.iOS10\AWSSDK.SyncManager.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.SyncManager.3.1.0.2\lib\Xamarin.iOS10\AWSSDK.SyncManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Facebook, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">

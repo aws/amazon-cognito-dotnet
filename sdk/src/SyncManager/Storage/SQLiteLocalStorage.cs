@@ -966,7 +966,7 @@ namespace Amazon.CognitoSync.SyncManager.Internal
                     string insertRecord = RecordColumns.BuildInsert();
                     ExecuteMultipleHelper(new List<Statement>{new Statement{
                     Query = insertRecord,
-                    Parameters = new object[]{identityId,datasetName,key,value,0,DateTime.Now,string.Empty,0,1}
+                    Parameters = new object[]{identityId,datasetName,key,value,0,DateTime.Now,string.Empty,DateTime.Now,1}
                     }});
                     return true;
                 }

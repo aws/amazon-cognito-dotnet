@@ -57,7 +57,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.SyncManager">
-      <HintPath>..\packages\AWSSDK.SyncManager.3.1.0.1\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SyncManager.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.SyncManager.3.1.0.2\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10\AWSSDK.SyncManager.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

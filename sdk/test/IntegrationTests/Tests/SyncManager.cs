@@ -66,7 +66,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
             }
             finally
             {
-                
+
             }
         }
 
@@ -131,7 +131,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
             {
                 using (CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials))
                 {
-                    syncManager.WipeData();
+                    syncManager.WipeData(false);
                     Dataset d = syncManager.OpenOrCreateDataset("testDataset");
                     d.Put("testKey", "testValue");
                 }
@@ -153,9 +153,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         [TestCategory("SyncManager")]
         public void DatasetCloudStorageTest()
         {
+            string failureMessage = string.Empty;
             using (CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials))
             {
-                syncManager.WipeData();
+                syncManager.WipeData(false);
                 Thread.Sleep(2000);
                 using (Dataset d = syncManager.OpenOrCreateDataset("testDataset2"))
                 {
@@ -165,40 +166,51 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     {
                         d.ClearAllDelegates();
                         string erasedValue = d.Get("key");
-                        syncManager.WipeData();
+                        syncManager.WipeData(false);
                         d.OnSyncSuccess += delegate(object sender2, SyncSuccessEventArgs e2)
                         {
                             string restoredValues = d.Get("key");
-                            Assert.IsNotNull(erasedValue);
-                            Assert.IsNotNull(restoredValues);
-                            Assert.AreEqual(erasedValue, restoredValues);
+                            if (erasedValue == null)
+                            {
+                                failureMessage = "erasedValue should not be null";
+                            }
+                            if (restoredValues == null)
+                            {
+                                failureMessage = "restoredValues should not be null";
+                            }
+                            if (erasedValue != restoredValues)
+                            {
+                                failureMessage = "erasedValue should equal restoredValues";
+                            }
                         };
 
                         RunAsSync(async () => await d.SynchronizeAsync());
                     };
                     d.OnSyncFailure += delegate(object sender, SyncFailureEventArgs e)
                     {
-                        Console.WriteLine(e.Exception.Message);
-                        Console.WriteLine(e.Exception.StackTrace);
-                        Assert.Fail("sync failed");
+                        failureMessage = "sync failed";
                     };
-                    d.OnSyncConflict += (Dataset dataset, List<SyncConflict> conflicts) =>
+                    d.OnSyncConflict += delegate(Dataset dataset, List<SyncConflict> conflicts)
                     {
-                        Assert.Fail();
+                        failureMessage = "Expected SyncSuccess instead of SyncConflict";
                         return false;
                     };
                     d.OnDatasetMerged += (Dataset dataset, List<string> datasetNames) =>
                     {
-                        Assert.Fail();
+                        failureMessage = "Did not expect DatasetMerged";
                         return false;
                     };
                     d.OnDatasetDeleted += (Dataset dataset) =>
                     {
-                        Assert.Fail();
+                        failureMessage = "Did not expect DatasetDeleted";
                         return false;
-                    };
-                    d.SynchronizeAsync().Wait();
+                    }; 
+                    RunAsSync(async () => await d.SynchronizeAsync());
                 }
+            }
+            if (!string.IsNullOrEmpty(failureMessage))
+            {
+                Assert.Fail(failureMessage);
             }
         }
 
@@ -334,7 +346,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         {
             using (CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials))
             {
-                syncManager.WipeData();
+                syncManager.WipeData(false);
                 using (Dataset d = syncManager.OpenOrCreateDataset("testDataset3"))
                 {
                     d.Put("testKey3", "the initial value");
@@ -372,6 +384,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                         Assert.IsTrue(finalDate > initialDate);
                         Assert.IsTrue(initialDate == synchronizedDate);
                     };
+                    d.OnSyncFailure += (object sender, SyncFailureEventArgs e) =>
+                    {
+                        Assert.Fail(e.Exception.ToString());
+                    };
                     RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
@@ -387,16 +403,17 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         [TestCategory("SyncManager")]
         public void ConflictTest()
         {
+            string failureMessage = string.Empty;
             using (CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials))
             {
-                syncManager.WipeData();
+                syncManager.WipeData(false);
                 using (Dataset d = syncManager.OpenOrCreateDataset("testDataset3"))
                 {
                     d.Put("testKey3", "the initial value");
                     d.OnSyncSuccess += delegate(object sender, SyncSuccessEventArgs e)
                     {
                         d.ClearAllDelegates();
-                        syncManager.WipeData();
+                        syncManager.WipeData(false);
                         using (Dataset d2 = syncManager.OpenOrCreateDataset("testDataset3"))
                         {
                             bool conflictTriggered = false;
@@ -409,17 +426,24 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                             };
                             d2.OnSyncSuccess += delegate(object sender4, SyncSuccessEventArgs e4)
                             {
-                                Assert.Fail("Expecting OnSyncConflict instead of OnSyncSuccess");
+                                failureMessage = "Expecting OnSyncConflict instead of OnSyncSuccess";
                             };
                             d2.OnSyncFailure += delegate(object sender4, SyncFailureEventArgs e4)
                             {
-                                Assert.IsTrue(conflictTriggered, "Expecting OnSyncConflict instead of OnSyncFailure");
+                                if (!conflictTriggered)
+                                {
+                                    failureMessage = "Expecting OnSyncConflict instead of OnSyncFailure";
+                                }
                             };
                             RunAsSync(async () => await d2.SynchronizeAsync());
                         }
                     };
                     RunAsSync(async () => await d.SynchronizeAsync());
                 }
+            }
+            if (!string.IsNullOrEmpty(failureMessage))
+            {
+                Assert.Fail(failureMessage);
             }
         }
 
@@ -432,9 +456,10 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
         [TestCategory("SyncManager")]
         public void ResolveConflictTest()
         {
+            string failureMessage = string.Empty;
             using (CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials))
             {
-                syncManager.WipeData();
+                syncManager.WipeData(false);
                 using (Dataset d = syncManager.OpenOrCreateDataset("testDataset4"))
                 {
                     d.Put("a", "1");
@@ -443,7 +468,7 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     d.OnSyncSuccess += delegate(object sender, SyncSuccessEventArgs e)
                     {
                         d.ClearAllDelegates();
-                        syncManager.WipeData();
+                        syncManager.WipeData(false);
                         using (Dataset d2 = syncManager.OpenOrCreateDataset("testDataset4"))
                         {
                             d2.Put("a", "10");
@@ -470,19 +495,28 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                             {
                                 if (resolved)
                                 {
-                                    Assert.AreSame(d2.Get("a"), "10");
-                                    Assert.AreSame(d2.Get("b"), "42");
-                                    Assert.AreSame(d2.Get("c"), "3");
+                                    if (d2.Get("a") != "10")
+                                    {
+                                        failureMessage = "Value for key 'a' should be '10'";
+                                    }
+                                    if (d2.Get("b") != "42")
+                                    {
+                                        failureMessage = "Value for key 'b' should be '42'";
+                                    }
+                                    if (d2.Get("c") != "3")
+                                    {
+                                        failureMessage = "Value for key 'c' should be '3'";
+                                    }
                                 }
                                 else
                                 {
-                                    Assert.Fail("Expecting SyncConflict instead of SyncSuccess");
+                                    failureMessage = "Expecting SyncConflict instead of SyncSuccess";
                                 }
 
                             };
                             d2.OnSyncFailure += delegate(object sender4, SyncFailureEventArgs e4)
                             {
-                                Assert.Fail("Expecting SyncConflict instead of SyncFailure");
+                                failureMessage = "Expecting SyncConflict instead of SyncFailure";
                             };
                             RunAsSync(async () => await d2.SynchronizeAsync());
                         }
@@ -490,8 +524,72 @@ namespace AWSSDK_DotNet.IntegrationTests.Tests
                     RunAsSync(async () => await d.SynchronizeAsync());
                 }
             }
+            if (!string.IsNullOrEmpty(failureMessage))
+            {
+                Assert.Fail(failureMessage);
+            }
         }
 
+
+        /// <summary>
+        /// Test case: Add and synchronize a dataset, then wipe data. Wiping data (while
+        /// using unauthorized credentials) should wipe the dataset and the identity,
+        /// so that the information in the dataset should no longer be retrievable.
+        /// Check that the dataset is no longer in local memory and that syncing a
+        /// dataset with the same record key does not cause a conflict.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("SyncManager")]
+        public void WipeDataTest()
+        {
+            string failureMessage = string.Empty;
+            CognitoSyncManager syncManager = new CognitoSyncManager(UnAuthCredentials);
+            syncManager.WipeData(false);
+            Dataset d = syncManager.OpenOrCreateDataset("testDataset5");
+            d.Put("testKey", "testValue");
+            d.OnSyncConflict += delegate(Dataset dataset, List<SyncConflict> conflicts)
+            {
+                failureMessage = "Expecting SyncSuccess instead of SyncConflict";
+                return false;
+            };
+            d.OnSyncFailure += delegate(object sender, SyncFailureEventArgs e)
+            {
+                failureMessage = "Expecting SyncSuccess instead of SyncFailure";
+            };
+
+            d.OnSyncSuccess += delegate(object sender, SyncSuccessEventArgs e)
+            {
+                syncManager.WipeData();
+                Dataset d2 = syncManager.OpenOrCreateDataset("testDataset5");
+                if (d2.Records.Count != 0)
+                {
+                    failureMessage = "Expecting dataset to be empty due to local data wipe.";
+                }
+                d2.Put("testKey", "newTestValue");
+                d2.OnSyncConflict += delegate(Dataset dataset, List<SyncConflict> conflicts)
+                {
+                    failureMessage = "Expecting SyncSuccess instead of SyncConflict";
+                    return false;
+                };
+                d2.OnSyncFailure += delegate(object sender2, SyncFailureEventArgs e2)
+                {
+                    failureMessage = "Expecting SyncSuccess instead of SyncFailure";
+                };
+                d2.OnSyncSuccess += delegate(object sender2, SyncSuccessEventArgs e2)
+                {
+                    if (d2.Get("testKey") != "newTestValue")
+                    {
+                        failureMessage = "Value for key 'testKey' should be 'newTestValue'";
+                    }
+                };
+                RunAsSync(async () => await d2.SynchronizeAsync());
+            };
+            RunAsSync(async () => await d.SynchronizeAsync());
+            if (!string.IsNullOrEmpty(failureMessage))
+            {
+                Assert.Fail(failureMessage);
+            }
+        }
 
         private CognitoAWSCredentials _AuthCredentials;
         private CognitoAWSCredentials _UnauthCredentials;

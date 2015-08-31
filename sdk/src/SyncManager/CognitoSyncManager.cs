@@ -182,11 +182,21 @@ namespace Amazon.CognitoSync.SyncManager
         /// Wipes all user data cached locally, including identity id, session
         /// credentials, dataset metadata, and all records. Any data that hasn't been
         /// synced will be lost. This method is usually used when customer logs out.
+        /// <param name="wipeCredentialsAndID">Wipe Credentials and IdentityId. Defaults as true</param>
         /// </summary>
-        public void WipeData()
+        public void WipeData(bool wipeCredentialsAndID = true)
         {
             Local.WipeData();
             _logger.InfoFormat("All data has been wiped");
+            if (wipeCredentialsAndID)
+            {
+                CognitoCredentials.Clear();
+                _logger.InfoFormat("All datasets and records have been wiped");
+            }
+            else
+            {
+                _logger.InfoFormat("All data has been wiped");
+            }
         }
 
         #endregion
