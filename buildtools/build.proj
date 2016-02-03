@@ -25,11 +25,11 @@
 	
 	<Target Name="init" DependsOnTargets="clean;build-custom-tasks"/>
 
-	<Target Name="full-build" DependsOnTargets="init;test-sdk;copy-assemblies;save-build"/>
+	<Target Name="full-build" DependsOnTargets="init;nuget-pack"/>
 	
 	<Target Name="restore-nuget">
 		<Message Text="Restore nuget packages from locations $(nuget_location)"/>
-		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\AWSSDK.SyncManager.sln "/>
+		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\src\packages.config -PackagesDirectory ..\sdk\packages"/>
 	</Target>
 	
 	<Target Name="run-generator">
@@ -42,128 +42,10 @@
 		<Exec Command="CognitoSyncGenerator.exe" 
 			WorkingDirectory="..\generator\CognitoSyncGenerator\bin\Release"/>
 	</Target>
-	
-	<Target Name="build-sdk" DependsOnTargets="run-generator;restore-nuget">
-		<Message Text="Compile the SDK"/>
-		<MSBuild Projects="..\sdk\AWSSDK.SyncManager.sln"
-			Targets="Clean;Build"
-			Properties="Configuration=Release;AWSKeyFile=$(CustomSnkFileLocation)" />
-	</Target>
- 
-	<Target Name="test-sdk" DependsOnTargets="init;run-generator;build-sdk;fxcop;run-unit-tests;run-integ-tests" />
 
-	<Target Name="run-unit-tests" DependsOnTargets="init;build-sdk">
-		<Exec Command="$(vstest2013) /Platform:x64 /logger:trx /inIsolation ..\sdk\test\UnitTests\bin\Release\net45\AWSSDK.UnitTests.Net45.dll"/>
-		<Exec Command="$(vstest2013) /Platform:x86 /logger:trx /inIsolation ..\sdk\test\UnitTests\bin\Release\net45\AWSSDK.UnitTests.Net45.dll"/>
-	</Target>
-	<!-- Condition="'$(RunIntegTests)' != '' And '$(RunIntegTests)' != 'false'" -->
-	<Target Name="run-integ-tests" DependsOnTargets="init;build-sdk" Condition="'$(RunIntegTests)' != '' And '$(RunIntegTests)' != 'false'">
-		<Exec Command="$(vstest2013) /Platform:x64 /logger:trx /inIsolation ..\sdk\test\IntegrationTests\bin\Release\net45\AWSSDK.IntegrationTests.Net45.dll" />
-		<Exec Command="$(vstest2013) /Platform:x86 /logger:trx /inIsolation ..\sdk\test\IntegrationTests\bin\Release\net45\AWSSDK.IntegrationTests.Net45.dll" />
-	</Target>
-	
-	<Target Name="nuget-pack" DependsOnTargets="build-sdk">
+	<Target Name="nuget-pack" DependsOnTargets="run-generator;restore-nuget">
 		<Exec LogStandardErrorAsError="true"
               Command="$(powershell) -ExecutionPolicy Unrestricted -NoProfile -File create-nuget-packages.ps1" />		
 	</Target>
 
-	<Target Name="copy-assemblies" DependsOnTargets="nuget-pack">
-        <Message Text="Collating assemblies for downstream doc generation" />
-		<PropertyGroup>
-			<CustomSnkPublicKeyToken Condition="'$(CustomSnkPublicKeyToken)' == '' ">71c852f8be1c371d</CustomSnkPublicKeyToken>
-		</PropertyGroup>
-		<Exec LogStandardErrorAsError="true"
-              Command="$(powershell) -ExecutionPolicy Unrestricted -NoProfile -File copy-sdkassemblies.ps1 -PublicKeyTokenToCheck $(CustomSnkPublicKeyToken)" />		
-	</Target>
-	
-	<!-- TEST TARGETS/TASKS -->
-
-	<Target Name="fxcop" DependsOnTargets="init;copy-assemblies" Condition="Exists('$(fxcopcmdexe)')">
-		<!-- Update FxCop project files -->
-		<UpdateFxCopProject Assemblies="$(Deployment)\assemblies\net45" FxCopProject="..\sdk\SDK-4.5.FxCop" BinSuffix="net45" />
-
-		<!-- Compile custom FxCop rules -->
-		<MSBuild Projects="..\buildtools\CustomFxCopRules\CustomFxCopRules.sln"
-			Targets="Clean;Build"
-			Properties="Configuration=Release" />
-		
-		<!-- Run FxCop -->
-		<Exec Command="$(fxcopcmd) /p:..\sdk\SDK-4.5.FxCop /o:..\fxcop-report-4.5.xml /s"/>
-
-		<Error Condition="Exists('..\fxcop-report-3.5.xml') or Exists('..\fxcop-report-4.5.xml')" Text="There are FxCop violations!" />
-	</Target>
-	
-	<Target Name="run-tests">
-		<Message Text="TestContainer = $(TestContainer)" Condition="$(TestContainer.Length) > 0"/>
-		<Message Text="TestCategory = $(TestCategory)" Condition="$(TestCategory.Length) > 0"/>
-		
-		<Exec Command="$(devenv2013) /Rebuild Debug .\MSTestWrapper\MSTestWrapper.sln"/>
-
-		<PropertyGroup >
-			<Container>/testcontainer:$([System.IO.Path]::GetFullPath($(TestContainer)))</Container>
-			<Category></Category>
-		</PropertyGroup>
-		<PropertyGroup Condition="$(TestCategory.Length) > 0">
-			<Category>/category:$(TestCategory)</Category>
-		</PropertyGroup>
-
-		<Exec Command=".\MSTestWrapper\MSTestWrapper\bin\Debug\MSTestWrapper.exe  $(mstest2013) &quot;$(Container)&quot; &quot;$(Category)&quot;"/>
-		
-		<!-- Clear our properties -->
-		<PropertyGroup >
-			<TestContainer></TestContainer>
-			<TestCategory></TestCategory>
-		</PropertyGroup>
-		<CallTarget Targets="deploy-test-results" />
-		<OnError ExecuteTargets="deploy-test-results" />
-	</Target>
-
-	<UsingTask TaskName="PrepareTestResults" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-		<ParameterGroup>
-			<ResultFile ParameterType="System.String" Required="true" />
-		</ParameterGroup>
-		<Task>
-			<Code Type="Fragment" Language="cs">
-				<![CDATA[
-					Log.LogMessage("ResultFile = [{0}], formatting", ResultFile);
-					string content = File.ReadAllText(ResultFile);
-					content = content.Replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"trx-transform.xsl\"?>");
-					File.WriteAllText(ResultFile + ".xml", content);
-				]]>
-			</Code>
-		</Task>
-	</UsingTask>
-
-	<Target Name="deploy-test-results" >	
-		<ItemGroup>
-			<TestResult Include="TestResults\*.trx" />
-		</ItemGroup>
-		<PrepareTestResults ResultFile="%(TestResult.FullPath)" />
-		
-		<ItemGroup>
-			<FormattedTestResult Include="TestResults\*.trx.xml" />
-		</ItemGroup>
-		<Copy
-			SourceFiles="@(FormattedTestResult)"
-			DestinationFolder="$(Deployment)" />
-
-		<Copy
-			SourceFiles="trx-transform.xsl"
-			DestinationFolder="$(Deployment)" />
-	</Target>
-	
-	<Target Name="save-build" Condition="Exists('$(InternalBuildTools)\references.targets')" DependsOnTargets="build-tools">		
-		<SaveBuildArtifactTask
-			RepositoryRoot="$(MSBuildProjectDirectory)\.."
-			BuildArtifactType="sdk"
-			GitBranch="$(SaveReferenceGitBranch)"
-			LocalArchiveRootFolder="$(LocalArchiveRootFolder)"
-			/>
-	</Target>
-	
-	<Target Name="prepare-tests" Condition="'$(TestSettingsFile)' != ''">
-		<Copy
-			SourceFiles="$(TestSettingsFile)"
-			DestinationFolder="$(TestSettingsLocation)" />
-	</Target>  
 </Project>

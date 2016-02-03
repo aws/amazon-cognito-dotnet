@@ -10,7 +10,7 @@
     <title>AWSSDK - Amazon Cognito Sync Manager</title>
     <version><#=this.Config.Version#><#=this.Config.InPreview?"-preview":""#></version> 
     <authors>Amazon Web Services</authors>
-    <description>Amazon Cognito is a service that makes it easy to save user data, such as app preferences or game state, in the AWS Cloud without writing any backend code or managing any infrastructure. With Amazon Cognito, you can focus on creating great app experiences instead of having to worry about building and managing a backend solution to handle identity management, network state, storage, and sync.</description> 
+    <description>OBSOLETE - Please use AWSSDK.CognitoSync instead. Sync Manager is now directly included in AWSSDK.CognitoSync. Amazon Cognito is a service that makes it easy to save user data, such as app preferences or game state, in the AWS Cloud without writing any backend code or managing any infrastructure.</description> 
     <language>en-US</language>
     <licenseUrl>http://aws.amazon.com/asl/</licenseUrl>    
     <projectUrl>https://github.com/aws/amazon-cognito-dotnet</projectUrl>
@@ -35,7 +35,6 @@
 				}
 			}
 #>
-		<dependency id="System.Data.SQLite" version="1.0.97.0"/>
       </group>
 	  <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
 <#
@@ -51,22 +50,9 @@
 				}
 			}
 #>
-	    <dependency id="Microsoft.Net.Http" version="2.2.29" />
-		<dependency id="SQLitePCL" version="3.8.7.2" />
 	  </group>
     </dependencies>
   </metadata>
   <files>
-    <file src=".\bin\Release\net45\AWSSDK.SyncManager.dll" target="lib\net45" />
-    <file src=".\bin\Release\net45\AWSSDK.SyncManager.xml" target="lib\net45" />
-    <file src=".\bin\Release\net45\AWSSDK.SyncManager.pdb" target="lib\net45" />
-
-    <file src=".\bin\Release\pcl\AWSSDK.SyncManager.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10" />
-    <file src=".\bin\Release\pcl\AWSSDK.SyncManager.xml" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10" />
-    <file src=".\bin\Release\pcl\AWSSDK.SyncManager.pdb" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10+MonoTouch10" />
-    
-    <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.dll" target="lib\Xamarin.iOS10" />
-    <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.xml" target="lib\Xamarin.iOS10" />
-    <file src=".\bin\Release\Xamarin.iOS10\AWSSDK.SyncManager.pdb" target="lib\Xamarin.iOS10" />
   </files>
 </package>

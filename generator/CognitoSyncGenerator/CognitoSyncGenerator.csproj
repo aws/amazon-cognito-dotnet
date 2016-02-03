@@ -64,45 +64,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BaseGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="Templates\Component\Component.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Component.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\Component\Details.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Details.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\Component\GettingStarted.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GettingStarted.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\SourceFiles\AssemblyInfo.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyInfo.tt</DependentUpon>
-    </Compile>
     <Compile Include="Templates\SourceFiles\NuSpec.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>NuSpec.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\ProjectFiles\IOSProjectTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IOSProjectTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\ProjectFiles\Net45ProjectTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Net45ProjectTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\ProjectFiles\PCLProjectTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PCLProjectTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="Templates\SourceFiles\PackagesConfig.cs">
       <AutoGen>True</AutoGen>
@@ -118,37 +83,9 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>BaseGenerator.cs</LastGenOutput>
     </None>
-    <None Include="Templates\Component\Component.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Component.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\Component\Details.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Details.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\Component\GettingStarted.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>GettingStarted.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\SourceFiles\AssemblyInfo.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
-    </None>
     <None Include="Templates\SourceFiles\NuSpec.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>NuSpec.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\ProjectFiles\IOSProjectTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>IOSProjectTemplate.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\ProjectFiles\Net45ProjectTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Net45ProjectTemplate.cs</LastGenOutput>
-    </None>
-    <None Include="Templates\ProjectFiles\PCLProjectTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>PCLProjectTemplate.cs</LastGenOutput>
     </None>
     <None Include="Templates\SourceFiles\PackagesConfig.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
