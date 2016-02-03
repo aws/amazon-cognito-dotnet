@@ -14,10 +14,10 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="AWSSDK.CognitoSync" version="[3.1.0.5, 3.2)" />
+        <dependency id="AWSSDK.CognitoSync" version="3.1.0.5" />
       </group>
       <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
-        <dependency id="AWSSDK.CognitoSync" version="[3.1.0.5, 3.2)" />
+        <dependency id="AWSSDK.CognitoSync" version="3.1.0.5" />
       </group>
     </dependencies>
   </metadata>

@@ -26,24 +26,8 @@
 	<Target Name="init" DependsOnTargets="clean;build-custom-tasks"/>
 
 	<Target Name="full-build" DependsOnTargets="init;nuget-pack"/>
-	
-	<Target Name="restore-nuget">
-		<Message Text="Restore nuget packages from locations $(nuget_location)"/>
-		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\sdk\src\packages.config -PackagesDirectory ..\sdk\packages"/>
-	</Target>
-	
-	<Target Name="run-generator">
-		<Exec Command="..\sdk\.nuget\NuGet.exe restore -NoCache -Source &quot;$(nuget_location)&quot; ..\generator\CognitoSyncGenerator.sln"/>
-		
-		<Message Text="Build and run code generator"/>		
-		<MSBuild Projects="..\generator\CognitoSyncGenerator.sln"
-			Targets="Clean;Build"
-			Properties="Configuration=Release" />
-		<Exec Command="CognitoSyncGenerator.exe" 
-			WorkingDirectory="..\generator\CognitoSyncGenerator\bin\Release"/>
-	</Target>
 
-	<Target Name="nuget-pack" DependsOnTargets="run-generator;restore-nuget">
+	<Target Name="nuget-pack">
 		<Exec LogStandardErrorAsError="true"
               Command="$(powershell) -ExecutionPolicy Unrestricted -NoProfile -File create-nuget-packages.ps1" />		
 	</Target>
