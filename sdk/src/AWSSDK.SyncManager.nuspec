@@ -17,7 +17,7 @@
         <dependency id="AWSSDK.CognitoSync" version="3.1.0.5" />
       </group>
       <group targetFramework="portable-net45+netcore45+wpa81+wp8+MonoAndroid10+xamarinios10">
-        <dependency id="AWSSDK.CognitoSync" version="3.1.0.5" />
+        <dependency id="AWSSDK.CognitoSync" version="3.1.1.0" />
       </group>
     </dependencies>
   </metadata>
